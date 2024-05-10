@@ -19,7 +19,7 @@ public class Carrera {
     @Column(unique = true)
     private String nombre;
     private String descripcion;
-    private String duracion;
+    private Integer duracion;
     private Integer creditos;
     @OneToMany(mappedBy = "carrera")
     private List<Asignatura> asignaturas;
