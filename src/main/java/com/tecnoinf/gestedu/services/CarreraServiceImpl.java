@@ -32,7 +32,7 @@ public class CarreraServiceImpl implements CarreraService {
     }
 
     @Override
-    public CreateCarreraDTO getCarreraById(Long id) {
+    public CreateCarreraDTO getCarreraById(Long id) { //TEST AGREGUE COMENTARIOS
         return carreraRepository.findById(id)
                 .map(carrera -> modelMapper.map(carrera, CreateCarreraDTO.class))
                 .orElseThrow(() -> new ResourceNotFoundException("Carrera not found with id " + id));
