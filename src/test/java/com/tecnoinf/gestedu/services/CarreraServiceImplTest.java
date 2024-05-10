@@ -50,7 +50,7 @@ class CarreraServiceTest {
         CreateCarreraDTO result = carreraService.createCarrera(createCarreraDTO);
 
         // Assert
-        assertEquals(createCarreraDTO.getNombre(), result.getNombre());
+        assertEquals(createCarreraDTO.getNombre(), result.getDescripcion());
         verify(modelMapper).map(eq(createCarreraDTO), eq(Carrera.class));
         verify(carreraRepository).save(argThat(savedCarrera -> {
             return savedCarrera.getNombre().equals(createCarreraDTO.getNombre())
