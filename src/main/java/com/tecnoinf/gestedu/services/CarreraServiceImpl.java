@@ -53,7 +53,12 @@ public class CarreraServiceImpl implements CarreraService {
     public BasicInfoCarreraDTO updateCarrera(Long id, BasicInfoCarreraDTO basicInfoCarreraDTO) {
         return carreraRepository.findById(id)
                 .map(existingCarrera -> {
-                    existingCarrera.setNombre(basicInfoCarreraDTO.getNombre());
+                    if (basicInfoCarreraDTO.getNombre() != null && !basicInfoCarreraDTO.getNombre().isEmpty()) {
+                        existingCarrera.setNombre(basicInfoCarreraDTO.getNombre());
+                    }
+                    if (basicInfoCarreraDTO.getDescripcion() != null && !basicInfoCarreraDTO.getDescripcion().isEmpty()) {
+                        existingCarrera.setDescripcion(basicInfoCarreraDTO.getDescripcion());
+                    }
                     Carrera updatedCarrera = carreraRepository.save(existingCarrera);
                     return modelMapper.map(updatedCarrera, BasicInfoCarreraDTO.class);
                 })
