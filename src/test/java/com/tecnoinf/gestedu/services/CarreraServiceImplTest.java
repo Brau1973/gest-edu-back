@@ -47,7 +47,7 @@ class CarreraServiceImplTest {
         Carrera carrera = new Carrera();
         carrera.setNombre(createCarreraDTO.getNombre());
         carrera.setDescripcion(createCarreraDTO.getDescripcion());
-        carrera.setDuracion(createCarreraDTO.getDuracion());
+        carrera.setDuracionAnios(createCarreraDTO.getDuracionAnios());
         carrera.setCreditos(createCarreraDTO.getCreditos());
 
         when(modelMapper.map(eq(createCarreraDTO), eq(Carrera.class))).thenReturn(carrera);
@@ -63,7 +63,7 @@ class CarreraServiceImplTest {
         verify(carreraRepository).save(argThat(savedCarrera -> {
             return savedCarrera.getNombre().equals(createCarreraDTO.getNombre())
                     && savedCarrera.getDescripcion().equals(createCarreraDTO.getDescripcion())
-                    && Objects.equals(savedCarrera.getDuracion(), createCarreraDTO.getDuracion())
+                    && Objects.equals(savedCarrera.getDuracionAnios(), createCarreraDTO.getDuracionAnios())
                     && Objects.equals(savedCarrera.getCreditos(), createCarreraDTO.getCreditos());
         }));
     }
