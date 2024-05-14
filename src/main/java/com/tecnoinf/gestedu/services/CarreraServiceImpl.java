@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.services;
 
+import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.carrera.CreateCarreraDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.exceptions.UniqueFieldException;
@@ -25,16 +26,16 @@ public class CarreraServiceImpl implements CarreraService {
     }
 
     @Override
-    public Page<CreateCarreraDTO> getAllCarreras(Pageable pageable, String nombre) {
+    public Page<BasicInfoCarreraDTO> getAllCarreras(Pageable pageable, String nombre) {
         CarreraSpecification spec = new CarreraSpecification(nombre);
         return carreraRepository.findAll(spec, pageable)
-                .map(carrera -> modelMapper.map(carrera, CreateCarreraDTO.class));
+                .map(carrera -> modelMapper.map(carrera, BasicInfoCarreraDTO.class));
     }
 
     @Override
-    public CreateCarreraDTO getCarreraById(Long id) {
+    public BasicInfoCarreraDTO getCarreraBasicInfoById(Long id) {
         return carreraRepository.findById(id)
-                .map(carrera -> modelMapper.map(carrera, CreateCarreraDTO.class))
+                .map(carrera -> modelMapper.map(carrera, BasicInfoCarreraDTO.class))
                 .orElseThrow(() -> new ResourceNotFoundException("Carrera not found with id " + id));
     }
 
@@ -49,12 +50,17 @@ public class CarreraServiceImpl implements CarreraService {
     }
 
     @Override
-    public CreateCarreraDTO updateCarrera(Long id, CreateCarreraDTO createCarreraDto) {
+    public BasicInfoCarreraDTO updateCarrera(Long id, BasicInfoCarreraDTO basicInfoCarreraDTO) {
         return carreraRepository.findById(id)
                 .map(existingCarrera -> {
-                    existingCarrera.setNombre(createCarreraDto.getNombre());
+                    if (basicInfoCarreraDTO.getNombre() != null && !basicInfoCarreraDTO.getNombre().isEmpty()) {
+                        existingCarrera.setNombre(basicInfoCarreraDTO.getNombre());
+                    }
+                    if (basicInfoCarreraDTO.getDescripcion() != null && !basicInfoCarreraDTO.getDescripcion().isEmpty()) {
+                        existingCarrera.setDescripcion(basicInfoCarreraDTO.getDescripcion());
+                    }
                     Carrera updatedCarrera = carreraRepository.save(existingCarrera);
-                    return modelMapper.map(updatedCarrera, CreateCarreraDTO.class);
+                    return modelMapper.map(updatedCarrera, BasicInfoCarreraDTO.class);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Carrera not found with id " + id));
     }

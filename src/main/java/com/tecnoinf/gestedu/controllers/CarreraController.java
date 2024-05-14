@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.controllers;
 
+import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.carrera.CreateCarreraDTO;
 import com.tecnoinf.gestedu.services.CarreraService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,36 +23,37 @@ public class CarreraController {
         this.carreraService = carreraService;
     }
 
-    @Operation(summary = "Obtener todas las carreras")
+    @Operation(summary = "Obtener la info basica de todas las carreras")
     @GetMapping()
-    public ResponseEntity<Page<CreateCarreraDTO>> getAllCarreras(
+    public ResponseEntity<Page<BasicInfoCarreraDTO>> getAllCarreras(
             @RequestParam(required = false) String nombre,
             Pageable pageable) {
-                Page<CreateCarreraDTO> carreras = carreraService.getAllCarreras(pageable,nombre);
+                Page<BasicInfoCarreraDTO> carreras = carreraService.getAllCarreras(pageable,nombre);
                 return ResponseEntity.ok().body(carreras);
     }
 
-    @Operation(summary = "Obtener una carrera por su id")
+    @Operation(summary = "Obtener la info basica de una carrera por su id")
     @GetMapping("/{id}")
-    public ResponseEntity<CreateCarreraDTO> getCarreraById(@PathVariable("id") Long id) {
-        CreateCarreraDTO carrera = carreraService.getCarreraById(id);
+    public ResponseEntity<BasicInfoCarreraDTO> getCarreraBasicInfoById(@PathVariable("id") Long id) {
+        BasicInfoCarreraDTO carrera = carreraService.getCarreraBasicInfoById(id);
         return ResponseEntity.ok().body(carrera);
     }
 
-    @Operation(summary = "Crear una carrera")
+    //TODO Agrergar endpoint para obtener todas las asignaturas de una carrera
+
+    // TODO Agregar endpoint para obtener la info basica de la carrera junto con todas sus asignaturas
+
+    @Operation(summary = "Crear una carrera con su info basica")
     @PostMapping()
     public ResponseEntity<CreateCarreraDTO> createCarrera(@RequestBody CreateCarreraDTO createCarreraDto) {
         CreateCarreraDTO createdCarrera = carreraService.createCarrera(createCarreraDto);
-//        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-//                .buildAndExpand(createdCarrera.getId();
-//        return ResponseEntity.created(location).body(createdCarrera);
         return ResponseEntity.ok().body(createdCarrera);
     }
 
-    @Operation(summary = "Actualizar una carrera")
+    @Operation(summary = "Actualizar info basica de una carrera")
     @PutMapping("/{id}")
-    public ResponseEntity<CreateCarreraDTO> updateCarrera(@PathVariable Long id, @RequestBody CreateCarreraDTO createCarreraDto) {
-        CreateCarreraDTO updatedCarrera = carreraService.updateCarrera(id, createCarreraDto);
+    public ResponseEntity<BasicInfoCarreraDTO> updateCarrera(@PathVariable Long id, @RequestBody BasicInfoCarreraDTO basicInfoCarreraDTO) {
+        BasicInfoCarreraDTO updatedCarrera = carreraService.updateCarrera(id, basicInfoCarreraDTO);
         return ResponseEntity.ok().body(updatedCarrera);
     }
 
