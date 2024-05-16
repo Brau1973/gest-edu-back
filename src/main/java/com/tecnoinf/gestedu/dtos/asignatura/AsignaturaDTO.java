@@ -1,4 +1,4 @@
-package com.tecnoinf.gestedu.dtos;
+package com.tecnoinf.gestedu.dtos.asignatura;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,5 +13,4 @@ public class AsignaturaDTO {
     String descripcion;
     Integer creditos;
     Long carreraId;
-    Long docenteId;
 }
