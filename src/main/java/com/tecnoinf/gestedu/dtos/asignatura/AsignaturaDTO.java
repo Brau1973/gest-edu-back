@@ -9,8 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AsignaturaDTO {
     private Long id;
-    String nombre;
-    String descripcion;
-    Integer creditos;
-    Long carreraId;
+    private String nombre;
+    private String descripcion;
+    private Integer creditos;
+    private Integer semestrePlanEstudio;
+    private Long carreraId;
 }

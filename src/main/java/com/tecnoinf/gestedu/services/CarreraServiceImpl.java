@@ -1,10 +1,13 @@
 package com.tecnoinf.gestedu.services;
 
+import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.carrera.CreateCarreraDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.exceptions.UniqueFieldException;
+import com.tecnoinf.gestedu.models.Asignatura;
 import com.tecnoinf.gestedu.models.Carrera;
+import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.specifications.CarreraSpecification;
 import org.modelmapper.ModelMapper;
@@ -13,16 +16,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CarreraServiceImpl implements CarreraService {
 
     private final CarreraRepository carreraRepository;
     private final ModelMapper modelMapper;
+    private final AsignaturaRepository asignaturaRepository;
 
     @Autowired
-    public CarreraServiceImpl(CarreraRepository carreraRepository, ModelMapper modelMapper) {
+    public CarreraServiceImpl(CarreraRepository carreraRepository, ModelMapper modelMapper, AsignaturaRepository asignaturaRepository) {
         this.carreraRepository = carreraRepository;
         this.modelMapper = modelMapper;
+        this.asignaturaRepository = asignaturaRepository;
     }
 
     @Override
@@ -70,5 +77,32 @@ public class CarreraServiceImpl implements CarreraService {
         Carrera carrera = carreraRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Carrera not found with id " + id));
         carreraRepository.delete(carrera);
+    }
+
+    @Override
+    public Page<BasicInfoCarreraDTO> getCarrerasSinPlanDeEstudio(Pageable pageable) {
+        return carreraRepository.findByExistePlanEstudioFalse(pageable)
+                .map(carrera -> modelMapper.map(carrera, BasicInfoCarreraDTO.class));
+    }
+
+    @Override
+    public Page<AsignaturaDTO> getAsignaturasFromCarrera(Long id, Pageable pageable) {
+        return asignaturaRepository.findAllByCarreraId(id, pageable)
+                .map(asignatura -> modelMapper.map(asignatura, AsignaturaDTO.class));
+    }
+
+    @Override
+    public void updateSemestrePlanEstudio(Long id, List<AsignaturaDTO> asignaturasDto) {
+        for (AsignaturaDTO asignaturaDto : asignaturasDto) {
+            Asignatura asignatura = asignaturaRepository.findById(asignaturaDto.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Asignatura not found with id " + asignaturaDto.getId()));
+            asignatura.setSemestrePlanEstudio(asignaturaDto.getSemestrePlanEstudio());
+            asignaturaRepository.save(asignatura);
+        }
+        carreraRepository.findById(id)
+                .ifPresent(carrera -> {
+                    carrera.setExistePlanEstudio(true);
+                    carreraRepository.save(carrera);
+                });
     }
 }
