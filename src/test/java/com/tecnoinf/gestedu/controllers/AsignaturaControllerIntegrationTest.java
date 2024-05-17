@@ -11,13 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class AsignaturaControllerIntegrationTest {
 
     @Autowired
@@ -32,6 +35,7 @@ public class AsignaturaControllerIntegrationTest {
     private AsignaturaRepository asignaturaRepository;
 
     @Test
+    @Transactional
     public void testCreateAsignatura_Success() throws Exception {
         Carrera carrera = new Carrera();
         carrera.setNombre("Carrera Test");
@@ -48,6 +52,7 @@ public class AsignaturaControllerIntegrationTest {
     }
 
     @Test
+    @Transactional
     public void testCreateDuplicateAsignatura_Fails() throws Exception {
         // Crear una carrera
         Carrera carrera = new Carrera();
