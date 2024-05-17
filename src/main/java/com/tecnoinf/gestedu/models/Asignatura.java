@@ -17,7 +17,8 @@ public class Asignatura {
     private Long id;
     private String nombre;
     private String descripcion;
-    private int creditos;
+    private Integer creditos;
+    private Integer semestrePlanEstudio = 0;
     @ManyToOne
     @JoinColumn(name = "carrera_id", nullable = false)
     private Carrera carrera;

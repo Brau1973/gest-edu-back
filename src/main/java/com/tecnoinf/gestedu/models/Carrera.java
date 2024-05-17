@@ -21,6 +21,8 @@ public class Carrera {
     private String descripcion;
     private Integer duracionAnios;
     private Integer creditos;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean existePlanEstudio;
     @OneToMany(mappedBy = "carrera")
     private List<Asignatura> asignaturas;
 }
