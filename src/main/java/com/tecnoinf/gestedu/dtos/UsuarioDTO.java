@@ -20,5 +20,6 @@ public class UsuarioDTO {
     private String telefono;
     private String domicilio;
     private String fechaNac;
+    private String imagen;
     
 }
