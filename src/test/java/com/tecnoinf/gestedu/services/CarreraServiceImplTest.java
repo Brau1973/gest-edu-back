@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.Objects;
@@ -41,6 +42,7 @@ class CarreraServiceImplTest {
     }
 
     @Test
+    @Transactional
     void testCreateCarrera_Success_WithValidInput() {
         // Arrange
         CreateCarreraDTO createCarreraDTO = new CreateCarreraDTO("nombre", "descripcion", 4, 240);
@@ -69,6 +71,7 @@ class CarreraServiceImplTest {
     }
 
     @Test
+    @Transactional
     void testCreateCarrera_Failure_WithDuplicateName() {
         // Arrange
         CreateCarreraDTO createCarreraDTO = new CreateCarreraDTO("carrera1", "descripcion", 4, 240);
@@ -81,6 +84,7 @@ class CarreraServiceImplTest {
     }
 
     @Test
+    @Transactional
     void testGetAllCarreras_Success_WithValidInput() {
         // Arrange
         String nombre = "nombre";
@@ -106,6 +110,7 @@ class CarreraServiceImplTest {
     }
 
     @Test
+    @Transactional
     void testGetCarreraBasicInfoById_Success_WithValidId() {
         // Arrange
         Long id = 1L;
@@ -125,6 +130,7 @@ class CarreraServiceImplTest {
     }
 
     @Test
+    @Transactional
     void testGetCarreraBasicInfoById_Failure_WithInvalidId() {
         // Arrange
         Long id = 1L;
@@ -138,6 +144,7 @@ class CarreraServiceImplTest {
     }
 
     @Test
+    @Transactional
     void testUpdateCarrera_Failure_WithInvalidId() {
         // Arrange
         Long id = 1L;
@@ -152,6 +159,7 @@ class CarreraServiceImplTest {
     }
 
     @Test
+    @Transactional
     void testDeleteCarrera_Success_WithValidId() {
         // Arrange
         Long id = 1L;
@@ -168,6 +176,7 @@ class CarreraServiceImplTest {
     }
 
     @Test
+    @Transactional
     void testDeleteCarrera_Failure_WithInvalidId() {
         // Arrange
         Long id = 1L;
@@ -179,6 +188,5 @@ class CarreraServiceImplTest {
             carreraService.deleteCarrera(id);
         });
     }
-
 }
 
