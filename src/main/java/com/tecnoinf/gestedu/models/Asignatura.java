@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="asignaturas")
+@Table(name="asignaturas",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"nombre", "carrera_id"}))
 public class Asignatura {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,8 +21,5 @@ public class Asignatura {
     @ManyToOne
     @JoinColumn(name = "carrera_id", nullable = false)
     private Carrera carrera;
-    @ManyToOne
-    @JoinColumn(name = "docente_id", nullable = false)
-    private Docente docente;
     //TODO agregar campo para mapear a la asignatura en neo4j
 }

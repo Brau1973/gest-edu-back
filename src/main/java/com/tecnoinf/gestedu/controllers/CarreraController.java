@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Carreras", description = "API para operaciones de Carreras")
 public class CarreraController {
 
-    CarreraService carreraService;
+    private final CarreraService carreraService;
 
     @Autowired
     public CarreraController(CarreraService carreraService) {
