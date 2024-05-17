@@ -49,9 +49,14 @@ public class UsuarioController {
     }
 
     @PreAuthorize("hasAuthority('ROL_ADMINISTRADOR')")
-    @PostMapping("/registro/admin")
-    public ResponseEntity<AuthResponse> registrarUsuario(@RequestBody @Valid CrearUsuarioRequest crearUsuarioRequest) {
-        return new ResponseEntity<>(this.userDetailsService.registrarUsuario(crearUsuarioRequest), HttpStatus.CREATED);
+    @PostMapping("/altaUsuario")
+    public ResponseEntity<?> registrarUsuario(@RequestBody @Valid CrearUsuarioRequest crearUsuarioRequest) {
+        TipoUsuario tipo = crearUsuarioRequest.getTipoUsuario();
+        if (tipo == TipoUsuario.COORDINADOR || tipo == TipoUsuario.FUNCIONARIO) {
+            return new ResponseEntity<>(this.userDetailsService.registrarUsuario(crearUsuarioRequest), HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>("Tipo de usuario no permitido", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/resetPassword")
