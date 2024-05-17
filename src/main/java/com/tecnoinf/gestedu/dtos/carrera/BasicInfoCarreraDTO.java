@@ -13,4 +13,5 @@ public class BasicInfoCarreraDTO {
     private String descripcion;
     private Integer duracionAnios;
     private Integer creditos;
+    private Boolean existePlanEstudio;
 }

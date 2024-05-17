@@ -2,6 +2,7 @@ package com.tecnoinf.gestedu.controllers;
 
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.carrera.CreateCarreraDTO;
+import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.services.CarreraService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/carreras")
@@ -63,4 +66,26 @@ public class CarreraController {
         carreraService.deleteCarrera(id);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "Obtener las carreras sin plan de estudio")
+    @GetMapping("/carreras-sin-plan-de-estudio")
+    public ResponseEntity<Page<BasicInfoCarreraDTO>> getCarrerasSinPlanDeEstudio(Pageable pageable) {
+        Page<BasicInfoCarreraDTO> carreras = carreraService.getCarrerasSinPlanDeEstudio(pageable);
+        return ResponseEntity.ok().body(carreras);
+    }
+
+    @Operation(summary = "Obtener las asignaturas de una carrera por su id")
+    @GetMapping("/{id}/asignaturas")
+    public ResponseEntity<Page<AsignaturaDTO>> getAsignaturasFromCarrera(@PathVariable Long id, Pageable pageable) {
+        Page<AsignaturaDTO> asignaturas = carreraService.getAsignaturasFromCarrera(id, pageable);
+        return ResponseEntity.ok().body(asignaturas);
+    }
+
+    @Operation(summary = "Actualiza el semestre en que recomienda el plan de estudio cursar las asignaturas de una carrera")
+    @PutMapping("/{id}/asignaturas/semestre-plan-estudio")
+    public ResponseEntity<?> updateSemestrePlanEstudio(@PathVariable Long id, @RequestBody List<AsignaturaDTO> asignaturasDto) {
+        carreraService.updateSemestrePlanEstudio(id,asignaturasDto);
+        return ResponseEntity.ok().build();
+    }
+
 }
