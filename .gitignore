@@ -61,4 +61,6 @@ out/
 ### VS Code ###
 .vscode/
 
+# Ignore the development properties file
+application-dev.properties
 *ssl-server.jks*

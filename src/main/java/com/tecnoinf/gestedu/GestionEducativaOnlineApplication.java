@@ -111,14 +111,16 @@ public class GestionEducativaOnlineApplication {
 			}
 
 			//-----ASIGNATURAS-----
-			createAsignaturaInitData(asignaturaRepository, "Comunicacion oral y Escrita", "Asignatura de comunicacion oral y escrita", 4, savedCarrera1);
-			createAsignaturaInitData(asignaturaRepository, "Matematica discreta y logica 1", "Conjuntos y subconjuntos", 3, savedCarrera1);
-			createAsignaturaInitData(asignaturaRepository, "Programacion avanzada", "OOP con java", 2, savedCarrera1);
+			// SOLO VERIFICO SI EXISTE COE COMO PARA DARME CUENTA SI SE INSERTO LA DUMMY DATA PREVIAMENTE O NO (PARA SABER SI SE EJECUTO CON CREATE O UPDATE)
+			if(!asignaturaRepository.existsByNombre("Comunicacion oral y Escrita")){
+				createAsignaturaInitData(asignaturaRepository, "Comunicacion oral y Escrita", "Asignatura de comunicacion oral y escrita", 4, savedCarrera1);
+				createAsignaturaInitData(asignaturaRepository, "Matematica discreta y logica 1", "Conjuntos y subconjuntos", 3, savedCarrera1);
+				createAsignaturaInitData(asignaturaRepository, "Programacion avanzada", "OOP con java", 2, savedCarrera1);
 
-			createAsignaturaInitData(asignaturaRepository, "Diseño de Interfaz", "Asignatura de diseño de interfaz de usuario", 4, savedCarrera2);
-			createAsignaturaInitData(asignaturaRepository, "Experiencia de Usuario", "Asignatura de experiencia de usuario", 3, savedCarrera2);
-			createAsignaturaInitData(asignaturaRepository, "Prototipado", "Asignatura de prototipado de interfaces", 2, savedCarrera2);
-
+				createAsignaturaInitData(asignaturaRepository, "Diseño de Interfaz", "Asignatura de diseño de interfaz de usuario", 4, savedCarrera2);
+				createAsignaturaInitData(asignaturaRepository, "Experiencia de Usuario", "Asignatura de experiencia de usuario", 3, savedCarrera2);
+				createAsignaturaInitData(asignaturaRepository, "Prototipado", "Asignatura de prototipado de interfaces", 2, savedCarrera2);
+			}
 		};
 	}
 
