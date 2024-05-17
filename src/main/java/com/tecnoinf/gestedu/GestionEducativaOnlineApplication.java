@@ -1,6 +1,7 @@
 package com.tecnoinf.gestedu;
 
 import com.tecnoinf.gestedu.models.*;
+import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -18,7 +19,7 @@ public class GestionEducativaOnlineApplication {
 	}
 
 	@Bean
-	public CommandLineRunner initData(UsuarioRepository usuarioRepository, CarreraRepository carreraRepository) {
+	public CommandLineRunner initData(UsuarioRepository usuarioRepository, CarreraRepository carreraRepository, AsignaturaRepository asignaturaRepository) {
 		return (args) -> {
 			//-----USUARIOS-----
 			PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -87,6 +88,7 @@ public class GestionEducativaOnlineApplication {
 
 			//-----CARRERAS-----
 			// Comprueba si la carrera ya existe antes de intentar insertarla
+			Carrera savedCarrera1 = new Carrera();
 			if (!carreraRepository.existsByNombre("Tecnologo informatico InitData")) {
 				Carrera carrera1 = new Carrera();
 				carrera1.setNombre("Tecnologo informatico InitData");
@@ -94,9 +96,10 @@ public class GestionEducativaOnlineApplication {
 				carrera1.setDuracionAnios(3);
 				carrera1.setCreditos(256);
 				carrera1.setExistePlanEstudio(false);
-				carreraRepository.save(carrera1);
+				savedCarrera1 = carreraRepository.save(carrera1);
 			}
 
+			Carrera savedCarrera2 = new Carrera();
 			if (!carreraRepository.existsByNombre("Diseño UX/UI InitData")) {
 				Carrera carrera2 = new Carrera();
 				carrera2.setNombre("Diseño UX/UI InitData");
@@ -104,14 +107,25 @@ public class GestionEducativaOnlineApplication {
 				carrera2.setDuracionAnios(2);
 				carrera2.setCreditos(180);
 				carrera2.setExistePlanEstudio(false);
-				carreraRepository.save(carrera2);
+				savedCarrera2 = carreraRepository.save(carrera2);
 			}
 
 			//-----ASIGNATURAS-----
+			createAsignaturaInitData(asignaturaRepository, "Comunicacion oral y Escrita", "Asignatura de comunicacion oral y escrita", 4, savedCarrera1);
+			createAsignaturaInitData(asignaturaRepository, "Matematica discreta y logica 1", "Conjuntos y subconjuntos", 3, savedCarrera1);
+			createAsignaturaInitData(asignaturaRepository, "Programacion avanzada", "OOP con java", 2, savedCarrera1);
 
+			createAsignaturaInitData(asignaturaRepository, "Diseño de Interfaz", "Asignatura de diseño de interfaz de usuario", 4, savedCarrera2);
+			createAsignaturaInitData(asignaturaRepository, "Experiencia de Usuario", "Asignatura de experiencia de usuario", 3, savedCarrera2);
+			createAsignaturaInitData(asignaturaRepository, "Prototipado", "Asignatura de prototipado de interfaces", 2, savedCarrera2);
 
 		};
 	}
 
-	// usuario repo sil
+	private void createAsignaturaInitData(AsignaturaRepository asignaturaRepository, String nombre, String descripcion, Integer creditos, Carrera carrera) {
+		if(!asignaturaRepository.existsByNombreAndCarreraId(nombre, carrera.getId())){
+			Asignatura asignatura = new Asignatura(null, nombre, descripcion, creditos, 0, carrera);
+			asignaturaRepository.save(asignatura);
+		}
+	}
 }

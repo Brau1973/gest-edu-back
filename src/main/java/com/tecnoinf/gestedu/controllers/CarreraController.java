@@ -67,7 +67,7 @@ public class CarreraController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Obtener las carreras sin plan de estudio por su id")
+    @Operation(summary = "Obtener las carreras sin plan de estudio")
     @GetMapping("/carreras-sin-plan-de-estudio")
     public ResponseEntity<Page<BasicInfoCarreraDTO>> getCarrerasSinPlanDeEstudio(Pageable pageable) {
         Page<BasicInfoCarreraDTO> carreras = carreraService.getCarrerasSinPlanDeEstudio(pageable);
