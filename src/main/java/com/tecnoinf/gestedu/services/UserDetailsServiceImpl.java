@@ -1,8 +1,8 @@
 package com.tecnoinf.gestedu.services;
 
-import com.tecnoinf.gestedu.dtos.AuthLoginRequest;
-import com.tecnoinf.gestedu.dtos.AuthResponse;
-import com.tecnoinf.gestedu.dtos.CrearUsuarioRequest;
+import com.tecnoinf.gestedu.dtos.usuario.AuthLoginRequest;
+import com.tecnoinf.gestedu.dtos.usuario.AuthResponse;
+import com.tecnoinf.gestedu.dtos.usuario.CrearUsuarioRequest;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import com.tecnoinf.gestedu.util.JwtUtils;

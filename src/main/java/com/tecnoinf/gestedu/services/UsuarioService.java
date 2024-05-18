@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.services;
 
+import com.tecnoinf.gestedu.dtos.usuario.UsuarioDTO;
 import com.tecnoinf.gestedu.models.Usuario;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,4 +26,11 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
+    public UsuarioDTO getUsuarioDTO(String email) {
+        Optional<Usuario> usuario = getByEmail(email);
+        if (usuario.isPresent()) {
+            return new UsuarioDTO(usuario.get());
+        }
+        return null;
+    }
 }
