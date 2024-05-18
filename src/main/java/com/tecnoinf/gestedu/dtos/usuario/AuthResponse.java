@@ -7,4 +7,8 @@ public record AuthResponse (String email,
                             String message,
                             String jwt,
                             boolean status){
+
+    public String getEmail() {
+        return email;
+    }
 }

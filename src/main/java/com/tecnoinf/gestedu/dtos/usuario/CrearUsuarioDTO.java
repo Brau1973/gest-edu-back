@@ -12,7 +12,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CrearUsuarioRequest {
+public class CrearUsuarioDTO {
     @NotBlank
     private String ci;
     @NotBlank
