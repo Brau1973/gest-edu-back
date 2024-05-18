@@ -49,7 +49,7 @@ public class UsuarioController {
 
     @Operation(summary = "Registrar un estudiante")
     @PostMapping("/registro") //invitado
-    public ResponseEntity<AuthResponse> registrarEstudiante(@RequestBody @Valid CrearUsuarioRequest crearUsuarioRequest) {
+    public ResponseEntity<AuthResponse> registrarEstudiante(@RequestBody @Valid CrearUsuarioDTO crearUsuarioRequest) {
         crearUsuarioRequest.setTipoUsuario(TipoUsuario.ESTUDIANTE);
         return new ResponseEntity<>(this.userDetailsService.registrarUsuario(crearUsuarioRequest), HttpStatus.CREATED);
     }
@@ -57,7 +57,7 @@ public class UsuarioController {
     @Operation(summary = "Registrar un coordinador o funcionario")
     @PreAuthorize("hasAuthority('ROL_ADMINISTRADOR')")
     @PostMapping("/altaUsuario")
-    public ResponseEntity<?> registrarUsuario(@RequestBody @Valid CrearUsuarioRequest crearUsuarioRequest) {
+    public ResponseEntity<?> registrarUsuario(@RequestBody @Valid CrearUsuarioDTO crearUsuarioRequest) {
         TipoUsuario tipo = crearUsuarioRequest.getTipoUsuario();
         if (tipo == TipoUsuario.COORDINADOR || tipo == TipoUsuario.FUNCIONARIO) {
             return new ResponseEntity<>(this.userDetailsService.registrarUsuario(crearUsuarioRequest), HttpStatus.CREATED);

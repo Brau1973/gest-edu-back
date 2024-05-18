@@ -2,7 +2,7 @@ package com.tecnoinf.gestedu.services;
 
 import com.tecnoinf.gestedu.dtos.usuario.AuthLoginRequest;
 import com.tecnoinf.gestedu.dtos.usuario.AuthResponse;
-import com.tecnoinf.gestedu.dtos.usuario.CrearUsuarioRequest;
+import com.tecnoinf.gestedu.dtos.usuario.CrearUsuarioDTO;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import com.tecnoinf.gestedu.util.JwtUtils;
@@ -103,7 +103,7 @@ public class UserDetailsServiceImpl implements UserDetailsService{
         return new UsernamePasswordAuthenticationToken(email, userDetails.getPassword(), userDetails.getAuthorities());
     }
 
-    public AuthResponse registrarUsuario (CrearUsuarioRequest crearUsuarioRequest) {
+    public AuthResponse registrarUsuario(CrearUsuarioDTO crearUsuarioRequest) {
         Usuario usuario;
         switch(crearUsuarioRequest.getTipoUsuario()){
             case ADMINISTRADOR:
