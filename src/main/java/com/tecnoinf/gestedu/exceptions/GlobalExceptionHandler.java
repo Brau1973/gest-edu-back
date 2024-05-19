@@ -30,6 +30,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {
             UniqueFieldException.class,
+            PlanEstudioNoExisteException.class,
+            SemestreException.class,
+            AsignaturaPreviaExistenteException.class,
+            CicloEnAsignaturasException.class,
             })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<Object> handleUniqueField(UniqueFieldException ex) {
