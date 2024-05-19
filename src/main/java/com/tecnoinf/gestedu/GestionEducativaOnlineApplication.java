@@ -1,6 +1,7 @@
 package com.tecnoinf.gestedu;
 
 import com.tecnoinf.gestedu.models.*;
+import com.tecnoinf.gestedu.repositories.AsignaturaNeoRepository;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
@@ -23,7 +24,7 @@ public class GestionEducativaOnlineApplication {
 	}
 
 	@Bean
-	public CommandLineRunner initData(UsuarioRepository usuarioRepository, CarreraRepository carreraRepository, AsignaturaRepository asignaturaRepository) {
+	public CommandLineRunner initData(UsuarioRepository usuarioRepository, CarreraRepository carreraRepository, AsignaturaRepository asignaturaRepository, AsignaturaNeoRepository asignaturaNeoRepository) {
 		return (args) -> {
 			if(ddlAuto.equals("create") || ddlAuto.equals("create-drop")) {
 
@@ -128,10 +129,14 @@ public class GestionEducativaOnlineApplication {
 		};
 	}
 
-	private void createAsignaturaInitData(AsignaturaRepository asignaturaRepository, String nombre, String descripcion, Integer creditos, Integer semestrePlanEstudio ,Carrera carrera) {
+	private void createAsignaturaInitData(AsignaturaRepository asignaturaRepository, AsignaturaNeoRepository asignaturaNeoRepository, String nombre, String descripcion, Integer creditos, Carrera carrera) {
 		if(!asignaturaRepository.existsByNombreAndCarreraId(nombre, carrera.getId())){
-			Asignatura asignatura = new Asignatura(null, nombre, descripcion, creditos, semestrePlanEstudio, carrera);
+			Asignatura asignatura = new Asignatura(null,"prueba","descrp",null,0,);
 			asignaturaRepository.save(asignatura);
+			AsignaturaNeo asignaturaNeo = new AsignaturaNeo();
+			asignaturaNeo.setId(asignatura.getId());
+			asignaturaNeo.setNombre(asignatura.getNombre());
+			asignaturaNeoRepository.save(asignaturaNeo);
 		}
 	}
 }
