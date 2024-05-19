@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,5 +25,12 @@ public class Asignatura {
     @ManyToOne
     @JoinColumn(name = "carrera_id", nullable = false)
     private Carrera carrera;
-    //TODO agregar campo para mapear a la asignatura en neo4j
+
+    @ManyToMany
+    @JoinTable(
+            name = "asignatura_previas",
+            joinColumns = @JoinColumn(name = "asignatura_id"),
+            inverseJoinColumns = @JoinColumn(name = "previa_id")
+    )
+    private List<Asignatura> previas = new ArrayList<>();
 }
