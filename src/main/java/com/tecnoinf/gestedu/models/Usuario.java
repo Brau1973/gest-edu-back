@@ -38,6 +38,7 @@ public abstract class Usuario {
     private String telefono;
     private String domicilio;
     private Date fechaNac;
+    private String imagen;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<TokenPass> tokenPass = new HashSet<>();

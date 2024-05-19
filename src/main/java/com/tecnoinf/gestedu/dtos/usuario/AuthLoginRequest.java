@@ -1,4 +1,4 @@
-package com.tecnoinf.gestedu.dtos;
+package com.tecnoinf.gestedu.dtos.usuario;
 
 import jakarta.validation.constraints.NotBlank;
 

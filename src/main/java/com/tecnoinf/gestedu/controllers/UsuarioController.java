@@ -1,11 +1,14 @@
 package com.tecnoinf.gestedu.controllers;
 
 import com.tecnoinf.gestedu.dtos.*;
+import com.tecnoinf.gestedu.dtos.usuario.*;
 import com.tecnoinf.gestedu.models.Usuario;
 import com.tecnoinf.gestedu.services.EmailService;
 import com.tecnoinf.gestedu.services.TokenPassService;
 import com.tecnoinf.gestedu.services.UserDetailsServiceImpl;
 import com.tecnoinf.gestedu.services.UsuarioService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,10 +20,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/usuario")
+@Tag(name = "Usuarios", description = "API para operaciones de Usuarios")
 public class UsuarioController {
 
     @Autowired
@@ -42,18 +47,26 @@ public class UsuarioController {
     private String emailFrom;
 
 
+    @Operation(summary = "Registrar un estudiante")
     @PostMapping("/registro") //invitado
-    public ResponseEntity<AuthResponse> registrarEstudiante(@RequestBody @Valid CrearUsuarioRequest crearUsuarioRequest) {
+    public ResponseEntity<AuthResponse> registrarEstudiante(@RequestBody @Valid CrearUsuarioDTO crearUsuarioRequest) {
         crearUsuarioRequest.setTipoUsuario(TipoUsuario.ESTUDIANTE);
         return new ResponseEntity<>(this.userDetailsService.registrarUsuario(crearUsuarioRequest), HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Registrar un coordinador o funcionario")
     @PreAuthorize("hasAuthority('ROL_ADMINISTRADOR')")
-    @PostMapping("/registro/admin")
-    public ResponseEntity<AuthResponse> registrarUsuario(@RequestBody @Valid CrearUsuarioRequest crearUsuarioRequest) {
-        return new ResponseEntity<>(this.userDetailsService.registrarUsuario(crearUsuarioRequest), HttpStatus.CREATED);
+    @PostMapping("/altaUsuario")
+    public ResponseEntity<?> registrarUsuario(@RequestBody @Valid CrearUsuarioDTO crearUsuarioRequest) {
+        TipoUsuario tipo = crearUsuarioRequest.getTipoUsuario();
+        if (tipo == TipoUsuario.COORDINADOR || tipo == TipoUsuario.FUNCIONARIO) {
+            return new ResponseEntity<>(this.userDetailsService.registrarUsuario(crearUsuarioRequest), HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>("Tipo de usuario no permitido", HttpStatus.BAD_REQUEST);
+        }
     }
 
+    @Operation(summary = "Enviar correo para recuperar contraseña")
     @PostMapping("/resetPassword")
     public ResponseEntity<?> sendEmailResetPassword(@RequestBody EmailValuesDTO dto) {
 
@@ -73,6 +86,7 @@ public class UsuarioController {
         return new ResponseEntity<>("Correo enviado con éxito", HttpStatusCode.valueOf(200));
     }
 
+    @Operation(summary = "Cambiar contraseña")
     @PostMapping("/cambiarPassword")
     public ResponseEntity<?> cambiarPassword(@Valid @RequestBody ChangePasswordDTO dto, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
@@ -96,4 +110,37 @@ public class UsuarioController {
         return new ResponseEntity<>("Contraseña actualizada.", HttpStatus.OK);
     }
 
+    @Operation(summary = "Obtener la info perfil de usuario logueado")
+    @GetMapping("/perfil")
+    public ResponseEntity<UsuarioDTO> obtenerDatosUsuario(Principal principal) {
+        if(principal == null) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        String email = principal.getName();
+        Optional<Usuario> usuario = usuarioService.getByEmail(email);
+        if(usuario.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Usuario user = usuario.get();
+        return new ResponseEntity<>(new UsuarioDTO(user), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Editar perfil de usuario logueado")
+    @PutMapping("/perfil")
+    public ResponseEntity<UsuarioDTO> editarUsuario(Principal principal, @RequestBody EditarUsuarioDTO UsuarioDTO) {
+        if(principal == null) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        String email = principal.getName();
+        Optional<Usuario> usuario = usuarioService.getByEmail(email);
+        if(usuario.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Usuario user = usuario.get();
+        user.setTelefono(UsuarioDTO.getTelefono());
+        user.setDomicilio(UsuarioDTO.getDomicilio());
+        user.setImagen(UsuarioDTO.getImagen());
+        usuarioService.updateUsuario(user);
+        return new ResponseEntity<>(new UsuarioDTO(user), HttpStatus.OK);
+    }
 }
