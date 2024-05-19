@@ -154,7 +154,7 @@ public class UsuarioController {
     }
 
     @Operation(summary = "Listar usuarios")
-    @PreAuthorize("hasAuthority('ROL_ADMINISTRADOR')")
+    //@PreAuthorize("hasAuthority('ROL_ADMINISTRADOR')")
     @GetMapping("/listar")
     public ResponseEntity<Page<BasicInfoUsuarioDTO>> listarUsuarios(Pageable pageable) {
         return new ResponseEntity<>(usuarioService.getBasicInfoUsuarios(pageable), HttpStatus.OK);

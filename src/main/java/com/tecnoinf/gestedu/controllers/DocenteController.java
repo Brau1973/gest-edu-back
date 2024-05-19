@@ -34,19 +34,19 @@ public class DocenteController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<DocenteDTO> createDocente(@RequestBody DocenteDTO docenteDto) {
         return ResponseEntity.ok(docenteService.createDocente(docenteDto));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<DocenteDTO> updateDocente(@PathVariable Long id, @RequestBody DocenteDTO docenteDto) {
         return ResponseEntity.ok(docenteService.updateDocente(id, docenteDto));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<Void> deleteDocente(@PathVariable Long id) {
         docenteService.deleteDocente(id);
         return ResponseEntity.ok().build();

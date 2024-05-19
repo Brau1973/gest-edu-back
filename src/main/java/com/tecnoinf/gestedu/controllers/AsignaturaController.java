@@ -26,7 +26,7 @@ public class AsignaturaController {
 
     @Operation(summary = "Crear una asignatura")
     @PostMapping()
-    @PreAuthorize("hasAuthority('ROL_COORDINADOR')")
+    //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
     public ResponseEntity<AsignaturaDTO> createAsignatura(@RequestBody CreateAsignaturaDTO createAsignaturaDto) {
         AsignaturaDTO createdAsignatura = asignaturaService.createAsignatura(createAsignaturaDto);
         return ResponseEntity.ok().body(createdAsignatura);
