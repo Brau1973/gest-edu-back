@@ -6,6 +6,7 @@ import com.tecnoinf.gestedu.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -35,11 +36,17 @@ public class SecurityConfig {
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> {
-                    authorize.anyRequest().permitAll();
+//                    authorize.requestMatchers(HttpMethod.POST, "/login").permitAll();
+//                    authorize.requestMatchers(HttpMethod.POST, "/usuario/registro").permitAll();
+//                    authorize.requestMatchers(HttpMethod.POST, "/usuario/resetPassword").permitAll();
+//                    authorize.requestMatchers(HttpMethod.POST, "/usuario/cambiarPassword").permitAll();
+//                    authorize.anyRequest().authenticated();
+                      authorize.anyRequest().permitAll();
                 })
                 .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class)
                 .build();
     }
+
 
 
     @Bean
