@@ -38,6 +38,13 @@ public class AsignaturaController {
         return ResponseEntity.ok().body(previas);
     }
 
+    @Operation(summary = "Obtener asignaturas no previas")
+    @GetMapping("/{asignaturaId}/no-previas")
+    public ResponseEntity<List<AsignaturaDTO>> getNoPrevias(@PathVariable Long asignaturaId) {
+        List<AsignaturaDTO> noPrevias = asignaturaService.getNoPrevias(asignaturaId);
+        return ResponseEntity.ok().body(noPrevias);
+    }
+
     @Operation(summary = "Registrar previa de una asignatura")
     @PostMapping("/{asignaturaId}/previa/{previaId}")
     public ResponseEntity<AsignaturaDTO> addPrevia(@PathVariable Long asignaturaId, @PathVariable Long previaId) {
