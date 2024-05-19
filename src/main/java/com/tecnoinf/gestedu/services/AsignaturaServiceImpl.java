@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -117,5 +118,23 @@ public class AsignaturaServiceImpl implements AsignaturaService {
             }
         }
         return false;
+    }
+
+    @Override
+    public List<AsignaturaDTO> getNoPrevias(Long asignaturaId){
+        Asignatura asignatura = asignaturaRepository.findById(asignaturaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Asignatura not found with id " + asignaturaId));
+
+        List<Asignatura> asignaturasCarrera = asignaturaRepository.findByCarreraId(asignatura.getCarrera().getId());
+        List<Asignatura> previas = asignatura.getPrevias();
+
+        List<Asignatura> noPrevias = new ArrayList<>();
+        for(Asignatura a : asignaturasCarrera){
+            if(!previas.contains(a) && !a.equals(asignatura)){
+                noPrevias.add(a);
+            }
+        }
+        Type listType = new TypeToken<List<AsignaturaDTO>>(){}.getType();
+        return modelMapper.map(noPrevias, listType);
     }
 }
