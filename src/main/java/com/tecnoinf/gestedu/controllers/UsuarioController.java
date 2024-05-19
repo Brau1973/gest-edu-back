@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -142,5 +144,12 @@ public class UsuarioController {
         user.setImagen(UsuarioDTO.getImagen());
         usuarioService.updateUsuario(user);
         return new ResponseEntity<>(new UsuarioDTO(user), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Listar usuarios")
+    @PreAuthorize("hasAuthority('ROL_ADMINISTRADOR')")
+    @GetMapping("/listar")
+    public ResponseEntity<Page<BasicInfoUsuarioDTO>> listarUsuarios(Pageable pageable) {
+        return new ResponseEntity<>(usuarioService.getBasicInfoUsuarios(pageable), HttpStatus.OK);
     }
 }
