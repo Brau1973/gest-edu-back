@@ -14,7 +14,11 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = { ResourceNotFoundException.class })
+    @ExceptionHandler(value = {
+            ResourceNotFoundException.class,
+            TokenInactivoException.class,
+            TokenVencidoException.class,
+            TokenInvalidoException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     protected ResponseEntity<Object> handleNotFound(RuntimeException ex) {
         Map<String, Object> body = new LinkedHashMap<>();
@@ -24,7 +28,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = { UniqueFieldException.class })
+    @ExceptionHandler(value = {
+            UniqueFieldException.class,
+            })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<Object> handleUniqueField(UniqueFieldException ex) {
         Map<String, Object> body = new LinkedHashMap<>();
