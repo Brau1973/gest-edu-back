@@ -1,11 +1,17 @@
 package com.tecnoinf.gestedu.services;
 
+import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.dtos.usuario.UsuarioDTO;
 import com.tecnoinf.gestedu.models.Usuario;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,5 +38,14 @@ public class UsuarioService {
             return new UsuarioDTO(usuario.get());
         }
         return null;
+    }
+
+    public Page<BasicInfoUsuarioDTO> getBasicInfoUsuarios(Pageable pageable) {
+        Page<Usuario> usuarios = usuarioRepository.findAll(pageable);
+        List<BasicInfoUsuarioDTO> basicInfoUsuarios = new ArrayList<>();
+        for (Usuario usuario : usuarios) {
+            basicInfoUsuarios.add(new BasicInfoUsuarioDTO(usuario));
+        }
+        return new PageImpl<>(basicInfoUsuarios, pageable, usuarios.getTotalElements());
     }
 }
