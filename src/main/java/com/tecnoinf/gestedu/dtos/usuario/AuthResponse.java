@@ -1,4 +1,4 @@
-package com.tecnoinf.gestedu.dtos;
+package com.tecnoinf.gestedu.dtos.usuario;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -7,4 +7,8 @@ public record AuthResponse (String email,
                             String message,
                             String jwt,
                             boolean status){
+
+    public String getEmail() {
+        return email;
+    }
 }

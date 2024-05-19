@@ -1,5 +1,6 @@
-package com.tecnoinf.gestedu.dtos;
+package com.tecnoinf.gestedu.dtos.usuario;
 
+import com.tecnoinf.gestedu.dtos.TipoUsuario;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -11,7 +12,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CrearUsuarioRequest {
+public class CrearUsuarioDTO {
     @NotBlank
     private String ci;
     @NotBlank
