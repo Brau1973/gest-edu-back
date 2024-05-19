@@ -40,7 +40,7 @@ public class SecurityConfig {
                     authorize.requestMatchers(HttpMethod.POST, "/usuario/registro").permitAll();
                     authorize.requestMatchers(HttpMethod.POST, "/usuario/resetPassword").permitAll();
                     authorize.requestMatchers(HttpMethod.POST, "/usuario/cambiarPassword").permitAll();
-                    authorize.anyRequest().denyAll();
+                    authorize.anyRequest().authenticated();
                 })
                 .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class)
                 .build();

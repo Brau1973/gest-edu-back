@@ -30,16 +30,4 @@ public class AuthController {
         return new ResponseEntity<>(this.userDetailsService.loginUser(userRequest), HttpStatus.OK);
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<String> logout(@RequestHeader(value="Authorization") String token) {
-        try {
-            // Remove 'Bearer ' from the token
-            String jwtToken = token.substring(7);
-            this.jwtUtils.listaNegraToken(jwtToken);
-            return new ResponseEntity<>("Sesión finalizada.", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Error al cerrar la sesión.", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
 }
