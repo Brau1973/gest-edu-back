@@ -2,6 +2,9 @@ package com.tecnoinf.gestedu.controllers;
 
 import com.tecnoinf.gestedu.dtos.*;
 import com.tecnoinf.gestedu.dtos.usuario.*;
+import com.tecnoinf.gestedu.exceptions.TokenInactivoException;
+import com.tecnoinf.gestedu.exceptions.TokenInvalidoException;
+import com.tecnoinf.gestedu.exceptions.TokenVencidoException;
 import com.tecnoinf.gestedu.models.Usuario;
 import com.tecnoinf.gestedu.services.EmailService;
 import com.tecnoinf.gestedu.services.TokenPassService;
@@ -98,18 +101,22 @@ public class UsuarioController {
             return new ResponseEntity<>("Las contraseñas no coinciden", HttpStatus.BAD_REQUEST);
         }
 
-        Optional<Usuario> usuario = tokenPassService.validarToken(dto.getTokenPassword());
-        if(usuario.isEmpty()){
-            return new ResponseEntity<>("Token no encontrado", HttpStatus.NOT_FOUND);
+        try {
+            Optional<Usuario> usuario = tokenPassService.validarToken(dto.getTokenPassword());
+            if(usuario.isEmpty()){
+                return new ResponseEntity<>("Token no encontrado", HttpStatus.NOT_FOUND);
+            }
+            Usuario user = usuario.get();
+            String newPassword = passwordEncoder.encode(dto.getPassword());
+            user.setPassword(newPassword);
+            usuarioService.updateUsuario(user);
+
+            tokenPassService.invalidarToken(dto.getTokenPassword());
+
+            return new ResponseEntity<>("Contraseña actualizada.", HttpStatus.OK);
+        } catch (TokenInvalidoException | TokenInactivoException | TokenVencidoException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
-        Usuario user = usuario.get();
-        String newPassword = passwordEncoder.encode(dto.getPassword());
-        user.setPassword(newPassword);
-        usuarioService.updateUsuario(user);
-
-        tokenPassService.invalidarToken(dto.getTokenPassword());
-
-        return new ResponseEntity<>("Contraseña actualizada.", HttpStatus.OK);
     }
 
     @Operation(summary = "Obtener la info perfil de usuario logueado")
@@ -147,7 +154,7 @@ public class UsuarioController {
     }
 
     @Operation(summary = "Listar usuarios")
-    @PreAuthorize("hasAuthority('ROL_ADMINISTRADOR')")
+    //@PreAuthorize("hasAuthority('ROL_ADMINISTRADOR')")
     @GetMapping("/listar")
     public ResponseEntity<Page<BasicInfoUsuarioDTO>> listarUsuarios(Pageable pageable) {
         return new ResponseEntity<>(usuarioService.getBasicInfoUsuarios(pageable), HttpStatus.OK);
