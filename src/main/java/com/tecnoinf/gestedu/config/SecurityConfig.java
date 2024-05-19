@@ -36,15 +36,17 @@ public class SecurityConfig {
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> {
-                    authorize.requestMatchers(HttpMethod.POST, "/login").permitAll();
-                    authorize.requestMatchers(HttpMethod.POST, "/usuario/registro").permitAll();
-                    authorize.requestMatchers(HttpMethod.POST, "/usuario/resetPassword").permitAll();
-                    authorize.requestMatchers(HttpMethod.POST, "/usuario/cambiarPassword").permitAll();
-                    authorize.anyRequest().authenticated();
+//                    authorize.requestMatchers(HttpMethod.POST, "/login").permitAll();
+//                    authorize.requestMatchers(HttpMethod.POST, "/usuario/registro").permitAll();
+//                    authorize.requestMatchers(HttpMethod.POST, "/usuario/resetPassword").permitAll();
+//                    authorize.requestMatchers(HttpMethod.POST, "/usuario/cambiarPassword").permitAll();
+//                    authorize.anyRequest().authenticated();
+                      authorize.anyRequest().permitAll();
                 })
                 .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class)
                 .build();
     }
+
 
 
     @Bean

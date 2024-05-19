@@ -49,7 +49,7 @@ public class CarreraController {
 
     @Operation(summary = "Crear una carrera con su info basica")
     @PostMapping()
-    @PreAuthorize("hasAuthority('ROL_COORDINADOR')")
+    //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
     public ResponseEntity<CreateCarreraDTO> createCarrera(@RequestBody CreateCarreraDTO createCarreraDto) {
         CreateCarreraDTO createdCarrera = carreraService.createCarrera(createCarreraDto);
         return ResponseEntity.ok().body(createdCarrera);
@@ -57,7 +57,7 @@ public class CarreraController {
 
     @Operation(summary = "Actualizar info basica de una carrera")
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROL_COORDINADOR')")
+    //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
     public ResponseEntity<BasicInfoCarreraDTO> updateCarrera(@PathVariable Long id, @RequestBody BasicInfoCarreraDTO basicInfoCarreraDTO) {
         BasicInfoCarreraDTO updatedCarrera = carreraService.updateCarrera(id, basicInfoCarreraDTO);
         return ResponseEntity.ok().body(updatedCarrera);
@@ -65,7 +65,7 @@ public class CarreraController {
 
     @Operation(summary = "Eliminar una carrera")
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROL_COORDINADOR')")
+    //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
     public ResponseEntity<?> deleteCarrera(@PathVariable Long id) {
         carreraService.deleteCarrera(id);
         return ResponseEntity.noContent().build();
@@ -73,7 +73,7 @@ public class CarreraController {
 
     @Operation(summary = "Obtener las carreras sin plan de estudio")
     @GetMapping("/carreras-sin-plan-de-estudio")
-    @PreAuthorize("hasAuthority('ROL_COORDINADOR')")
+    //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
     public ResponseEntity<Page<BasicInfoCarreraDTO>> getCarrerasSinPlanDeEstudio(Pageable pageable) {
         Page<BasicInfoCarreraDTO> carreras = carreraService.getCarrerasSinPlanDeEstudio(pageable);
         return ResponseEntity.ok().body(carreras);
@@ -88,7 +88,7 @@ public class CarreraController {
 
     @Operation(summary = "Actualiza el semestre en que recomienda el plan de estudio cursar las asignaturas de una carrera")
     @PutMapping("/{id}/asignaturas/semestre-plan-estudio")
-    @PreAuthorize("hasAuthority('ROL_COORDINADOR')")
+    //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
     public ResponseEntity<?> updateSemestrePlanEstudio(@PathVariable Long id, @RequestBody List<AsignaturaDTO> asignaturasDto) {
         carreraService.updateSemestrePlanEstudio(id,asignaturasDto);
         return ResponseEntity.ok().build();
