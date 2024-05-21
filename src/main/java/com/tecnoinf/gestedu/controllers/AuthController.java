@@ -30,4 +30,9 @@ public class AuthController {
         return new ResponseEntity<>(this.userDetailsService.loginUser(userRequest), HttpStatus.OK);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestHeader(value="Authorization") String token) {
+        return new ResponseEntity<>("Sesión cerrada", HttpStatus.OK);
+    }
+
 }
