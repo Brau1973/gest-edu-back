@@ -29,15 +29,16 @@ public class AsignaturaServiceImpl implements AsignaturaService {
 
     @Override
     public AsignaturaDTO createAsignatura(CreateAsignaturaDTO createAsignaturaDto) {
-        Asignatura asignatura = modelMapper.map(createAsignaturaDto, Asignatura.class);
         Carrera carrera = carreraRepository.findById(createAsignaturaDto.getCarreraId())
                 .orElseThrow(() -> new ResourceNotFoundException("Carrera not found with id " + createAsignaturaDto.getCarreraId()));
-        asignatura.setCarrera(carrera);
 
-        if (asignaturaRepository.existsByNombreAndCarreraId(asignatura.getNombre(), carrera.getId())) {
+        if (asignaturaRepository.existsByNombreAndCarreraId(createAsignaturaDto.getNombre(), carrera.getId())) {
             throw new UniqueFieldException("Ya existe una asignatura con el nombre " + createAsignaturaDto.getNombre() + " en la carrera  " + carrera.getNombre() + " (id Carrera: " + carrera.getId() + ")");
         }
-
+        Asignatura asignatura = new Asignatura();
+        asignatura = modelMapper.map(createAsignaturaDto, Asignatura.class);
+        asignatura.setCarrera(carrera);
+        asignatura.setId(null);
         Asignatura createdAsignatura = asignaturaRepository.save(asignatura);
         return modelMapper.map(createdAsignatura, AsignaturaDTO.class);
     }
