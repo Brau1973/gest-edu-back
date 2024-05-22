@@ -43,10 +43,6 @@ public class CarreraController {
         return ResponseEntity.ok().body(carrera);
     }
 
-    //TODO Agrergar endpoint para obtener todas las asignaturas de una carrera
-
-    // TODO Agregar endpoint para obtener la info basica de la carrera junto con todas sus asignaturas
-
     @Operation(summary = "Crear una carrera con su info basica")
     @PostMapping()
     //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
