@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -19,10 +20,19 @@ public class Carrera {
     @Column(unique = true)
     private String nombre;
     private String descripcion;
-    private Integer duracionAnios;
+    @Transient
+    private Float duracionAnios;
+    @Transient
     private Integer creditos;
     @Column(columnDefinition = "boolean default false")
-    private Boolean existePlanEstudio;
-    @OneToMany(mappedBy = "carrera")
-    private List<Asignatura> asignaturas;
+    private Boolean existePlanEstudio = false;
+    @OneToMany(mappedBy = "carrera", fetch = FetchType.EAGER)
+    private List<Asignatura> asignaturas = new ArrayList<>();
+
+    @PostLoad
+    private void updateFields() {
+        this.creditos = asignaturas.stream().mapToInt(Asignatura::getCreditos).sum();
+        this.duracionAnios =  (asignaturas.stream().mapToInt(Asignatura::getSemestrePlanEstudio).max().orElse(0) / 2.0f);
+    }
+
 }

@@ -11,7 +11,7 @@ public class BasicInfoCarreraDTO {
     private Long id;
     private String nombre;
     private String descripcion;
-    private Integer duracionAnios;
+    private Float duracionAnios;
     private Integer creditos;
     private Boolean existePlanEstudio;
 }
