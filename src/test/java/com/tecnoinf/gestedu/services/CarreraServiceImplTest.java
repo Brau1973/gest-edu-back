@@ -7,6 +7,7 @@ import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.carrera.CreateCarreraDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.exceptions.UniqueFieldException;
+import com.tecnoinf.gestedu.models.Asignatura;
 import com.tecnoinf.gestedu.models.Carrera;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.specifications.CarreraSpecification;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
@@ -45,12 +47,10 @@ class CarreraServiceImplTest {
     @Transactional
     void testCreateCarrera_Success_WithValidInput() {
         // Arrange
-        CreateCarreraDTO createCarreraDTO = new CreateCarreraDTO("nombre", "descripcion", 4, 240);
+        CreateCarreraDTO createCarreraDTO = new CreateCarreraDTO("nombre", "descripcion");
         Carrera carrera = new Carrera();
         carrera.setNombre(createCarreraDTO.getNombre());
         carrera.setDescripcion(createCarreraDTO.getDescripcion());
-        carrera.setDuracionAnios(createCarreraDTO.getDuracionAnios());
-        carrera.setCreditos(createCarreraDTO.getCreditos());
 
         when(modelMapper.map(eq(createCarreraDTO), eq(Carrera.class))).thenReturn(carrera);
         when(carreraRepository.save(any(Carrera.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -64,9 +64,7 @@ class CarreraServiceImplTest {
         verify(modelMapper).map(eq(createCarreraDTO), eq(Carrera.class));
         verify(carreraRepository).save(argThat(savedCarrera -> {
             return savedCarrera.getNombre().equals(createCarreraDTO.getNombre())
-                    && savedCarrera.getDescripcion().equals(createCarreraDTO.getDescripcion())
-                    && Objects.equals(savedCarrera.getDuracionAnios(), createCarreraDTO.getDuracionAnios())
-                    && Objects.equals(savedCarrera.getCreditos(), createCarreraDTO.getCreditos());
+                    && savedCarrera.getDescripcion().equals(createCarreraDTO.getDescripcion());
         }));
     }
 
@@ -74,7 +72,7 @@ class CarreraServiceImplTest {
     @Transactional
     void testCreateCarrera_Failure_WithDuplicateName() {
         // Arrange
-        CreateCarreraDTO createCarreraDTO = new CreateCarreraDTO("carrera1", "descripcion", 4, 240);
+        CreateCarreraDTO createCarreraDTO = new CreateCarreraDTO("carrera1", "descripcion");
         when(carreraRepository.existsByNombre(createCarreraDTO.getNombre())).thenReturn(true);
 
         // Act and Assert
@@ -188,5 +186,6 @@ class CarreraServiceImplTest {
             carreraService.deleteCarrera(id);
         });
     }
+
 }
 
