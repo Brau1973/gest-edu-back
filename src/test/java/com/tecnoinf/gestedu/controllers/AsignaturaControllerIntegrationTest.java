@@ -18,7 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+        "spring.jpa.hibernate.ddl-auto=create"
+})
 @AutoConfigureMockMvc
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class AsignaturaControllerIntegrationTest {
@@ -65,16 +67,6 @@ public class AsignaturaControllerIntegrationTest {
         asignatura.setCarrera(carrera);
         asignaturaRepository.save(asignatura);
 
-        /*
-        CreateAsignaturaDTO createAsignaturaDto = new CreateAsignaturaDTO();
-        createAsignaturaDto.setNombre("Asignatura Test");
-        createAsignaturaDto.setCarreraId(carrera.getId());
-        */
-        /*mockMvc.perform(post("/asignaturas")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createAsignaturaDto)))
-                .andExpect(status().isOk());
-        */
         // Intentar crear otra asignatura con el mismo nombre en la misma carrera
         CreateAsignaturaDTO createDuplicateAsignaturaDto = new CreateAsignaturaDTO();
         createDuplicateAsignaturaDto.setNombre("Asignatura Test");
