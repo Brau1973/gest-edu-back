@@ -1,18 +1,14 @@
 package com.tecnoinf.gestedu.services;
 
-import com.tecnoinf.gestedu.dtos.usuario.AuthLoginRequest;
 import com.tecnoinf.gestedu.dtos.usuario.AuthResponse;
 import com.tecnoinf.gestedu.dtos.usuario.CrearUsuarioDTO;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import com.tecnoinf.gestedu.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -62,45 +57,6 @@ public class UserDetailsServiceImpl implements UserDetailsService{
                 usuario.getAccountNonLocked(),
                 authorities);
         return user;
-    }
-
-    public AuthResponse loginUser(Usuario usuario) {
-        return new AuthResponse(usuario.getEmail(), "Usuario logueado", "jwt", true);
-    }
-
-    public AuthResponse loginUser(AuthLoginRequest authLoginRequest) {
-        //generar token de acceso
-        String email = authLoginRequest.email();
-        String password = authLoginRequest.password();
-
-        Authentication authentication = this.autenticar(email, password);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String token = jwtUtils.crearToken(authentication);
-
-        // Obtener las autoridades del usuario
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        List<String> authorityNames = new ArrayList<>();
-        for (GrantedAuthority authority : authorities) {
-            authorityNames.add(authority.getAuthority());
-        }
-        System.out.println("Autoridades del usuario: " + authorityNames);
-
-        AuthResponse authResponse = new AuthResponse(email, "Usuario logueado", token, true);
-        return authResponse;
-    }
-
-    public Authentication autenticar(String email, String password) {
-        UserDetails userDetails = this.loadUserByUsername(email);
-        if(userDetails == null){
-            throw new BadCredentialsException("Usuario no encontrado");
-        }
-
-        if(!passwordEncoder.matches(password, userDetails.getPassword())){
-            throw new BadCredentialsException("Contraseña incorrecta");
-        }
-
-        return new UsernamePasswordAuthenticationToken(email, userDetails.getPassword(), userDetails.getAuthorities());
     }
 
     public AuthResponse registrarUsuario(CrearUsuarioDTO crearUsuarioRequest) {
