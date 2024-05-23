@@ -37,5 +37,4 @@ public class Carrera {
             this.duracionAnios =  (asignaturas.stream().mapToInt(Asignatura::getSemestrePlanEstudio).max().orElse(0) / 2.0f);
         }
     }
-
 }
