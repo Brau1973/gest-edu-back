@@ -117,13 +117,13 @@ public class GestionEducativaOnlineApplication {
 				//-----ASIGNATURAS-----
 				// SOLO VERIFICO SI EXISTE COE COMO PARA DARME CUENTA SI SE INSERTO LA DUMMY DATA PREVIAMENTE O NO (PARA SABER SI SE EJECUTO CON CREATE O UPDATE)
 				if (!asignaturaRepository.existsByNombre("Comunicacion oral y Escrita")) {
-					createAsignaturaInitData(asignaturaRepository, "Comunicacion oral y Escrita", "Asignatura de comunicacion oral y escrita", 4, 3, savedCarrera1);
-					createAsignaturaInitData(asignaturaRepository, "Matematica discreta y logica 1", "Conjuntos y subconjuntos", 3, 2 , savedCarrera1);
-					createAsignaturaInitData(asignaturaRepository, "Programacion avanzada", "OOP con java", 2, 1 ,savedCarrera1);
+					createAsignaturaInitData(asignaturaRepository, asignaturaNeoRepository,"Comunicacion oral y Escrita", "Asignatura de comunicacion oral y escrita", 3, savedCarrera1);
+					createAsignaturaInitData(asignaturaRepository, asignaturaNeoRepository,"Matematica discreta y logica 1", "Conjuntos y subconjuntos", 3, savedCarrera1);
+					createAsignaturaInitData(asignaturaRepository, asignaturaNeoRepository,"Programacion avanzada", "OOP con java", 2, savedCarrera1);
 
-					createAsignaturaInitData(asignaturaRepository, "Diseño de Interfaz", "Asignatura de diseño de interfaz de usuario", 4, 0, savedCarrera2);
-					createAsignaturaInitData(asignaturaRepository, "Experiencia de Usuario", "Asignatura de experiencia de usuario", 3,  0, savedCarrera2);
-					createAsignaturaInitData(asignaturaRepository, "Prototipado", "Asignatura de prototipado de interfaces", 2,  0, savedCarrera2);
+					createAsignaturaInitData(asignaturaRepository, asignaturaNeoRepository,"Diseño de Interfaz", "Asignatura de diseño de interfaz de usuario", 4, savedCarrera2);
+					createAsignaturaInitData(asignaturaRepository, asignaturaNeoRepository,"Experiencia de Usuario", "Asignatura de experiencia de usuario", 3, savedCarrera2);
+					createAsignaturaInitData(asignaturaRepository, asignaturaNeoRepository,"Prototipado", "Asignatura de prototipado de interfaces", 2, savedCarrera2);
 				}
 			}
 		};
@@ -131,7 +131,11 @@ public class GestionEducativaOnlineApplication {
 
 	private void createAsignaturaInitData(AsignaturaRepository asignaturaRepository, AsignaturaNeoRepository asignaturaNeoRepository, String nombre, String descripcion, Integer creditos, Carrera carrera) {
 		if(!asignaturaRepository.existsByNombreAndCarreraId(nombre, carrera.getId())){
-			Asignatura asignatura = new Asignatura(null,"prueba","descrp",null,0,);
+			Asignatura asignatura = new Asignatura();
+			asignatura.setNombre(nombre);
+			asignatura.setDescripcion(descripcion);
+			asignatura.setCreditos(creditos);
+			asignatura.setCarrera(carrera);
 			asignaturaRepository.save(asignatura);
 			AsignaturaNeo asignaturaNeo = new AsignaturaNeo();
 			asignaturaNeo.setId(asignatura.getId());
