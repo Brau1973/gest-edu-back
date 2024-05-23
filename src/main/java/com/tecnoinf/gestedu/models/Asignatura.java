@@ -16,10 +16,11 @@ public class Asignatura {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
+    @Column(length = 2000)
     private String descripcion;
     private Integer creditos;
     private Integer semestrePlanEstudio = 0;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "carrera_id", nullable = false)
     private Carrera carrera;
     //TODO agregar campo para mapear a la asignatura en neo4j

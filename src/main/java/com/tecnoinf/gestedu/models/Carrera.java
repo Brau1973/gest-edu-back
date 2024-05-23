@@ -19,6 +19,7 @@ public class Carrera {
     private Long id;
     @Column(unique = true)
     private String nombre;
+    @Column(length = 2000)
     private String descripcion;
     @Transient
     private Float duracionAnios;
@@ -30,9 +31,11 @@ public class Carrera {
     private List<Asignatura> asignaturas = new ArrayList<>();
 
     @PostLoad
-    private void updateFields() {
-        this.creditos = asignaturas.stream().mapToInt(Asignatura::getCreditos).sum();
-        this.duracionAnios =  (asignaturas.stream().mapToInt(Asignatura::getSemestrePlanEstudio).max().orElse(0) / 2.0f);
+    private void calculateCreditosYDuracion() {
+        if(asignaturas != null && !asignaturas.isEmpty()){
+            this.creditos = asignaturas.stream().mapToInt(Asignatura::getCreditos).sum();
+            this.duracionAnios =  (asignaturas.stream().mapToInt(Asignatura::getSemestrePlanEstudio).max().orElse(0) / 2.0f);
+        }
     }
 
 }
