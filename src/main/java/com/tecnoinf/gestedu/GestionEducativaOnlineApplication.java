@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
+
 @SpringBootApplication
 public class GestionEducativaOnlineApplication {
 
@@ -116,24 +118,21 @@ public class GestionEducativaOnlineApplication {
 				//-----ASIGNATURAS-----
 				// SOLO VERIFICO SI EXISTE COE COMO PARA DARME CUENTA SI SE INSERTO LA DUMMY DATA PREVIAMENTE O NO (PARA SABER SI SE EJECUTO CON CREATE O UPDATE)
 				if (!asignaturaRepository.existsByNombre("Comunicacion oral y Escrita")) {
-					createAsignaturaInitData(asignaturaRepository, "Comunicacion oral y Escrita", "Asignatura de comunicacion oral y escrita", 3, savedCarrera1);
-					createAsignaturaInitData(asignaturaRepository, "Matematica discreta y logica 1", "Conjuntos y subconjuntos", 3, savedCarrera1);
-					createAsignaturaInitData(asignaturaRepository, "Programacion avanzada", "OOP con java", 2, savedCarrera1);
-					createAsignaturaInitData(asignaturaRepository, "Diseño de Interfaz", "Asignatura de diseño de interfaz de usuario", 4, savedCarrera2);
-					createAsignaturaInitData(asignaturaRepository, "Experiencia de Usuario", "Asignatura de experiencia de usuario", 3, savedCarrera2);
-					createAsignaturaInitData(asignaturaRepository, "Prototipado", "Asignatura de prototipado de interfaces", 2, savedCarrera2);
+					createAsignaturaInitData(asignaturaRepository, "Comunicacion oral y Escrita", "Asignatura de comunicacion oral y escrita", 4, 3, savedCarrera1);
+					createAsignaturaInitData(asignaturaRepository, "Matematica discreta y logica 1", "Conjuntos y subconjuntos", 3, 2 , savedCarrera1);
+					createAsignaturaInitData(asignaturaRepository, "Programacion avanzada", "OOP con java", 2, 1 ,savedCarrera1);
+
+					createAsignaturaInitData(asignaturaRepository, "Diseño de Interfaz", "Asignatura de diseño de interfaz de usuario", 4, 0, savedCarrera2);
+					createAsignaturaInitData(asignaturaRepository, "Experiencia de Usuario", "Asignatura de experiencia de usuario", 3,  0, savedCarrera2);
+					createAsignaturaInitData(asignaturaRepository, "Prototipado", "Asignatura de prototipado de interfaces", 2,  0, savedCarrera2);
 				}
 			}
 		};
 	}
 
-	private void createAsignaturaInitData(AsignaturaRepository asignaturaRepository, String nombre, String descripcion, Integer creditos, Carrera carrera) {
+	private void createAsignaturaInitData(AsignaturaRepository asignaturaRepository, String nombre, String descripcion, Integer creditos, Integer semestrePlanEstudio ,Carrera carrera) {
 		if(!asignaturaRepository.existsByNombreAndCarreraId(nombre, carrera.getId())){
-			Asignatura asignatura = new Asignatura();
-			asignatura.setNombre(nombre);
-			asignatura.setDescripcion(descripcion);
-			asignatura.setCreditos(creditos);
-			asignatura.setCarrera(carrera);
+			Asignatura asignatura = new Asignatura(null, nombre, descripcion, creditos, semestrePlanEstudio, carrera, new ArrayList<>());
 			asignaturaRepository.save(asignatura);
 		}
 	}
