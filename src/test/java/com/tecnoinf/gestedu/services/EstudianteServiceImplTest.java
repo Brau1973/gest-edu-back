@@ -1,7 +1,13 @@
 package com.tecnoinf.gestedu.services;
+
+import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
+import com.tecnoinf.gestedu.models.Carrera;
 import com.tecnoinf.gestedu.models.Estudiante;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
+import com.tecnoinf.gestedu.models.Usuario;
+import com.tecnoinf.gestedu.repositories.CarreraRepository;
+import com.tecnoinf.gestedu.repositories.EstudianteRepository;
 import com.tecnoinf.gestedu.services.implementations.EstudianteServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,8 +20,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -71,6 +80,27 @@ public class EstudianteServiceImplTest {
         assertEquals(2, result.getContent().size());
         assertEquals("123456", result.getContent().get(0).getCi());
         assertEquals("789012", result.getContent().get(1).getCi());
+    }
+
+    @Test
+    public void getCarrerasNoInscriptoReturnsPageOfCarrerasWhenStudentExists() {
+        Estudiante estudiante = new Estudiante();
+        estudiante.setId(1L);
+        when(estudianteRepository.findByEmail(any(String.class))).thenReturn(Optional.of(estudiante));
+        when(carreraRepository.findCarrerasWithPlanEstudioAndEstudianteNotInscripto(any(Long.class), any(PageRequest.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(new Carrera())));
+
+        Page<Carrera> result = estudianteService.getCarrerasNoInscripto("test@test.com", PageRequest.of(0, 10));
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
+    public void getCarrerasNoInscriptoThrowsResourceNotFoundExceptionWhenStudentDoesNotExist() {
+        when(estudianteRepository.findByEmail(any(String.class))).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> estudianteService.getCarrerasNoInscripto("test@test.com", PageRequest.of(0, 10)));
     }
 
 }

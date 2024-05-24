@@ -7,7 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Data
 @AllArgsConstructor
@@ -19,10 +20,11 @@ public class Tramite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String descripcion;
-    private EstadoTramite estado = EstadoTramite.NUEVO;
-    private Date fecha;
+    @Enumerated(EnumType.STRING)
     private TipoTramite tipo;
+    private LocalDateTime fechaCreacion = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+    @Enumerated(EnumType.STRING)
+    private EstadoTramite estado = EstadoTramite.PENDIENTE;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "carrera_id", nullable = false)
     private Carrera carrera;
@@ -30,6 +32,6 @@ public class Tramite {
     @JoinColumn(name = "usuario_solicitante_id", nullable = false)
     private Usuario usuarioSolicitante;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_responsable_id", nullable = false)
-    private Usuario usuarioResponsable;
+    @JoinColumn(name = "usuario_responsable_id")
+    private Usuario usuarioResponsable = null;
 }
