@@ -18,8 +18,8 @@ public class AsignaturaNeo {
     private Long id;
     private String nombre;
 
-    @Version
-    private Long version;
+//    @Version
+//    private Long version;
 
     @Relationship(type = "PREVIA", direction = Relationship.Direction.OUTGOING)
     private List<AsignaturaNeo> asignaturasPrevias = new ArrayList<>();
