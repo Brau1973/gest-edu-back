@@ -12,4 +12,5 @@ public interface AsignaturaRepository extends JpaRepository<Asignatura, Long>{
     boolean existsByNombreAndCarreraId(String nombre, Long carreraId);
     boolean existsByNombre(String comunicacionOralYEscrita);
     List<Asignatura> findByCarreraId(Long id);
+    Asignatura findByNombreAndCarreraId(String nombre, Long carreraId);
 }
