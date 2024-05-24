@@ -4,9 +4,7 @@ import com.tecnoinf.gestedu.dtos.asignatura.CreateAsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.exceptions.*;
 import com.tecnoinf.gestedu.models.Asignatura;
-import com.tecnoinf.gestedu.models.AsignaturaNeo;
 import com.tecnoinf.gestedu.models.Carrera;
-import com.tecnoinf.gestedu.repositories.AsignaturaNeoRepository;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import org.modelmapper.ModelMapper;
@@ -22,14 +20,12 @@ import java.util.List;
 public class AsignaturaServiceImpl implements AsignaturaService {
 
     private final AsignaturaRepository asignaturaRepository;
-    private final AsignaturaNeoRepository asignaturaNeoRepository;
     private final ModelMapper modelMapper;
     private final CarreraRepository carreraRepository;
 
     @Autowired
-    public AsignaturaServiceImpl(AsignaturaRepository asignaturaRepository, AsignaturaNeoRepository asignaturaNeoRepository, CarreraRepository carreraRepository ,ModelMapper modelMapper) {
+    public AsignaturaServiceImpl(AsignaturaRepository asignaturaRepository, CarreraRepository carreraRepository ,ModelMapper modelMapper) {
         this.asignaturaRepository = asignaturaRepository;
-        this.asignaturaNeoRepository = asignaturaNeoRepository;
         this.carreraRepository = carreraRepository;
         this.modelMapper = modelMapper;
     }
@@ -47,12 +43,6 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         asignatura.setCarrera(carrera);
         asignatura.setId(null);
         Asignatura createdAsignatura = asignaturaRepository.save(asignatura);
-
-        AsignaturaNeo asignaturaNeo = new AsignaturaNeo();
-        asignaturaNeo.setId(createdAsignatura.getId());
-        asignaturaNeo.setNombre(createdAsignatura.getNombre());
-        asignaturaNeoRepository.save(asignaturaNeo);
-
 
         return modelMapper.map(createdAsignatura, AsignaturaDTO.class);
     }
@@ -86,33 +76,23 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         if(asignatura.getPrevias().contains(previa)){
             throw new AsignaturaPreviaExistenteException("La asignatura previa ya se encuentra registrada");
         }
-
-        // Verificar que no se forme un ciclo
-        AsignaturaNeo asignaturaNeo = asignaturaNeoRepository.findById(asignaturaId)
-                .orElseThrow(() -> new ResourceNotFoundException("Asignatura id " + asignaturaId + "no se encuentra en Neo4j"));
-        AsignaturaNeo previaNeo = asignaturaNeoRepository.findById(previaId)
-                .orElseThrow(() -> new ResourceNotFoundException("Asignatura id " + asignaturaId + "no se encuentra en Neo4j"));
-
-        if(existeCiclo(asignaturaNeo, previaNeo)){
+        if(existeCiclo(asignatura, previa)){
             throw new CicloEnAsignaturasException("No se puede agregar la asignatura previa porque se forma un ciclo");
         }
-
         asignatura.getPrevias().add(previa);
         Asignatura updatedAsignatura = asignaturaRepository.save(asignatura);
-        asignaturaNeo.getAsignaturasPrevias().add(previaNeo);
-        asignaturaNeoRepository.save(asignaturaNeo);
         return modelMapper.map(updatedAsignatura, AsignaturaDTO.class);
     }
 
-    private boolean existeCiclo(AsignaturaNeo asignatura, AsignaturaNeo asignaturaPrevia) {
+    private boolean existeCiclo(Asignatura asignatura, Asignatura asignaturaPrevia) {
         if(asignaturaPrevia.equals(asignatura)) {
             return true;
         }
-        List<AsignaturaNeo> previas = asignaturaPrevia.getAsignaturasPrevias();
+        List<Asignatura> previas = asignaturaPrevia.getPrevias();
         if(previas == null) {
             return false;
         }
-        for(AsignaturaNeo previa : previas) {
+        for(Asignatura previa : previas) {
             if(existeCiclo(asignatura, previa)) {
                 return true;
             }
