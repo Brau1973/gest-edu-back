@@ -1,7 +1,13 @@
 package com.tecnoinf.gestedu.services;
+
+import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
+import com.tecnoinf.gestedu.models.Carrera;
 import com.tecnoinf.gestedu.models.Estudiante;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
+import com.tecnoinf.gestedu.models.Usuario;
+import com.tecnoinf.gestedu.repositories.CarreraRepository;
+import com.tecnoinf.gestedu.repositories.EstudianteRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -13,10 +19,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EstudianteServiceImplTest {
 
@@ -32,16 +40,24 @@ public class EstudianteServiceImplTest {
     }
 
     @Test
-    public void testObtenerEstudiantePorCi() {
-        String ci = "123456";
+    public void getCarrerasNoInscriptoReturnsPageOfCarrerasWhenStudentExists() {
         Estudiante estudiante = new Estudiante();
-        estudiante.setCi(ci);
+        estudiante.setId(1L);
+        when(estudianteRepository.findByEmail(any(String.class))).thenReturn(Optional.of(estudiante));
+        when(carreraRepository.findCarrerasWithPlanEstudioAndEstudianteNotInscripto(any(Long.class), any(PageRequest.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(new Carrera())));
 
-        when(usuarioRepository.findByCi(ci)).thenReturn(Optional.of(estudiante));
+        Page<Carrera> result = estudianteService.getCarrerasNoInscripto("test@test.com", PageRequest.of(0, 10));
 
-        Optional<BasicInfoUsuarioDTO> result = estudianteService.obtenerEstudiantePorCi(ci);
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
 
-        assertEquals(ci, result.get().getCi());
+    @Test
+    public void getCarrerasNoInscriptoThrowsResourceNotFoundExceptionWhenStudentDoesNotExist() {
+        when(estudianteRepository.findByEmail(any(String.class))).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> estudianteService.getCarrerasNoInscripto("test@test.com", PageRequest.of(0, 10)));
     }
 
     @Test
@@ -72,4 +88,16 @@ public class EstudianteServiceImplTest {
         assertEquals("789012", result.getContent().get(1).getCi());
     }
 
+    @Test
+    public void testObtenerEstudiantePorCi() {
+        String ci = "123456";
+        Estudiante estudiante = new Estudiante();
+        estudiante.setCi(ci);
+
+        when(usuarioRepository.findByCi(ci)).thenReturn(Optional.of(estudiante));
+
+        Optional<BasicInfoUsuarioDTO> result = estudianteService.obtenerEstudiantePorCi(ci);
+
+        assertEquals(ci, result.get().getCi());
+    }
 }

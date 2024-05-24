@@ -1,7 +1,7 @@
 package com.tecnoinf.gestedu.models.enums;
 
 public enum EstadoTramite {
-    NUEVO,
+    PENDIENTE,
     ACEPTADO,
     RECHAZADO
 }
