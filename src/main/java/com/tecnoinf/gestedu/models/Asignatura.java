@@ -1,9 +1,7 @@
 package com.tecnoinf.gestedu.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +23,8 @@ public class Asignatura {
     private Integer semestrePlanEstudio = 0;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "carrera_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Carrera carrera;
 
     @ManyToMany
