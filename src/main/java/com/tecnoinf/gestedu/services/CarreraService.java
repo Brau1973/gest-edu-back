@@ -12,7 +12,7 @@ public interface CarreraService {
     Page<BasicInfoCarreraDTO> getAllCarreras(Pageable pageable, String nombre);
     BasicInfoCarreraDTO getCarreraBasicInfoById(Long id);
     CreateCarreraDTO createCarrera(CreateCarreraDTO createCarreraDto);
-    BasicInfoCarreraDTO updateCarrera(Long id, BasicInfoCarreraDTO basicInfoCarreraDTO);
+    BasicInfoCarreraDTO updateCarrera(Long id, CreateCarreraDTO basicInfoCarreraDTO);
     void deleteCarrera(Long id);
     Page<BasicInfoCarreraDTO> getCarrerasSinPlanDeEstudio(Pageable pageable);
     Page<AsignaturaDTO> getAsignaturasFromCarrera(Long id, Pageable pageable);

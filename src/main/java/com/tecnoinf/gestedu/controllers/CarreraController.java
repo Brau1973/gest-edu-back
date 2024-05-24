@@ -54,8 +54,8 @@ public class CarreraController {
     @Operation(summary = "Actualizar info basica de una carrera")
     @PutMapping("/{id}")
     //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
-    public ResponseEntity<BasicInfoCarreraDTO> updateCarrera(@PathVariable Long id, @RequestBody BasicInfoCarreraDTO basicInfoCarreraDTO) {
-        BasicInfoCarreraDTO updatedCarrera = carreraService.updateCarrera(id, basicInfoCarreraDTO);
+    public ResponseEntity<BasicInfoCarreraDTO> updateCarrera(@PathVariable Long id, @RequestBody CreateCarreraDTO createCarreraDTO) {
+        BasicInfoCarreraDTO updatedCarrera = carreraService.updateCarrera(id, createCarreraDTO);
         return ResponseEntity.ok().body(updatedCarrera);
     }
 
