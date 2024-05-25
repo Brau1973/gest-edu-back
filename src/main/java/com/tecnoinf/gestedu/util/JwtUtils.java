@@ -39,7 +39,7 @@ public class JwtUtils {
                 .withSubject(username)
                 .withClaim("roles", roles)
                 .withIssuedAt(new Date())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 1800000)) //vence en 30 minutos
+                .withExpiresAt(new Date(System.currentTimeMillis() + 5400000)) //vence en 90 minutos
                 .withJWTId(UUID.randomUUID().toString())
                 .withNotBefore(new Date(System.currentTimeMillis()))
                 .sign(algoritmo);
