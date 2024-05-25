@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
+
 @SpringBootApplication
 public class GestionEducativaOnlineApplication {
 
@@ -130,7 +132,7 @@ public class GestionEducativaOnlineApplication {
 
 	private void createAsignaturaInitData(AsignaturaRepository asignaturaRepository, String nombre, String descripcion, Integer creditos, Integer semestrePlanEstudio ,Carrera carrera) {
 		if(!asignaturaRepository.existsByNombreAndCarreraId(nombre, carrera.getId())){
-			Asignatura asignatura = new Asignatura(null, nombre, descripcion, creditos, semestrePlanEstudio, carrera);
+			Asignatura asignatura = new Asignatura(null, nombre, descripcion, creditos, semestrePlanEstudio, carrera, new ArrayList<>());
 			asignaturaRepository.save(asignatura);
 		}
 	}
