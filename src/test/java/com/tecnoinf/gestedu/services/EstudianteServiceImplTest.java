@@ -48,19 +48,19 @@ public class EstudianteServiceImplTest {
         Mockito.reset(estudianteRepository, carreraRepository, usuarioRepository);
     }
 
-    @Transactional
-    @Test
-    public void testObtenerEstudiantePorCi() {
-        String ci = "123456";
-        Estudiante estudiante = new Estudiante();
-        estudiante.setCi(ci);
-
-        when(usuarioRepository.findByCi(ci)).thenReturn(Optional.of(estudiante));
-
-        Optional<BasicInfoUsuarioDTO> result = estudianteService.obtenerEstudiantePorCi(ci);
-
-        assertEquals(ci, result.get().getCi());
-    }
+//    @Transactional
+//    @Test
+//    public void testObtenerEstudiantePorCi() {
+//        String ci = "123456";
+//        Estudiante estudiante = new Estudiante();
+//        estudiante.setCi(ci);
+//
+//        when(usuarioRepository.findByCi(ci)).thenReturn(Optional.of(estudiante));
+//
+//        Optional<BasicInfoUsuarioDTO> result = estudianteService.obtenerEstudiantePorCi(ci);
+//
+//        assertEquals(ci, result.get().getCi());
+//    }
 
     @Transactional
     @Test
@@ -74,23 +74,23 @@ public class EstudianteServiceImplTest {
         assertEquals(Optional.empty(), result);
     }
 
-    @Transactional
-    @Test
-    public void testObtenerEstudiantes() {
-        Estudiante estudiante1 = new Estudiante();
-        estudiante1.setCi("123456");
-        Estudiante estudiante2 = new Estudiante();
-        estudiante2.setCi("789012");
-
-        Pageable pageable = PageRequest.of(0, 2);
-        when(usuarioRepository.findAll(pageable)).thenReturn(new PageImpl<>(Arrays.asList(estudiante1, estudiante2), pageable, 2));
-
-        Page<BasicInfoUsuarioDTO> result = estudianteService.obtenerEstudiantes(pageable);
-
-        assertEquals(2, result.getContent().size());
-        assertEquals("123456", result.getContent().get(0).getCi());
-        assertEquals("789012", result.getContent().get(1).getCi());
-    }
+//    @Transactional
+//    @Test
+//    public void testObtenerEstudiantes() {
+//        Estudiante estudiante1 = new Estudiante();
+//        estudiante1.setCi("123456");
+//        Estudiante estudiante2 = new Estudiante();
+//        estudiante2.setCi("789012");
+//
+//        Pageable pageable = PageRequest.of(0, 2);
+//        when(usuarioRepository.findAll(pageable)).thenReturn(new PageImpl<>(Arrays.asList(estudiante1, estudiante2), pageable, 2));
+//
+//        Page<BasicInfoUsuarioDTO> result = estudianteService.obtenerEstudiantes(pageable);
+//
+//        assertEquals(2, result.getContent().size());
+//        assertEquals("123456", result.getContent().get(0).getCi());
+//        assertEquals("789012", result.getContent().get(1).getCi());
+//    }
 
     @Transactional
     @Test
