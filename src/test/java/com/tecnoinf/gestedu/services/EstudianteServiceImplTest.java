@@ -4,6 +4,7 @@ import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.models.Carrera;
 import com.tecnoinf.gestedu.models.Estudiante;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
+import com.tecnoinf.gestedu.models.Usuario;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.EstudianteRepository;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
@@ -18,14 +19,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Transactional
 public class EstudianteServiceImplTest {
@@ -48,7 +52,7 @@ public class EstudianteServiceImplTest {
         Mockito.reset(estudianteRepository, carreraRepository, usuarioRepository);
     }
 
-//    @Transactional
+// MANUAL ANDA OK
 //    @Test
 //    public void testObtenerEstudiantePorCi() {
 //        String ci = "123456";
@@ -74,7 +78,7 @@ public class EstudianteServiceImplTest {
         assertEquals(Optional.empty(), result);
     }
 
-//    @Transactional
+// MANUAL ANDA OK
 //    @Test
 //    public void testObtenerEstudiantes() {
 //        Estudiante estudiante1 = new Estudiante();
@@ -91,6 +95,7 @@ public class EstudianteServiceImplTest {
 //        assertEquals("123456", result.getContent().get(0).getCi());
 //        assertEquals("789012", result.getContent().get(1).getCi());
 //    }
+
 
     @Transactional
     @Test
