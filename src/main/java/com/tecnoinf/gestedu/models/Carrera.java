@@ -33,6 +33,8 @@ public class Carrera {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<InscripcionCarrera> inscripciones = new ArrayList<>();
+    @OneToMany(mappedBy = "carrera")
+    private List<PeriodoExamen> periodosExamen;
 
     @PostLoad
     private void calculateCreditosYDuracion() {
@@ -41,4 +43,5 @@ public class Carrera {
             this.duracionAnios =  (asignaturas.stream().mapToInt(Asignatura::getSemestrePlanEstudio).max().orElse(0) / 2.0f);
         }
     }
+
 }
