@@ -53,25 +53,23 @@ public class PeriodoExamenServiceImplTest {
         PeriodoExamenDTO periodoExamenDTO = crearPeriodoExamenDTO(LocalDateTime.now().plusDays(1), LocalDateTime.now(), 1L);
         assertThrows(FechaException.class, () -> periodoExamenService.registrarPeriodoExamen(periodoExamenDTO));
     }
-
-//    @Test ------ MANUALMENTE SI DA BIEN
+//SI ANDA MANUAL
+//    @Test
 //    public void testRegistrarPeriodoExamen_PeriodoExamenYaExiste() {
-//        Carrera carrera = new Carrera();
-//        Long carreraId = carrera.getId();
-//        LocalDateTime fechaInicio = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
-//        LocalDateTime fechaFin = LocalDateTime.now().plusDays(1).withHour(23).withMinute(59).withSecond(59).withNano(0);
+//        LocalDateTime fechaInicio = LocalDateTime.now();
+//        LocalDateTime fechaFin = LocalDateTime.now().plusDays(1);
+//        Long carreraId = 1L;
 //
-//        PeriodoExamenDTO periodoExamenDTO = new PeriodoExamenDTO();
-//        periodoExamenDTO.setFechaInicio(fechaInicio);
-//        periodoExamenDTO.setFechaFin(fechaFin);
-//        periodoExamenDTO.setCarreraid(carreraId);
-//
+//        PeriodoExamenDTO periodoExamenDTO = crearPeriodoExamenDTO(fechaInicio, fechaFin, carreraId);
 //        PeriodoExamen periodoExamenExistente = new PeriodoExamen();
 //        periodoExamenExistente.setFechaInicio(fechaInicio);
 //        periodoExamenExistente.setFechaFin(fechaFin);
-//        periodoExamenExistente.setCarrera(carrera); // Set carrera in periodoExamenExistente
+//
+//        Carrera carrera = new Carrera();
+//        carrera.setId(carreraId);
 //
 //        // Configurar los mocks
+//        when(carreraRepository.findById(carreraId)).thenReturn(Optional.of(carrera));
 //        when(periodoExamenRepository.findByFechaInicioAndFechaFinAndCarreraId(fechaInicio, fechaFin, carreraId))
 //                .thenReturn(Optional.of(periodoExamenExistente));
 //

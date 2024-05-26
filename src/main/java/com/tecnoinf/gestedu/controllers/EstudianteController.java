@@ -4,8 +4,6 @@ import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.services.interfaces.EstudianteService;
 import com.tecnoinf.gestedu.models.Carrera;
-import com.tecnoinf.gestedu.dtos.usuario.UsuarioDTO;
-import com.tecnoinf.gestedu.services.EstudianteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
