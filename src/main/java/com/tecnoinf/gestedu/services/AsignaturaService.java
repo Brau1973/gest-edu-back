@@ -10,4 +10,5 @@ public interface AsignaturaService {
     List<AsignaturaDTO> getPrevias(Long asignaturaId);
     AsignaturaDTO addPrevia(Long asignaturaId, Long previaId);
     List<AsignaturaDTO> getNoPrevias(Long asignaturaId);
+    AsignaturaDTO getAsignaturaById(Long id);
 }
