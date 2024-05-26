@@ -11,6 +11,7 @@ import com.tecnoinf.gestedu.exceptions.UniqueFieldException;
 import com.tecnoinf.gestedu.models.Administrador;
 import com.tecnoinf.gestedu.models.Coordinador;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
+import com.tecnoinf.gestedu.services.implementations.UserDetailsServiceImpl;
 import com.tecnoinf.gestedu.util.JwtUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

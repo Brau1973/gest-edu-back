@@ -1,4 +1,4 @@
-package com.tecnoinf.gestedu.services;
+package com.tecnoinf.gestedu.services.implementations;
 
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
@@ -10,6 +10,7 @@ import com.tecnoinf.gestedu.models.Carrera;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.specifications.CarreraSpecification;
+import com.tecnoinf.gestedu.services.interfaces.CarreraService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

@@ -1,4 +1,4 @@
-package com.tecnoinf.gestedu.services;
+package com.tecnoinf.gestedu.services.implementations;
 
 import com.tecnoinf.gestedu.exceptions.TokenInactivoException;
 import com.tecnoinf.gestedu.exceptions.TokenInvalidoException;

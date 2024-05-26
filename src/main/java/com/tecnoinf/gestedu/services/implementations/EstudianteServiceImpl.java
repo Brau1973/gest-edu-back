@@ -1,15 +1,14 @@
-package com.tecnoinf.gestedu.services;
+package com.tecnoinf.gestedu.services.implementations;
 
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.models.Estudiante;
 import com.tecnoinf.gestedu.models.Usuario;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
-import jakarta.persistence.Basic;
+import com.tecnoinf.gestedu.services.interfaces.EstudianteService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
