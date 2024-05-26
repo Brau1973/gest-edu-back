@@ -147,6 +147,12 @@ public class GestionEducativaOnlineApplication {
 					savedCarrera2 = carreraRepository.save(carrera2);
 				}
 
+				Carrera carrera3 = new Carrera();
+				carrera3.setNombre("Tecnologo Audiovisual InitData");
+				carrera3.setDescripcion("Carrera de tecnologo audiovisual donde se enseña a editar videos y sonido");
+				carrera3.setExistePlanEstudio(true);
+				Carrera savedCarrera3 = carreraRepository.save(carrera3);
+
 				//-----ASIGNATURAS-----
 				// SOLO VERIFICO SI EXISTE COE COMO PARA DARME CUENTA SI SE INSERTO LA DUMMY DATA PREVIAMENTE O NO (PARA SABER SI SE EJECUTO CON CREATE O UPDATE)
 				if (!asignaturaRepository.existsByNombre("Comunicacion oral y Escrita")) {
@@ -157,6 +163,10 @@ public class GestionEducativaOnlineApplication {
 					createAsignaturaInitData(asignaturaRepository, "Diseño de Interfaz", "Asignatura de diseño de interfaz de usuario", 4, 0, savedCarrera2);
 					createAsignaturaInitData(asignaturaRepository, "Experiencia de Usuario", "Asignatura de experiencia de usuario", 3,  0, savedCarrera2);
 					createAsignaturaInitData(asignaturaRepository, "Prototipado", "Asignatura de prototipado de interfaces", 2,  0, savedCarrera2);
+
+					createAsignaturaInitData(asignaturaRepository, "Grabacion con camara PRO", "Grabacion Full HD 4k", 2, 1, savedCarrera3);
+					createAsignaturaInitData(asignaturaRepository, "Adobe PRO", "Edicion de videos", 8, 2 , savedCarrera3);
+					createAsignaturaInitData(asignaturaRepository, "Photoshop", "Photoshop con adobe ilustrator", 1, 3 ,savedCarrera3);
 				}
 
 				// -----INSCRIPCIONCARRERA-----

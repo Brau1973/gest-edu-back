@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.services;
 
+import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.models.Carrera;
 import com.tecnoinf.gestedu.models.Estudiante;
@@ -15,9 +16,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Pageable;
 
@@ -42,6 +45,9 @@ public class EstudianteServiceImplTest {
 
     @Mock
     private UsuarioRepository usuarioRepository;
+
+    @Mock
+    private ModelMapper modelMapper;
 
     @InjectMocks
     private EstudianteServiceImpl estudianteService;
@@ -105,8 +111,9 @@ public class EstudianteServiceImplTest {
         when(estudianteRepository.findByEmail(any(String.class))).thenReturn(Optional.of(estudiante));
         when(carreraRepository.findCarrerasWithPlanEstudioAndEstudianteNotInscripto(any(Long.class), any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(Collections.singletonList(new Carrera())));
+        when(modelMapper.map(any(Carrera.class), any())).thenReturn(new BasicInfoCarreraDTO());
 
-        Page<Carrera> result = estudianteService.getCarrerasNoInscripto("test@test.com", PageRequest.of(0, 10));
+        Page<BasicInfoCarreraDTO> result = estudianteService.getCarrerasNoInscripto("test@test.com", PageRequest.of(0, 10));
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -119,4 +126,26 @@ public class EstudianteServiceImplTest {
 
         assertThrows(ResourceNotFoundException.class, () -> estudianteService.getCarrerasNoInscripto("test@test.com", PageRequest.of(0, 10)));
     }
+
+    @Transactional
+    @Test
+    public void getCarrerasNoInscriptoReturnsEmptyPageWhenNoCarrerasFound() {
+        // Given
+        String email = "test@test.com";
+        Pageable pageable = PageRequest.of(0, 10);
+        Estudiante estudiante = new Estudiante();
+        estudiante.setId(1L);
+        List<Carrera> carreras = Collections.emptyList();
+        Page<Carrera> pageCarreras = new PageImpl<>(carreras, pageable, carreras.size());
+
+        // When
+        when(estudianteRepository.findByEmail(email)).thenReturn(Optional.of(estudiante));
+        when(carreraRepository.findCarrerasWithPlanEstudioAndEstudianteNotInscripto(estudiante.getId(), pageable)).thenReturn(pageCarreras);
+
+        // Then
+        Page<BasicInfoCarreraDTO> result = estudianteService.getCarrerasNoInscripto(email, pageable);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
 }
