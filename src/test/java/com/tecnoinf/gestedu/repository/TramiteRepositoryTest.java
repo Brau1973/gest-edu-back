@@ -11,9 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Transactional
 @DataJpaTest
 public class TramiteRepositoryTest {
 
@@ -40,6 +42,7 @@ public class TramiteRepositoryTest {
         entityManager.persist(carrera);
     }
 
+    @Transactional
     @Test
     public void existsByUsuarioSolicitanteAndCarreraAndTipoAndEstado_returnsTrue_whenTramiteExists() {
         Tramite tramite = new Tramite();
