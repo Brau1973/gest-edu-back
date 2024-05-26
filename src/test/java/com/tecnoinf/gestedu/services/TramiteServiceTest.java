@@ -6,6 +6,7 @@ import com.tecnoinf.gestedu.exceptions.TramitePendienteExistenteException;
 import com.tecnoinf.gestedu.models.Carrera;
 import com.tecnoinf.gestedu.models.Estudiante;
 import com.tecnoinf.gestedu.models.Tramite;
+import com.tecnoinf.gestedu.models.enums.EstadoTramite;
 import com.tecnoinf.gestedu.models.enums.TipoTramite;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.EstudianteRepository;
@@ -20,9 +21,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -161,4 +164,35 @@ public class TramiteServiceTest {
             tramiteService.nuevoTramite(1L, TipoTramite.INSCRIPCION_A_CARRERA, "test@test.com");
         });
     }
+
+    @Test
+    public void listarTramitesInscripcionCarreraPendientes_returnsListOfTramiteDTOs_whenTramitesExist() {
+        // Given
+        Tramite tramite = new Tramite();
+        List<Tramite> tramites = Collections.singletonList(tramite);
+        TramiteDTO tramiteDTO = new TramiteDTO();
+        when(tramiteRepository.findAllByTipoAndEstado(TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE)).thenReturn(tramites);
+        when(modelMapper.map(tramite, TramiteDTO.class)).thenReturn(tramiteDTO);
+
+        // When
+        List<TramiteDTO> result = tramiteService.listarTramitesInscripcionCarreraPendientes();
+
+        // Then
+        assertFalse(result.isEmpty());
+        assertEquals(tramiteDTO, result.get(0));
+    }
+
+    @Test
+    public void listarTramitesInscripcionCarreraPendientes_returnsEmptyList_whenNoTramitesExist() {
+        // Given
+        List<Tramite> tramites = Collections.emptyList();
+        when(tramiteRepository.findAllByTipoAndEstado(TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE)).thenReturn(tramites);
+
+        // When
+        List<TramiteDTO> result = tramiteService.listarTramitesInscripcionCarreraPendientes();
+
+        // Then
+        assertTrue(result.isEmpty());
+    }
+
 }
