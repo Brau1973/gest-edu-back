@@ -74,7 +74,7 @@ public class CarreraController {
         return ResponseEntity.ok().body(carreras);
     }
 
-    @Operation(summary = "Obtener las asignaturas de una carrera por su id")
+    @Operation(summary = "Obtener las asignaturas de una carrera por su id (contieen info de plan de estudio si existe el mismo)")
     @GetMapping("/{id}/asignaturas")
     public ResponseEntity<Page<AsignaturaDTO>> getAsignaturasFromCarrera(@PathVariable Long id, Pageable pageable) {
         Page<AsignaturaDTO> asignaturas = carreraService.getAsignaturasFromCarrera(id, pageable);
