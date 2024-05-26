@@ -1,4 +1,4 @@
-package com.tecnoinf.gestedu.services;
+package com.tecnoinf.gestedu.services.interfaces;
 
 import com.tecnoinf.gestedu.dtos.Tramite.TramiteDTO;
 import com.tecnoinf.gestedu.models.enums.TipoTramite;

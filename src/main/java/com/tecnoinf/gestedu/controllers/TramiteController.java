@@ -2,7 +2,7 @@ package com.tecnoinf.gestedu.controllers;
 
 import com.tecnoinf.gestedu.dtos.Tramite.TramiteDTO;
 import com.tecnoinf.gestedu.models.enums.TipoTramite;
-import com.tecnoinf.gestedu.services.TramiteService;
+import com.tecnoinf.gestedu.services.interfaces.TramiteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

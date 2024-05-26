@@ -10,6 +10,8 @@ import com.tecnoinf.gestedu.models.enums.TipoTramite;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.EstudianteRepository;
 import com.tecnoinf.gestedu.repositories.TramiteRepository;
+import com.tecnoinf.gestedu.services.implementations.TramiteServiceImpl;
+import com.tecnoinf.gestedu.services.interfaces.EmailService;
 import jakarta.mail.MessagingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
