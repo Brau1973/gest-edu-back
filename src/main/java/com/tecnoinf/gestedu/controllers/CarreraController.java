@@ -7,7 +7,7 @@ import com.tecnoinf.gestedu.dtos.inscripcionCarrera.InscripcionCarreraDTO;
 import com.tecnoinf.gestedu.models.InscripcionCarrera;
 import com.tecnoinf.gestedu.services.interfaces.CarreraService;
 import com.tecnoinf.gestedu.dtos.periodoExamen.PeriodoExamenDTO;
-import com.tecnoinf.gestedu.services.CarreraService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
