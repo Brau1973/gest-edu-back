@@ -1,4 +1,4 @@
-package com.tecnoinf.gestedu.services;
+package com.tecnoinf.gestedu.services.implementations;
 
 import com.tecnoinf.gestedu.dtos.Tramite.TramiteDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
@@ -11,13 +11,15 @@ import com.tecnoinf.gestedu.models.enums.TipoTramite;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.EstudianteRepository;
 import com.tecnoinf.gestedu.repositories.TramiteRepository;
+import com.tecnoinf.gestedu.services.interfaces.EmailService;
+import com.tecnoinf.gestedu.services.interfaces.TramiteService;
 import jakarta.mail.MessagingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TramiteServiceImpl implements TramiteService{
+public class TramiteServiceImpl implements TramiteService {
 
     private final EstudianteRepository estudianteRepository;
     private final CarreraRepository carreraRepository;

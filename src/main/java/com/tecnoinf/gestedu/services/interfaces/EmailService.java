@@ -1,4 +1,4 @@
-package com.tecnoinf.gestedu.services;
+package com.tecnoinf.gestedu.services.interfaces;
 
 import jakarta.mail.MessagingException;
 import org.springframework.scheduling.annotation.Async;
