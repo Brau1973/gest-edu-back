@@ -4,25 +4,20 @@ import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.carrera.CreateCarreraDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCarrera.InscripcionCarreraDTO;
-import com.tecnoinf.gestedu.dtos.periodoExamen.PeriodoExamenDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.exceptions.UniqueFieldException;
 import com.tecnoinf.gestedu.models.Asignatura;
 import com.tecnoinf.gestedu.models.Carrera;
-import com.tecnoinf.gestedu.models.PeriodoExamen;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
-import com.tecnoinf.gestedu.repositories.PeriodoExamenRepository;
 import com.tecnoinf.gestedu.repositories.specifications.CarreraSpecification;
 import com.tecnoinf.gestedu.services.interfaces.CarreraService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,14 +26,12 @@ public class CarreraServiceImpl implements CarreraService {
     private final CarreraRepository carreraRepository;
     private final ModelMapper modelMapper;
     private final AsignaturaRepository asignaturaRepository;
-    private final PeriodoExamenRepository periodoExamenRepository;
 
     @Autowired
-    public CarreraServiceImpl(CarreraRepository carreraRepository, ModelMapper modelMapper, AsignaturaRepository asignaturaRepository, PeriodoExamenRepository periodoExamenRepository) {
+    public CarreraServiceImpl(CarreraRepository carreraRepository, ModelMapper modelMapper, AsignaturaRepository asignaturaRepository) {
         this.carreraRepository = carreraRepository;
         this.modelMapper = modelMapper;
         this.asignaturaRepository = asignaturaRepository;
-        this.periodoExamenRepository = periodoExamenRepository;
     }
 
     @Override
