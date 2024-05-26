@@ -2,6 +2,7 @@ package com.tecnoinf.gestedu.services;
 
 import com.tecnoinf.gestedu.dtos.Tramite.TramiteDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
+import com.tecnoinf.gestedu.exceptions.TramitePendienteExistenteException;
 import com.tecnoinf.gestedu.models.Carrera;
 import com.tecnoinf.gestedu.models.Estudiante;
 import com.tecnoinf.gestedu.models.Tramite;
@@ -37,8 +38,18 @@ public class TramiteServiceImpl implements TramiteService{
     public TramiteDTO nuevoTramite(Long carreraId, TipoTramite tipoTramite, String email) throws MessagingException {
         Carrera carrera = carreraRepository.findById(carreraId)
                 .orElseThrow(() -> new ResourceNotFoundException("Carrera not found with id " + carreraId));
+
+        if (!carrera.getExistePlanEstudio()) {
+            throw new ResourceNotFoundException("No se puede inscribir a la carrera " + carrera.getNombre() + " porque no tiene un plan de estudio asociado");
+        }
+
         Estudiante estudiante = (Estudiante) estudianteRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Estudiante not found with email " + email));
+
+        //Verificar si el estudiante ya tiene un trámite pendiente asociado con la misma carrera y con el mismo tipo
+        if (tramiteRepository.existsByUsuarioSolicitanteAndCarreraAndTipoAndEstado(estudiante, carrera, tipoTramite, EstadoTramite.PENDIENTE)) {
+            throw new TramitePendienteExistenteException("El estudiante " + estudiante.getNombre() + " ya tiene un trámite pendiente de inscripción a la carrera " + carrera.getNombre());
+        }
 
         Tramite tramite = new Tramite();
         tramite.setCarrera(carrera);
