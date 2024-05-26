@@ -2,10 +2,9 @@ package com.tecnoinf.gestedu;
 
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCarrera;
-import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
-import com.tecnoinf.gestedu.repositories.CarreraRepository;
-import com.tecnoinf.gestedu.repositories.InscripcionCarreraRepository;
-import com.tecnoinf.gestedu.repositories.UsuarioRepository;
+import com.tecnoinf.gestedu.models.enums.EstadoTramite;
+import com.tecnoinf.gestedu.models.enums.TipoTramite;
+import com.tecnoinf.gestedu.repositories.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -30,7 +29,7 @@ public class GestionEducativaOnlineApplication {
 
 	@Bean
 	public CommandLineRunner initData(UsuarioRepository usuarioRepository, CarreraRepository carreraRepository, AsignaturaRepository asignaturaRepository,
-									  InscripcionCarreraRepository inscripcionCarreraRepository) {
+									  InscripcionCarreraRepository inscripcionCarreraRepository, TramiteRepository tramiteRepository) {
 		return (args) -> {
 			if(ddlAuto.equals("create") || ddlAuto.equals("create-drop")) {
 				Estudiante estudiante1 = new Estudiante();
@@ -191,6 +190,22 @@ public class GestionEducativaOnlineApplication {
 				inscripcionCarrera3.setFechaInscripcion(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
 				inscripcionCarreraRepository.save(inscripcionCarrera3);
 
+				// -----TRAMITES-----
+				Tramite tramite1 = new Tramite();
+				tramite1.setUsuarioSolicitante(estudiante1);
+				tramite1.setTipo(TipoTramite.INSCRIPCION_A_CARRERA);
+				tramite1.setEstado(EstadoTramite.PENDIENTE);
+				tramite1.setFechaCreacion(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
+				tramite1.setCarrera(savedCarrera3);
+				tramiteRepository.save(tramite1);
+
+				Tramite tramite2 = new Tramite();
+				tramite2.setUsuarioSolicitante(estudiante2);
+				tramite2.setTipo(TipoTramite.INSCRIPCION_A_CARRERA);
+				tramite2.setEstado(EstadoTramite.PENDIENTE);
+				tramite2.setFechaCreacion(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
+				tramite2.setCarrera(savedCarrera3);
+				tramiteRepository.save(tramite2);
 			}
 		};
 	}
