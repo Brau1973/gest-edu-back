@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.controllers;
 
+import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.services.interfaces.EstudianteService;
 import com.tecnoinf.gestedu.models.Carrera;
@@ -37,11 +38,11 @@ public class EstudianteController {
         return new ResponseEntity<>(estudianteService.obtenerEstudiantes(pageable), HttpStatus.OK);
     }
 
-    @Operation(summary = "Obtiene las carreras que tiene plan de estudio y que el estudiante no esta inscripto")
+    @Operation(summary = "Obtiene las carreras que tienen plan de estudio y que el estudiante no esta inscripto")
     @GetMapping("/carreras-no-inscripto")
-    public ResponseEntity<Page<Carrera>> getCarrerasNoInscripto(Principal principal, Pageable pageable) {
+    public ResponseEntity<Page<BasicInfoCarreraDTO>> getCarrerasNoInscripto(Principal principal, Pageable pageable) {
         String email = principal.getName();
-        Page<Carrera> page = estudianteService.getCarrerasNoInscripto(email, pageable);
+        Page<BasicInfoCarreraDTO> page = estudianteService.getCarrerasNoInscripto(email, pageable);
         return ResponseEntity.ok(page);
     }
 
