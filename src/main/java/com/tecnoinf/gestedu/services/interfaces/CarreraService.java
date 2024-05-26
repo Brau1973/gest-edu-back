@@ -1,4 +1,4 @@
-package com.tecnoinf.gestedu.services.interfaces;
+package com.tecnoinf.gestedu.services;
 
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
