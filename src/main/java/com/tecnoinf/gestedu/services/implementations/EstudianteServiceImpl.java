@@ -1,14 +1,19 @@
 package com.tecnoinf.gestedu.services.implementations;
 
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
+import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
+import com.tecnoinf.gestedu.models.Carrera;
 import com.tecnoinf.gestedu.models.Estudiante;
 import com.tecnoinf.gestedu.models.Usuario;
+import com.tecnoinf.gestedu.repositories.CarreraRepository;
+import com.tecnoinf.gestedu.repositories.EstudianteRepository;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import com.tecnoinf.gestedu.services.interfaces.EstudianteService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +24,27 @@ import java.util.Optional;
 @Service
 public class EstudianteServiceImpl implements EstudianteService {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final EstudianteRepository estudianteRepository;
+    private final CarreraRepository carreraRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    private ModelMapper modelMapper;
+    public EstudianteServiceImpl(EstudianteRepository estudianteRepository ,CarreraRepository carreraRepository, UsuarioRepository usuarioRepository, ModelMapper modelMapper) {
+        this.estudianteRepository = estudianteRepository;
+        this.carreraRepository = carreraRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.modelMapper = modelMapper;
+    }
+
+    @Override
+    public Page<Carrera> getCarrerasNoInscripto(String email, Pageable pageable) {
+        Optional<Usuario> estudiante = estudianteRepository.findByEmail(email);
+        if (estudiante.isEmpty()) {
+            throw new ResourceNotFoundException("Estudiante con email " + email + " no encontrado");
+        }
+        return carreraRepository.findCarrerasWithPlanEstudioAndEstudianteNotInscripto(estudiante.get().getId(), pageable);
+    }
 
     @Override
     public Page<BasicInfoUsuarioDTO> obtenerEstudiantes(Pageable pageable) {

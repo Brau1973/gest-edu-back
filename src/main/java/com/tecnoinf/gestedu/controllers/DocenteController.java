@@ -2,14 +2,17 @@ package com.tecnoinf.gestedu.controllers;
 
 import com.tecnoinf.gestedu.dtos.DocenteDTO;
 import com.tecnoinf.gestedu.services.interfaces.DocenteService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/docentes")
+@Tag(name = "Docentes", description = "API para operaciones de Docentes")
 public class DocenteController {
 
     private final DocenteService docenteService;

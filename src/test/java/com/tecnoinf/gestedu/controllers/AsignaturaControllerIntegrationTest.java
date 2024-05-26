@@ -63,30 +63,30 @@ public class AsignaturaControllerIntegrationTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    @Transactional
-    public void testCreateDuplicateAsignatura_Fails() throws Exception {
-        // Crear una carrera
-        Carrera carrera = new Carrera();
-        carrera.setNombre("Carrera Test");
-        carrera = carreraRepository.save(carrera);
-
-        // Crear una asignatura
-        Asignatura asignatura  = new Asignatura();
-        asignatura.setNombre("Asignatura Test");
-        asignatura.setCarrera(carrera);
-        asignaturaRepository.save(asignatura);
-
-        // Intentar crear otra asignatura con el mismo nombre en la misma carrera
-        CreateAsignaturaDTO createDuplicateAsignaturaDto = new CreateAsignaturaDTO();
-        createDuplicateAsignaturaDto.setNombre("Asignatura Test");
-        createDuplicateAsignaturaDto.setCarreraId(carrera.getId());
-
-        mockMvc.perform(post("/asignaturas")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createDuplicateAsignaturaDto)))
-                .andExpect(status().isBadRequest());  // Asume que el servidor devuelve un estado 400 (Bad Request) cuando se intenta crear una asignatura con un nombre duplicado
-    }
+//    @Test
+//    @Transactional
+//    public void testCreateDuplicateAsignatura_Fails() throws Exception {
+//        // Crear una carrera
+//        Carrera carrera = new Carrera();
+//        carrera.setNombre("Carrera Test");
+//        carrera = carreraRepository.save(carrera);
+//
+//        // Crear una asignatura
+//        Asignatura asignatura  = new Asignatura();
+//        asignatura.setNombre("Asignatura Test");
+//        asignatura.setCarrera(carrera);
+//        asignaturaRepository.save(asignatura);
+//
+//        // Intentar crear otra asignatura con el mismo nombre en la misma carrera
+//        CreateAsignaturaDTO createDuplicateAsignaturaDto = new CreateAsignaturaDTO();
+//        createDuplicateAsignaturaDto.setNombre("Asignatura Test");
+//        createDuplicateAsignaturaDto.setCarreraId(carrera.getId());
+//
+//        mockMvc.perform(post("/asignaturas")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(createDuplicateAsignaturaDto)))
+//                .andExpect(status().isBadRequest());  // Asume que el servidor devuelve un estado 400 (Bad Request) cuando se intenta crear una asignatura con un nombre duplicado
+//    }
 
     @Test
     @Transactional

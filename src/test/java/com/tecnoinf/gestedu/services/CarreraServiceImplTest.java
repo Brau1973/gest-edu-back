@@ -143,13 +143,13 @@ class CarreraServiceImplTest {
     void testUpdateCarrera_Failure_WithInvalidId() {
         // Arrange
         Long id = 1L;
-        BasicInfoCarreraDTO basicInfoCarreraDTO = new BasicInfoCarreraDTO();
+        CreateCarreraDTO createCarreraDTO = new CreateCarreraDTO();
 
         when(carreraRepository.findById(id)).thenReturn(Optional.empty());
 
         // Act and Assert
         assertThrows(ResourceNotFoundException.class, () -> {
-            carreraService.updateCarrera(id, basicInfoCarreraDTO);
+            carreraService.updateCarrera(id, createCarreraDTO);
         });
     }
 
