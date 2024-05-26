@@ -52,7 +52,8 @@ public class EstudianteServiceImplTest {
         Mockito.reset(estudianteRepository, carreraRepository, usuarioRepository);
     }
 
-//    @Test --MANUAL ANDA BIEN
+// MANUAL ANDA OK
+//    @Test
 //    public void testObtenerEstudiantePorCi() {
 //        String ci = "123456";
 //        Estudiante estudiante = new Estudiante();
@@ -77,8 +78,8 @@ public class EstudianteServiceImplTest {
         assertEquals(Optional.empty(), result);
     }
 
-//    @Transactional
-//    @Test -- MANUAL ANDA BIEN
+// MANUAL ANDA OK
+//    @Test
 //    public void testObtenerEstudiantes() {
 //        Estudiante estudiante1 = new Estudiante();
 //        estudiante1.setCi("123456");
