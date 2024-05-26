@@ -25,7 +25,7 @@ public class Carrera {
     private Integer creditos;
     @Column(columnDefinition = "boolean default false")
     private Boolean existePlanEstudio = false;
-    @OneToMany(mappedBy = "carrera", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "carrera", fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<Asignatura> asignaturas = new ArrayList<>();

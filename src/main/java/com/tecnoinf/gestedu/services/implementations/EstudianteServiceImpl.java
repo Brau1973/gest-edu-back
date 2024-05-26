@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.services.implementations;
 
+import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.models.Carrera;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EstudianteServiceImpl implements EstudianteService {
@@ -38,12 +40,16 @@ public class EstudianteServiceImpl implements EstudianteService {
     }
 
     @Override
-    public Page<Carrera> getCarrerasNoInscripto(String email, Pageable pageable) {
+    public Page<BasicInfoCarreraDTO> getCarrerasNoInscripto(String email, Pageable pageable) {
         Optional<Usuario> estudiante = estudianteRepository.findByEmail(email);
         if (estudiante.isEmpty()) {
             throw new ResourceNotFoundException("Estudiante con email " + email + " no encontrado");
         }
-        return carreraRepository.findCarrerasWithPlanEstudioAndEstudianteNotInscripto(estudiante.get().getId(), pageable);
+        Page<Carrera> carreras = carreraRepository.findCarrerasWithPlanEstudioAndEstudianteNotInscripto(estudiante.get().getId(), pageable);
+        List<BasicInfoCarreraDTO> carreraDTOs = carreras.stream()
+                .map(carrera -> modelMapper.map(carrera, BasicInfoCarreraDTO.class))
+                .collect(Collectors.toList());
+        return new PageImpl<>(carreraDTOs, pageable, carreraDTOs.size());
     }
 
     @Override
