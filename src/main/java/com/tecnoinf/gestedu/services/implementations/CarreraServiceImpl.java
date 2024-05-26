@@ -130,7 +130,7 @@ public class CarreraServiceImpl implements CarreraService {
         List<PeriodoExamenDTO> periodosExamenDTO = new ArrayList<>();
         List<PeriodoExamen> periodosExamen = periodoExamenRepository.findAllByCarreraId(id, pageable).stream().toList();
         for (PeriodoExamen periodoExamen : periodosExamen) {
-            PeriodoExamenDTO periodoExamenDTO = modelMapper.map(periodoExamen, PeriodoExamenDTO.class);
+            PeriodoExamenDTO periodoExamenDTO = new PeriodoExamenDTO(periodoExamen);
             periodosExamenDTO.add(periodoExamenDTO);
         }
         return new PageImpl<>(periodosExamenDTO, pageable, periodosExamenDTO.size());
