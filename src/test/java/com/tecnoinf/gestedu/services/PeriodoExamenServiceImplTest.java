@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -53,22 +54,24 @@ public class PeriodoExamenServiceImplTest {
         assertThrows(FechaException.class, () -> periodoExamenService.registrarPeriodoExamen(periodoExamenDTO));
     }
 
-//    @Test --- SI ANDA MANUAL
+//    @Test ------ MANUALMENTE SI DA BIEN
 //    public void testRegistrarPeriodoExamen_PeriodoExamenYaExiste() {
-//        LocalDateTime fechaInicio = LocalDateTime.now();
-//        LocalDateTime fechaFin = LocalDateTime.now().plusDays(1);
-//        Long carreraId = 1L;
+//        Carrera carrera = new Carrera();
+//        Long carreraId = carrera.getId();
+//        LocalDateTime fechaInicio = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+//        LocalDateTime fechaFin = LocalDateTime.now().plusDays(1).withHour(23).withMinute(59).withSecond(59).withNano(0);
 //
-//        PeriodoExamenDTO periodoExamenDTO = crearPeriodoExamenDTO(fechaInicio, fechaFin, carreraId);
+//        PeriodoExamenDTO periodoExamenDTO = new PeriodoExamenDTO();
+//        periodoExamenDTO.setFechaInicio(fechaInicio);
+//        periodoExamenDTO.setFechaFin(fechaFin);
+//        periodoExamenDTO.setCarreraid(carreraId);
+//
 //        PeriodoExamen periodoExamenExistente = new PeriodoExamen();
 //        periodoExamenExistente.setFechaInicio(fechaInicio);
 //        periodoExamenExistente.setFechaFin(fechaFin);
-//
-//        Carrera carrera = new Carrera();
-//        carrera.setId(carreraId);
+//        periodoExamenExistente.setCarrera(carrera); // Set carrera in periodoExamenExistente
 //
 //        // Configurar los mocks
-//        when(carreraRepository.findById(carreraId)).thenReturn(Optional.of(carrera));
 //        when(periodoExamenRepository.findByFechaInicioAndFechaFinAndCarreraId(fechaInicio, fechaFin, carreraId))
 //                .thenReturn(Optional.of(periodoExamenExistente));
 //
