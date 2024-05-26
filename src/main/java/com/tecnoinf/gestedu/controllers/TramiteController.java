@@ -28,7 +28,15 @@ public class TramiteController {
     @Operation(summary = "Crear un nuevo trámite (inscripción a una carrera o solicitud de titulo)")
     @PostMapping("/nuevo-tramite")
     public ResponseEntity<TramiteDTO> nuevoTramite(@RequestParam Long carreraId, @Parameter(example = "INSCRIPCION_A_CARRERA") @RequestParam TipoTramite tipoTramite, Principal principal) throws MessagingException {
-        String email = (principal != null) ? principal.getName() : "estudianteInitData@yahoo.com";
+        String email = (principal != null) ? principal.getName() : "estudiante1InitData@yahoo.com";
         return ResponseEntity.ok().body(tramiteService.nuevoTramite(carreraId, tipoTramite, email));
     }
+
+    //listar tramites tipo = inscripcion a carrera
+    @Operation(summary = "Listar todos los trámites de inscripción a carrera PENDIENTES")
+    @GetMapping("/inscripcion-carrera-pendientes")
+    public ResponseEntity<?> listarTramitesInscripcionCarreraPendientes() {
+        return ResponseEntity.ok().body(tramiteService.listarTramitesInscripcionCarreraPendientes());
+    }
+
 }

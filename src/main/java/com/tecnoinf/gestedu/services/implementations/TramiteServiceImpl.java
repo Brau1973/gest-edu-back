@@ -1,6 +1,7 @@
 package com.tecnoinf.gestedu.services.implementations;
 
 import com.tecnoinf.gestedu.dtos.Tramite.TramiteDTO;
+import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.exceptions.TramitePendienteExistenteException;
 import com.tecnoinf.gestedu.models.Carrera;
@@ -17,6 +18,8 @@ import jakarta.mail.MessagingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class TramiteServiceImpl implements TramiteService {
@@ -64,5 +67,13 @@ public class TramiteServiceImpl implements TramiteService {
         emailService.sendNuevoTramiteInscripcionCarreraEmail("gestedu.info@gmail.com", estudiante.getNombre(), carrera.getNombre());
 
         return modelMapper.map(tramiteRepository.save(tramite), TramiteDTO.class);
+    }
+
+    @Override
+    public List<TramiteDTO> listarTramitesInscripcionCarreraPendientes() {
+        List<Tramite> tramites = tramiteRepository.findAllByTipoAndEstado(TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE);
+        return tramites.stream()
+                .map(tramite -> modelMapper.map(tramite, TramiteDTO.class))
+                .toList();
     }
 }
