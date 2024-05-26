@@ -52,4 +52,12 @@ public class AsignaturaController {
         AsignaturaDTO updatedAsignatura = asignaturaService.addPrevia(asignaturaId, previaId);
         return ResponseEntity.ok().body(updatedAsignatura);
     }
+
+    @Operation(summary = "Obtener asignatura por id")
+    @GetMapping("/{id}")
+    public ResponseEntity<AsignaturaDTO> getAsignaturaById(@PathVariable("id") Long id) {
+        AsignaturaDTO asignatura = asignaturaService.getAsignaturaById(id);
+        return ResponseEntity.ok().body(asignatura);
+    }
+
 }

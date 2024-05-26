@@ -117,4 +117,11 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         Type listType = new TypeToken<List<AsignaturaDTO>>(){}.getType();
         return modelMapper.map(noPrevias, listType);
     }
+
+    @Override
+    public AsignaturaDTO getAsignaturaById(Long id) {
+        Asignatura asignatura = asignaturaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Asignatura not found with id " + id));
+        return modelMapper.map(asignatura, AsignaturaDTO.class);
+    }
 }
