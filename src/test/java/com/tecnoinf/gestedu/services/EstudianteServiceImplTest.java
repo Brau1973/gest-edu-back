@@ -2,6 +2,7 @@ package com.tecnoinf.gestedu.services;
 import com.tecnoinf.gestedu.models.Estudiante;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
+import com.tecnoinf.gestedu.services.implementations.EstudianteServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

@@ -1,28 +1,22 @@
 package com.tecnoinf.gestedu.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.asignatura.CreateAsignaturaDTO;
 import com.tecnoinf.gestedu.models.Asignatura;
 import com.tecnoinf.gestedu.models.Carrera;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
-import com.tecnoinf.gestedu.services.AsignaturaService;
-import org.junit.jupiter.api.BeforeEach;
+import com.tecnoinf.gestedu.services.interfaces.AsignaturaService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
-import java.util.List;
 
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;

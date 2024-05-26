@@ -1,4 +1,4 @@
-package com.tecnoinf.gestedu.services;
+package com.tecnoinf.gestedu.services.implementations;
 
 import com.tecnoinf.gestedu.dtos.asignatura.CreateAsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
@@ -7,6 +7,7 @@ import com.tecnoinf.gestedu.models.Asignatura;
 import com.tecnoinf.gestedu.models.Carrera;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
+import com.tecnoinf.gestedu.services.interfaces.AsignaturaService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;

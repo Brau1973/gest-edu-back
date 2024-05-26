@@ -1,9 +1,10 @@
-package com.tecnoinf.gestedu.services;
+package com.tecnoinf.gestedu.services.implementations;
 
 import com.tecnoinf.gestedu.dtos.EmailValuesDTO;
 import com.tecnoinf.gestedu.dtos.usuario.AuthLoginRequest;
 import com.tecnoinf.gestedu.dtos.usuario.AuthResponse;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
+import com.tecnoinf.gestedu.services.interfaces.InvitadoService;
 import com.tecnoinf.gestedu.util.JwtUtils;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -25,7 +26,7 @@ import org.thymeleaf.context.Context;
 import java.util.*;
 
 @Service
-public class InvitadoServiceImpl implements InvitadoService{
+public class InvitadoServiceImpl implements InvitadoService {
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;

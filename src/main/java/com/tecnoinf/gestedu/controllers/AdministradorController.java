@@ -2,7 +2,7 @@ package com.tecnoinf.gestedu.controllers;
 
 import com.tecnoinf.gestedu.dtos.TipoUsuario;
 import com.tecnoinf.gestedu.dtos.usuario.CrearUsuarioDTO;
-import com.tecnoinf.gestedu.services.UserDetailsServiceImpl;
+import com.tecnoinf.gestedu.services.implementations.UserDetailsServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
