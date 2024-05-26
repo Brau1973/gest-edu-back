@@ -31,6 +31,7 @@ public class InscripcionCarrera {
     @JoinColumn(name = "carrera_id")
     private Carrera carrera;
 
+    //TODO cuando se tenga el tema de cursos se calculara en base a los cursos aprobados y de cada uno se suma los creditos que da esa asignatura
     @Transient
     Integer creditosObtenidos;
 
