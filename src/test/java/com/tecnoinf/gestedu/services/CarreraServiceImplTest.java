@@ -5,9 +5,11 @@ import static org.mockito.Mockito.*;
 
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.carrera.CreateCarreraDTO;
+import com.tecnoinf.gestedu.dtos.inscripcionCarrera.InscripcionCarreraDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.exceptions.UniqueFieldException;
 import com.tecnoinf.gestedu.models.Carrera;
+import com.tecnoinf.gestedu.models.InscripcionCarrera;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.specifications.CarreraSpecification;
 import com.tecnoinf.gestedu.services.implementations.CarreraServiceImpl;
@@ -21,7 +23,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 class CarreraServiceImplTest {
@@ -181,6 +185,35 @@ class CarreraServiceImplTest {
         // Act and Assert
         assertThrows(ResourceNotFoundException.class, () -> {
             carreraService.deleteCarrera(id);
+        });
+    }
+
+    @Test
+    void getEstudiantesInscriptosReturnsInscripcionesWhenCarreraExists() {
+        Long id = 1L;
+        Carrera carrera = new Carrera();
+        InscripcionCarrera inscripcion = new InscripcionCarrera();
+        carrera.setInscripciones(List.of(inscripcion));
+        InscripcionCarreraDTO inscripcionCarreraDTO = new InscripcionCarreraDTO();
+
+        when(carreraRepository.findById(id)).thenReturn(Optional.of(carrera));
+        when(modelMapper.map(inscripcion, InscripcionCarreraDTO.class)).thenReturn(inscripcionCarreraDTO);
+
+        List<InscripcionCarreraDTO> result = carreraService.getEstudiantesInscriptos(id);
+
+        assertEquals(1, result.size());
+        verify(carreraRepository).findById(id);
+        verify(modelMapper).map(inscripcion, InscripcionCarreraDTO.class);
+    }
+
+    @Test
+    void getEstudiantesInscriptosThrowsExceptionWhenCarreraDoesNotExist() {
+        Long id = 1L;
+
+        when(carreraRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            carreraService.getEstudiantesInscriptos(id);
         });
     }
 

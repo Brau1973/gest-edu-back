@@ -1,8 +1,10 @@
 package com.tecnoinf.gestedu;
 
 import com.tecnoinf.gestedu.models.*;
+import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCarrera;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
+import com.tecnoinf.gestedu.repositories.InscripcionCarreraRepository;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -12,6 +14,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 @SpringBootApplication
@@ -25,10 +29,13 @@ public class GestionEducativaOnlineApplication {
 	}
 
 	@Bean
-	public CommandLineRunner initData(UsuarioRepository usuarioRepository, CarreraRepository carreraRepository, AsignaturaRepository asignaturaRepository) {
+	public CommandLineRunner initData(UsuarioRepository usuarioRepository, CarreraRepository carreraRepository, AsignaturaRepository asignaturaRepository,
+									  InscripcionCarreraRepository inscripcionCarreraRepository) {
 		return (args) -> {
 			if(ddlAuto.equals("create") || ddlAuto.equals("create-drop")) {
-
+				Estudiante estudiante1 = new Estudiante();
+				Estudiante estudiante2 = new Estudiante();
+				Estudiante estudiante3 = new Estudiante();
 
 				//-----USUARIOS-----
 				PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -50,19 +57,44 @@ public class GestionEducativaOnlineApplication {
 				}
 
 				if (usuarioRepository.findByCi("77141245").isEmpty()) {
-					Usuario estudiante = new Estudiante();
-					estudiante.setNombre("NombreEstudianteInitData");
-					estudiante.setApellido("estudiante");
-					estudiante.setEmail("estudianteInitData@yahoo.com");
-					estudiante.setPassword(passwordEncoder.encode("1234"));
-					estudiante.setCi("77141245");
-					estudiante.setTelefono("1234567");
-					estudiante.setDomicilio("calle 123");
-					estudiante.setIsEnable(true);
-					estudiante.setAccountNonExpired(true);
-					estudiante.setAccountNonLocked(true);
-					estudiante.setCredentialsNonExpired(true);
-					usuarioRepository.save(estudiante);
+					estudiante1.setNombre("Nombreestudiante1InitData");
+					estudiante1.setApellido("estudiante1");
+					estudiante1.setEmail("estudiante1InitData@yahoo.com");
+					estudiante1.setPassword(passwordEncoder.encode("1234"));
+					estudiante1.setCi("77141245");
+					estudiante1.setTelefono("1234567");
+					estudiante1.setDomicilio("calle 123");
+					estudiante1.setIsEnable(true);
+					estudiante1.setAccountNonExpired(true);
+					estudiante1.setAccountNonLocked(true);
+					estudiante1.setCredentialsNonExpired(true);
+					usuarioRepository.save(estudiante1);
+
+					estudiante2.setNombre("Nombreestudiante2InitData");
+					estudiante2.setApellido("estudiante2");
+					estudiante2.setEmail("estudiante2InitData@yahoo.com");
+					estudiante2.setPassword(passwordEncoder.encode("1234"));
+					estudiante2.setCi("77142245");
+					estudiante2.setTelefono("1234567");
+					estudiante2.setDomicilio("calle 123");
+					estudiante2.setIsEnable(true);
+					estudiante2.setAccountNonExpired(true);
+					estudiante2.setAccountNonLocked(true);
+					estudiante2.setCredentialsNonExpired(true);
+					usuarioRepository.save(estudiante2);
+
+					estudiante3.setNombre("Nombreestudiante3InitData");
+					estudiante3.setApellido("estudiante3");
+					estudiante3.setEmail("estudiante3InitData@yahoo.com");
+					estudiante3.setPassword(passwordEncoder.encode("1234"));
+					estudiante3.setCi("77143245");
+					estudiante3.setTelefono("1234567");
+					estudiante3.setDomicilio("calle 123");
+					estudiante3.setIsEnable(true);
+					estudiante3.setAccountNonExpired(true);
+					estudiante3.setAccountNonLocked(true);
+					estudiante3.setCredentialsNonExpired(true);
+					usuarioRepository.save(estudiante3);
 				}
 				if (usuarioRepository.findByCi("87141245").isEmpty()) {
 					Usuario funcionario = new Funcionario();
@@ -70,7 +102,7 @@ public class GestionEducativaOnlineApplication {
 					funcionario.setApellido("funcionario");
 					funcionario.setEmail("funcionarioInitData@yahoo.com");
 					funcionario.setPassword(passwordEncoder.encode("1234"));
-					funcionario.setCi("87141245");
+					funcionario.setCi("87147245");
 					funcionario.setTelefono("1234567");
 					funcionario.setDomicilio("calle 123");
 					funcionario.setIsEnable(true);
@@ -126,6 +158,29 @@ public class GestionEducativaOnlineApplication {
 					createAsignaturaInitData(asignaturaRepository, "Experiencia de Usuario", "Asignatura de experiencia de usuario", 3,  0, savedCarrera2);
 					createAsignaturaInitData(asignaturaRepository, "Prototipado", "Asignatura de prototipado de interfaces", 2,  0, savedCarrera2);
 				}
+
+				// -----INSCRIPCIONCARRERA-----
+				InscripcionCarrera inscripcionCarrera1 = new InscripcionCarrera();
+				inscripcionCarrera1.setEstudiante(estudiante1);
+				inscripcionCarrera1.setCarrera(savedCarrera1);
+				inscripcionCarrera1.setEstado(EstadoInscripcionCarrera.CURSANDO);
+				inscripcionCarrera1.setFechaInscripcion(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
+				inscripcionCarreraRepository.save(inscripcionCarrera1);
+
+				InscripcionCarrera inscripcionCarrera2= new InscripcionCarrera();
+				inscripcionCarrera2.setEstudiante(estudiante2);
+				inscripcionCarrera2.setCarrera(savedCarrera1);
+				inscripcionCarrera2.setEstado(EstadoInscripcionCarrera.COMPLETADA);
+				inscripcionCarrera2.setFechaInscripcion(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
+				inscripcionCarreraRepository.save(inscripcionCarrera2);
+
+				InscripcionCarrera inscripcionCarrera3 = new InscripcionCarrera();
+				inscripcionCarrera3.setEstudiante(estudiante3);
+				inscripcionCarrera3.setCarrera(savedCarrera1);
+				inscripcionCarrera3.setEstado(EstadoInscripcionCarrera.CURSANDO);
+				inscripcionCarrera3.setFechaInscripcion(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
+				inscripcionCarreraRepository.save(inscripcionCarrera3);
+
 			}
 		};
 	}

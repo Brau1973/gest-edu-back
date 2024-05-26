@@ -3,6 +3,8 @@ package com.tecnoinf.gestedu.controllers;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.carrera.CreateCarreraDTO;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
+import com.tecnoinf.gestedu.dtos.inscripcionCarrera.InscripcionCarreraDTO;
+import com.tecnoinf.gestedu.models.InscripcionCarrera;
 import com.tecnoinf.gestedu.services.interfaces.CarreraService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -87,6 +89,13 @@ public class CarreraController {
     public ResponseEntity<?> updateSemestrePlanEstudio(@PathVariable Long id, @RequestBody List<AsignaturaDTO> asignaturasDto) {
         carreraService.updateSemestrePlanEstudio(id,asignaturasDto);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Listar estudiantes inscriptos a carrera")
+    @GetMapping("/{id}/estudiantes-inscriptos")
+    public ResponseEntity<List<InscripcionCarreraDTO>> getEstudiantesInscriptos(@PathVariable Long id) {
+        List<InscripcionCarreraDTO> inscripciones = carreraService.getEstudiantesInscriptos(id);
+        return ResponseEntity.ok().body(inscripciones);
     }
 
 }

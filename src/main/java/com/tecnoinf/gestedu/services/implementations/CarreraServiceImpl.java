@@ -3,6 +3,7 @@ package com.tecnoinf.gestedu.services.implementations;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.carrera.CreateCarreraDTO;
+import com.tecnoinf.gestedu.dtos.inscripcionCarrera.InscripcionCarreraDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.exceptions.UniqueFieldException;
 import com.tecnoinf.gestedu.models.Asignatura;
@@ -105,5 +106,15 @@ public class CarreraServiceImpl implements CarreraService {
                     carrera.setExistePlanEstudio(true);
                     carreraRepository.save(carrera);
                 });
+    }
+
+    @Override
+    public List<InscripcionCarreraDTO> getEstudiantesInscriptos(Long id) {
+        Carrera carrera = carreraRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Carrera not found with id " + id));
+        return carrera.getInscripciones()
+                .stream()
+                .map(inscripcion -> modelMapper.map(inscripcion, InscripcionCarreraDTO.class))
+                .toList();
     }
 }
