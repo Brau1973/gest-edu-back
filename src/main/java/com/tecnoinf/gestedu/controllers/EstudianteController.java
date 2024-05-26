@@ -1,7 +1,7 @@
 package com.tecnoinf.gestedu.controllers;
 
 import com.tecnoinf.gestedu.models.Carrera;
-import com.tecnoinf.gestedu.services.interfaces.EstudianteService;
+import com.tecnoinf.gestedu.services.EstudianteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class EstudianteController {
     @GetMapping("/listar")
     //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<Page<BasicInfoUsuarioDTO>> listarEstudiantes(Pageable pageable) {
-        return new ResponseEntity<>(estdudianteService.obtenerEstudiantes(pageable), HttpStatus.OK);
+        return new ResponseEntity<>(estudianteService.obtenerEstudiantes(pageable), HttpStatus.OK);
     }
 
     @Operation(summary = "Obtiene las carreras que tiene plan de estudio y que el estudiante no esta inscripto")
@@ -46,7 +46,7 @@ public class EstudianteController {
     @GetMapping("/buscar/{ci}")
     //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<BasicInfoUsuarioDTO> buscarEstudiantePorCi(@PathVariable String ci) {
-        Optional<BasicInfoUsuarioDTO> estudiante = estdudianteService.obtenerEstudiantePorCi(ci);
+        Optional<BasicInfoUsuarioDTO> estudiante = estudianteService.obtenerEstudiantePorCi(ci);
         if(estudiante.isPresent()){
             return new ResponseEntity<>(estudiante.get(), HttpStatus.OK);
         }else{
