@@ -7,6 +7,7 @@ import com.tecnoinf.gestedu.models.Coordinador;
 import com.tecnoinf.gestedu.models.TokenPass;
 import com.tecnoinf.gestedu.models.Usuario;
 import com.tecnoinf.gestedu.repositories.TokenPassRepository;
+import com.tecnoinf.gestedu.services.implementations.TokenPassService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

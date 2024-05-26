@@ -2,8 +2,8 @@ package com.tecnoinf.gestedu.controllers;
 
 import com.tecnoinf.gestedu.dtos.usuario.*;
 import com.tecnoinf.gestedu.models.Usuario;
-import com.tecnoinf.gestedu.services.UserDetailsServiceImpl;
-import com.tecnoinf.gestedu.services.UsuarioService;
+import com.tecnoinf.gestedu.services.implementations.UserDetailsServiceImpl;
+import com.tecnoinf.gestedu.services.implementations.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

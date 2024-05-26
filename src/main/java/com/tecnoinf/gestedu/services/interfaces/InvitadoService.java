@@ -1,4 +1,4 @@
-package com.tecnoinf.gestedu.services;
+package com.tecnoinf.gestedu.services.interfaces;
 
 import com.tecnoinf.gestedu.dtos.EmailValuesDTO;
 import com.tecnoinf.gestedu.dtos.usuario.AuthLoginRequest;

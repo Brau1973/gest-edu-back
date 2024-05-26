@@ -1,4 +1,4 @@
-package com.tecnoinf.gestedu.services;
+package com.tecnoinf.gestedu.services.implementations;
 
 import com.tecnoinf.gestedu.dtos.DocenteDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
@@ -6,6 +6,7 @@ import com.tecnoinf.gestedu.exceptions.UniqueFieldException;
 import com.tecnoinf.gestedu.models.Docente;
 import com.tecnoinf.gestedu.repositories.DocenteRepository;
 import com.tecnoinf.gestedu.repositories.specifications.DocenteSpecification;
+import com.tecnoinf.gestedu.services.interfaces.DocenteService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DocenteServiceImpl implements DocenteService{
+public class DocenteServiceImpl implements DocenteService {
 
     private final DocenteRepository docenteRepository;
     private final ModelMapper modelMapper;

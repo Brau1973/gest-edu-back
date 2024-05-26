@@ -1,12 +1,11 @@
 package com.tecnoinf.gestedu.config;
 
 import com.tecnoinf.gestedu.config.filters.JwtTokenValidator;
-import com.tecnoinf.gestedu.services.UserDetailsServiceImpl;
+import com.tecnoinf.gestedu.services.implementations.UserDetailsServiceImpl;
 import com.tecnoinf.gestedu.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
