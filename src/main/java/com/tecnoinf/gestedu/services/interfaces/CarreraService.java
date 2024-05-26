@@ -1,9 +1,10 @@
-package com.tecnoinf.gestedu.services.interfaces;
+package com.tecnoinf.gestedu.services;
 
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.carrera.CreateCarreraDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCarrera.InscripcionCarreraDTO;
+import com.tecnoinf.gestedu.dtos.periodoExamen.PeriodoExamenDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -19,4 +20,5 @@ public interface CarreraService {
     Page<AsignaturaDTO> getAsignaturasFromCarrera(Long id, Pageable pageable);
     void updateSemestrePlanEstudio(Long id, List<AsignaturaDTO> asignaturasDto);
     List<InscripcionCarreraDTO> getEstudiantesInscriptos(Long id);
+    Page<PeriodoExamenDTO> obtenerPeriodosExamenCarrera(Long id, Pageable pageable);
 }
