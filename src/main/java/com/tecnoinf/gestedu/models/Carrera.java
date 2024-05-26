@@ -1,9 +1,7 @@
 package com.tecnoinf.gestedu.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +26,13 @@ public class Carrera {
     @Column(columnDefinition = "boolean default false")
     private Boolean existePlanEstudio = false;
     @OneToMany(mappedBy = "carrera", fetch = FetchType.EAGER)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Asignatura> asignaturas = new ArrayList<>();
+    @OneToMany(mappedBy = "carrera", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<InscripcionCarrera> inscripciones = new ArrayList<>();
 
     @PostLoad
     private void calculateCreditosYDuracion() {
@@ -37,5 +41,4 @@ public class Carrera {
             this.duracionAnios =  (asignaturas.stream().mapToInt(Asignatura::getSemestrePlanEstudio).max().orElse(0) / 2.0f);
         }
     }
-
 }
