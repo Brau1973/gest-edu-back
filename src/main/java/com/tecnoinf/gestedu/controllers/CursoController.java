@@ -3,6 +3,7 @@ package com.tecnoinf.gestedu.controllers;
 import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.curso.HorarioCursoDTO;
 import com.tecnoinf.gestedu.dtos.curso.HorarioDTO;
+import com.tecnoinf.gestedu.dtos.curso.InscripcionACursoDTO;
 import com.tecnoinf.gestedu.enumerados.Estado;
 import com.tecnoinf.gestedu.services.CursoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +30,7 @@ public class CursoController {
     @PostMapping()
     //PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<CursoDTO> registerHorarioCurso(@RequestBody HorarioCursoDTO curso) throws ParseException {
-        CursoDTO nuevoCurso = new CursoDTO();
+        /*CursoDTO nuevoCurso = new CursoDTO();
         nuevoCurso.setId(curso.getIdCurso());
         nuevoCurso.setFechaInicio(curso.getFechaInicio());
         nuevoCurso.setFechaFin(curso.getFechaFin());
@@ -41,8 +42,16 @@ public class CursoController {
         nuevoHorario.setDia(curso.getDia());
         nuevoHorario.setHoraInicio(curso.getHoraInicio());
         nuevoHorario.setHoraFin(curso.getHoraFin());
-        Long docente = curso.getIdDocente();
-        CursoDTO createdCurso = cursoService.createCurso(nuevoCurso, nuevoHorario, docente);
+        Long docente = curso.getIdDocente();*/
+        CursoDTO createdCurso = cursoService.createCurso(curso);//nuevoCurso, nuevoHorario, docente);
         return ResponseEntity.ok().body(createdCurso);
+    }
+
+    @Operation(summary = "Inscripcion a Curso de Asignatura")
+    @PostMapping("/inscripcion")
+    //PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
+    public ResponseEntity<InscripcionACursoDTO> inscripcionCurso(@RequestBody InscripcionACursoDTO inscripcionCurso) throws ParseException {
+        InscripcionACursoDTO createdInscCurso = cursoService.inscribirCurso(inscripcionCurso);
+        return ResponseEntity.ok().body(createdInscCurso);
     }
 }

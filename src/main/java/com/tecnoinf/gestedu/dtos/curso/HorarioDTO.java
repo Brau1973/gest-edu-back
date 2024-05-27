@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Time;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -15,4 +17,12 @@ public class HorarioDTO {
     private DiaSemana dia;
     private Time horaInicio;
     private Time horaFin;
+    private Set<Long> cursosId;
+
+    public void addCursosId(Long cursoId) {
+        if (this.cursosId == null) {
+            this.cursosId = new HashSet<>();
+        }
+        this.cursosId.add(cursoId);
+    }
 }

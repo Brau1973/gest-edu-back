@@ -50,4 +50,8 @@ public class Curso {
         this.horarios.add(horario);
         horario.getCursos().add(this);
     }
+
+    public void addDocente(Docente docente) {
+        this.docentes.add(docente);
+    }
 }

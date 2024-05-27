@@ -18,6 +18,6 @@ public class CursoDTO {
     private Integer diasPrevInsc;
     private Estado estado;
     private Integer semestre;
-    private Set<HorarioDTO> horarios;
+    private Set<HorarioDTO> horariosId;
     private Long asignaturaId;
 }
