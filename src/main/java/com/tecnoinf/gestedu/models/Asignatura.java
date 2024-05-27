@@ -34,4 +34,7 @@ public class Asignatura {
             inverseJoinColumns = @JoinColumn(name = "previa_id")
     )
     private List<Asignatura> previas = new ArrayList<>();
+
+    @OneToMany(mappedBy = "asignatura")
+    private List<Examen> examenes = new ArrayList<>();
 }

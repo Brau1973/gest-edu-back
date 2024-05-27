@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,4 +21,8 @@ public class Docente {
     private String documento;
     private String nombre;
     private String apellido;
+
+    @ManyToMany(mappedBy = "docentes")
+    private List<Examen> examenes = new ArrayList<>();
+
 }

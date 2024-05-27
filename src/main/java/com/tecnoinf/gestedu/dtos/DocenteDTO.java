@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.dtos;
 
+import com.tecnoinf.gestedu.models.Docente;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,4 +15,10 @@ public class  DocenteDTO{
     private String nombre;
     private String apellido;
 
+    public DocenteDTO(Docente docente) {
+        this.id = docente.getId();
+        this.documento = docente.getDocumento();
+        this.nombre = docente.getNombre();
+        this.apellido = docente.getApellido();
+    }
 }
