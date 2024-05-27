@@ -15,4 +15,5 @@ public interface PeriodoExamenRepository extends JpaRepository<PeriodoExamen, Lo
     Page<PeriodoExamen> findAllByCarreraId(Long id, Pageable pageable);
     Optional<PeriodoExamen> findByFechaInicioAndFechaFinAndCarreraId(LocalDateTime fechaInicio, LocalDateTime fechaFin, Long carreraId);
     List<PeriodoExamen> findAllByCarreraId(Long carreraId);
+    Page<PeriodoExamen> findAllByCarreraIdAndFechaFinAfter(Long carreraId, LocalDateTime fecha, Pageable pageable);
 }
