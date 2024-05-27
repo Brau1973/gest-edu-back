@@ -64,3 +64,5 @@ out/
 # Ignore the development properties file
 application-dev.properties
 *ssl-server.jks*
+
+.idea/
