@@ -2,20 +2,27 @@ package com.tecnoinf.gestedu.services.implementations;
 
 import com.tecnoinf.gestedu.dtos.asignatura.CreateAsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
+import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.exceptions.*;
 import com.tecnoinf.gestedu.models.Asignatura;
 import com.tecnoinf.gestedu.models.Carrera;
+import com.tecnoinf.gestedu.models.Examen;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
+import com.tecnoinf.gestedu.repositories.ExamenRepository;
 import com.tecnoinf.gestedu.services.interfaces.AsignaturaService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AsignaturaServiceImpl implements AsignaturaService {
@@ -23,12 +30,14 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     private final AsignaturaRepository asignaturaRepository;
     private final ModelMapper modelMapper;
     private final CarreraRepository carreraRepository;
+    private final ExamenRepository examenRepository;
 
     @Autowired
-    public AsignaturaServiceImpl(AsignaturaRepository asignaturaRepository, CarreraRepository carreraRepository ,ModelMapper modelMapper) {
+    public AsignaturaServiceImpl(AsignaturaRepository asignaturaRepository, CarreraRepository carreraRepository , ModelMapper modelMapper, ExamenRepository examenRepository) {
         this.asignaturaRepository = asignaturaRepository;
         this.carreraRepository = carreraRepository;
         this.modelMapper = modelMapper;
+        this.examenRepository = examenRepository;
     }
 
     @Override
@@ -124,5 +133,17 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         Asignatura asignatura = asignaturaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Asignatura not found with id " + id));
         return modelMapper.map(asignatura, AsignaturaDTO.class);
+    }
+
+    @Override
+    public Page<ExamenDTO> obtenerExamenes(Long asignaturaId, Pageable pageable){
+        Asignatura asignatura = asignaturaRepository.findById(asignaturaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Asignatura no encontrada - id " + asignaturaId));
+        List<Examen> examenes = examenRepository.findByAsignaturaId(asignaturaId);
+        if(examenes.isEmpty()){
+            throw new ResourceNotFoundException("No se encontraron examenes para la asignatura con id " + asignaturaId);
+        }
+        List<ExamenDTO> examenesDto = examenes.stream().map(examen -> modelMapper.map(examen, ExamenDTO.class)).collect(Collectors.toList());
+        return new PageImpl<>(examenesDto, pageable, examenes.size());
     }
 }

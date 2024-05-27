@@ -2,10 +2,13 @@ package com.tecnoinf.gestedu.controllers;
 
 import com.tecnoinf.gestedu.dtos.asignatura.CreateAsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
+import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.services.interfaces.AsignaturaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,4 +63,10 @@ public class AsignaturaController {
         return ResponseEntity.ok().body(asignatura);
     }
 
+    @Operation(summary = "Obtener examenes de una asignatura")
+    @GetMapping("/{asignaturaId}/examenes")
+    public ResponseEntity<Page<ExamenDTO>> getExamenes(@PathVariable Long asignaturaId, Pageable pageable) {
+        Page<ExamenDTO> examenes = asignaturaService.obtenerExamenes(asignaturaId, pageable);
+        return ResponseEntity.ok().body(examenes);
+    }
 }
