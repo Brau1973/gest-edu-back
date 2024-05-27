@@ -29,7 +29,8 @@ public class GestionEducativaOnlineApplication {
 
 	@Bean
 	public CommandLineRunner initData(UsuarioRepository usuarioRepository, CarreraRepository carreraRepository, AsignaturaRepository asignaturaRepository,
-									  InscripcionCarreraRepository inscripcionCarreraRepository, TramiteRepository tramiteRepository) {
+                                      InscripcionCarreraRepository inscripcionCarreraRepository, TramiteRepository tramiteRepository,  DocenteRepository docenteRepository) {
+
 		return (args) -> {
 			if(ddlAuto.equals("create") || ddlAuto.equals("create-drop")) {
 				Estudiante estudiante1 = new Estudiante();
@@ -206,13 +207,32 @@ public class GestionEducativaOnlineApplication {
 				tramite2.setFechaCreacion(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
 				tramite2.setCarrera(savedCarrera3);
 				tramiteRepository.save(tramite2);
+
+                //---- DOCENTES ----
+				Docente docente1 = new Docente();
+				docente1.setNombre("Docente1");
+				docente1.setApellido("ApellidoDocente1");
+				docente1.setDocumento("1234567");
+				docenteRepository.save(docente1);
+
+				Docente docente2 = new Docente();
+				docente2.setNombre("Docente2");
+				docente2.setApellido("ApellidoDocente2");
+				docente2.setDocumento("1234568");
+				docenteRepository.save(docente2);
+
+				Docente docente3 = new Docente();
+				docente3.setNombre("Docente3");
+				docente3.setApellido("ApellidoDocente3");
+				docente3.setDocumento("1234569");
+				docenteRepository.save(docente3);
 			}
 		};
 	}
 
 	private void createAsignaturaInitData(AsignaturaRepository asignaturaRepository, String nombre, String descripcion, Integer creditos, Integer semestrePlanEstudio ,Carrera carrera) {
 		if(!asignaturaRepository.existsByNombreAndCarreraId(nombre, carrera.getId())){
-			Asignatura asignatura = new Asignatura(null, nombre, descripcion, creditos, semestrePlanEstudio, carrera, new ArrayList<>());
+			Asignatura asignatura = new Asignatura(null, nombre, descripcion, creditos, semestrePlanEstudio, carrera, new ArrayList<>(), new ArrayList<>());
 			asignaturaRepository.save(asignatura);
 		}
 	}
