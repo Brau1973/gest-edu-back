@@ -97,49 +97,4 @@ public class ExamenServiceImpl implements ExamenService {
                 (fechaExamen.isAfter(periodoExamen.getFechaInicio()) || fechaExamen.isEqual(periodoExamen.getFechaInicio())) &&
                         (fechaExamen.isBefore(periodoExamen.getFechaFin()) || fechaExamen.isEqual(periodoExamen.getFechaFin())));
     }
-
-//    @Override
-//    public ExamenDTO altaExamen(CreateExamenDTO createExamenDto){
-//        if(createExamenDto.getAsignaturaId()==null){
-//            throw new ResourceNotFoundException("Se requiere una asignatura para crear un examen.");
-//        }
-//        Asignatura asignatura = asignaturaRepository.findById(createExamenDto.getAsignaturaId())
-//                .orElseThrow(() -> new ResourceNotFoundException("Asignatura no encontrada."));
-//        List<Docente> docentes = new ArrayList<>();
-//        for (Long docenteId : createExamenDto.getDocenteIds()) {
-//            Docente docente = docenteRepository.findById(docenteId)
-//                    .orElseThrow(() -> new ResourceNotFoundException("Docente no encontrado."));
-//            docentes.add(docente);
-//        }
-//        if (docentes.isEmpty()) {
-//            throw new ResourceNotFoundException("Se requiere al menos un docente para crear un examen.");
-//        }
-//        LocalDateTime fechaExamen = createExamenDto.getFecha().withSecond(0).withNano(0);
-//
-//        if (examenRepository.existsByFechaAndAsignatura(fechaExamen, asignatura)) {
-//            throw new UniqueFieldException("Ya existe un examen programado para esta asignatura en la misma fecha y hora.");
-//        }
-//
-//        List<PeriodoExamenDTO> periodosExamen = carreraService.obtenerPeriodosExamenCarrera(asignatura.getCarrera().getId(), Pageable.unpaged()).getContent();
-//        if (isFechaDentroDePeriodo(fechaExamen, periodosExamen)) {
-//            Examen examen = new Examen();
-//            examen.setFecha(fechaExamen);
-//            if(createExamenDto.getDiasPrevInsc() == null){
-//                examen.setDiasPrevInsc(10);
-//            }else{
-//                examen.setDiasPrevInsc(createExamenDto.getDiasPrevInsc());
-//            }
-//            examen.setAsignatura(asignatura);
-//            examen.setDocentes(docentes);
-//            examenRepository.save(examen);
-//            return new ExamenDTO(examen);
-//        }
-//        throw new FechaException("La fecha del examen no está dentro de un periodo de examen vigente.");
-//    }
-//
-//    private boolean isFechaDentroDePeriodo(LocalDateTime fechaExamen, List<PeriodoExamenDTO> periodosExamen) {
-//        return periodosExamen.stream().anyMatch(periodoExamen ->
-//                (fechaExamen.isAfter(periodoExamen.getFechaInicio()) || fechaExamen.isEqual(periodoExamen.getFechaInicio())) &&
-//                        (fechaExamen.isBefore(periodoExamen.getFechaFin()) || fechaExamen.isEqual(periodoExamen.getFechaFin())));
-//    }
 }
