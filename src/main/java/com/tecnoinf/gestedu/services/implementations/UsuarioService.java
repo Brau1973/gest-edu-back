@@ -48,4 +48,12 @@ public class UsuarioService {
         }
         return new PageImpl<>(basicInfoUsuarios, pageable, usuarios.getTotalElements());
     }
+
+    public Optional<BasicInfoUsuarioDTO> obtenerUsuarioPorCi(String ci) {
+        Optional<Usuario> usuario = usuarioRepository.findByCi(ci);
+        if(usuario.isPresent()){
+            return Optional.of(new BasicInfoUsuarioDTO(usuario.get()));
+        }
+        return Optional.empty();
+    }
 }
