@@ -3,16 +3,12 @@ package com.tecnoinf.gestedu.controllers;
 import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.curso.HorarioCursoDTO;
 import com.tecnoinf.gestedu.dtos.curso.HorarioDTO;
-import com.tecnoinf.gestedu.dtos.curso.InscripcionACursoDTO;
 import com.tecnoinf.gestedu.enumerados.Estado;
 import com.tecnoinf.gestedu.services.CursoService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 
@@ -29,29 +25,22 @@ public class CursoController {
     @Operation(summary = "Registrar Curso de Asignatura")
     @PostMapping()
     //PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
-    public ResponseEntity<CursoDTO> registerHorarioCurso(@RequestBody HorarioCursoDTO curso) throws ParseException {
-        /*CursoDTO nuevoCurso = new CursoDTO();
-        nuevoCurso.setId(curso.getIdCurso());
-        nuevoCurso.setFechaInicio(curso.getFechaInicio());
-        nuevoCurso.setFechaFin(curso.getFechaFin());
+    public ResponseEntity<CursoDTO> registerHorarioCurso(@RequestBody HorarioCursoDTO horarioCursoDTO) throws ParseException {
+        CursoDTO nuevoCurso = new CursoDTO();
+        nuevoCurso.setId(horarioCursoDTO.getIdCurso());
+        nuevoCurso.setFechaInicio(horarioCursoDTO.getFechaInicio());
+        nuevoCurso.setFechaFin(horarioCursoDTO.getFechaFin());
         nuevoCurso.setEstado(Estado.ACTIVO);
-        nuevoCurso.setDiasPrevInsc(curso.getDiasPrevInsc());
-        nuevoCurso.setAsignaturaId(curso.getAsignaturaId());
+        nuevoCurso.setDiasPrevInsc(horarioCursoDTO.getDiasPrevInsc());
+        nuevoCurso.setAsignaturaId(horarioCursoDTO.getAsignaturaId());
         HorarioDTO nuevoHorario = new HorarioDTO();
-        nuevoHorario.setId(curso.getIdHorario());
-        nuevoHorario.setDia(curso.getDia());
-        nuevoHorario.setHoraInicio(curso.getHoraInicio());
-        nuevoHorario.setHoraFin(curso.getHoraFin());
-        Long docente = curso.getIdDocente();*/
-        CursoDTO createdCurso = cursoService.createCurso(curso);//nuevoCurso, nuevoHorario, docente);
-        return ResponseEntity.ok().body(createdCurso);
-    }
+        nuevoHorario.setId(horarioCursoDTO.getIdHorario());
+        nuevoHorario.setDia(horarioCursoDTO.getDia());
+        nuevoHorario.setHoraInicio(horarioCursoDTO.getHoraInicio());
+        nuevoHorario.setHoraFin(horarioCursoDTO.getHoraFin());
+        Long idDocente = horarioCursoDTO.getIdDocente();
+        CursoDTO createdCurso = cursoService.createCurso(nuevoCurso, nuevoHorario, idDocente);
 
-    @Operation(summary = "Inscripcion a Curso de Asignatura")
-    @PostMapping("/inscripcion")
-    //PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
-    public ResponseEntity<InscripcionACursoDTO> inscripcionCurso(@RequestBody InscripcionACursoDTO inscripcionCurso) throws ParseException {
-        InscripcionACursoDTO createdInscCurso = cursoService.inscribirCurso(inscripcionCurso);
-        return ResponseEntity.ok().body(createdInscCurso);
+        return ResponseEntity.ok().body(createdCurso);
     }
 }

@@ -47,8 +47,10 @@ public class Curso {
     private Asignatura asignaturas;
 
     public void addHorario(Horario horario) {
+        if (this.horarios == null) {
+            this.horarios = new HashSet<>();
+        }
         this.horarios.add(horario);
-        horario.getCursos().add(this);
     }
 
     public void addDocente(Docente docente) {

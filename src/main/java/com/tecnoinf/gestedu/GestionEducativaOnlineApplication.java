@@ -1,5 +1,9 @@
 package com.tecnoinf.gestedu;
 
+import com.tecnoinf.gestedu.controllers.CursoController;
+import com.tecnoinf.gestedu.dtos.curso.HorarioCursoDTO;
+import com.tecnoinf.gestedu.enumerados.DiaSemana;
+import com.tecnoinf.gestedu.enumerados.Estado;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
@@ -11,6 +15,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 @SpringBootApplication
 public class GestionEducativaOnlineApplication {
@@ -25,7 +34,7 @@ public class GestionEducativaOnlineApplication {
 	@Bean
 	public CommandLineRunner initData(UsuarioRepository usuarioRepository, CarreraRepository carreraRepository, AsignaturaRepository asignaturaRepository) {
 		return (args) -> {
-			if(ddlAuto.equals("create") || ddlAuto.equals("create-drop")) {
+			if(ddlAuto.equals("update") || ddlAuto.equals("create-drop")) {
 
 
 				//-----USUARIOS-----
