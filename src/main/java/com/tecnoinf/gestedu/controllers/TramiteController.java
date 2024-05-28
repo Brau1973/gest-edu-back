@@ -39,7 +39,7 @@ public class TramiteController {
     }
 
     @PutMapping("/aprobar-tramite-inscripcion-carrera/{tramiteId}")
-    public ResponseEntity<TramiteDTO> aprobarTramiteInscripcionCarrera(@PathVariable Long tramiteId, Principal principal) {
+    public ResponseEntity<TramiteDTO> aprobarTramiteInscripcionCarrera(@PathVariable Long tramiteId, Principal principal) throws MessagingException {
         String email = (principal != null) ? principal.getName() : null;
         return ResponseEntity.ok().body(tramiteService.aprobarTramiteInscripcionCarrera(tramiteId, email));
     }

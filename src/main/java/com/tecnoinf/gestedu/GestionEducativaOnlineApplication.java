@@ -180,21 +180,21 @@ public class GestionEducativaOnlineApplication {
 				inscripcionCarrera1.setEstudiante(estudiante1);
 				inscripcionCarrera1.setCarrera(savedCarrera1);
 				inscripcionCarrera1.setEstado(EstadoInscripcionCarrera.CURSANDO);
-				inscripcionCarrera1.setFechaInscripcion(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
+				inscripcionCarrera1.setFechaInscripcion(LocalDate.now());
 				inscripcionCarreraRepository.save(inscripcionCarrera1);
 
 				InscripcionCarrera inscripcionCarrera2= new InscripcionCarrera();
 				inscripcionCarrera2.setEstudiante(estudiante2);
 				inscripcionCarrera2.setCarrera(savedCarrera1);
 				inscripcionCarrera2.setEstado(EstadoInscripcionCarrera.COMPLETADA);
-				inscripcionCarrera2.setFechaInscripcion(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
+				inscripcionCarrera2.setFechaInscripcion(LocalDate.now());
 				inscripcionCarreraRepository.save(inscripcionCarrera2);
 
 				InscripcionCarrera inscripcionCarrera3 = new InscripcionCarrera();
 				inscripcionCarrera3.setEstudiante(estudiante3);
 				inscripcionCarrera3.setCarrera(savedCarrera1);
 				inscripcionCarrera3.setEstado(EstadoInscripcionCarrera.CURSANDO);
-				inscripcionCarrera3.setFechaInscripcion(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
+				inscripcionCarrera3.setFechaInscripcion(LocalDate.now());
 				inscripcionCarreraRepository.save(inscripcionCarrera3);
 
 				// -----TRAMITES-----

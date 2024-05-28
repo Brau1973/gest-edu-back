@@ -13,6 +13,7 @@ import com.tecnoinf.gestedu.repositories.EstudianteRepository;
 import com.tecnoinf.gestedu.repositories.TramiteRepository;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import com.tecnoinf.gestedu.services.interfaces.EmailService;
+import com.tecnoinf.gestedu.services.interfaces.InscripcionCarreraService;
 import com.tecnoinf.gestedu.services.interfaces.TramiteService;
 import jakarta.mail.MessagingException;
 import org.modelmapper.ModelMapper;
@@ -30,21 +31,24 @@ public class TramiteServiceImpl implements TramiteService {
     private final ModelMapper modelMapper;
     private final EmailService emailService;
     private final UsuarioRepository usuarioRepository;
+    private final InscripcionCarreraService inscripcionCarreraService;
 
     @Autowired
-    public TramiteServiceImpl(EstudianteRepository estudianteRepository, CarreraRepository carreraRepository, TramiteRepository tramiteRepository, ModelMapper modelMapper, EmailService emailService, UsuarioRepository usuarioRepository) {
+    public TramiteServiceImpl(EstudianteRepository estudianteRepository, CarreraRepository carreraRepository,
+                              TramiteRepository tramiteRepository, ModelMapper modelMapper, EmailService emailService,
+                              UsuarioRepository usuarioRepository, InscripcionCarreraService inscripcionCarreraService) {
         this.estudianteRepository = estudianteRepository;
         this.carreraRepository = carreraRepository;
         this.tramiteRepository = tramiteRepository;
         this.modelMapper = modelMapper;
         this.emailService = emailService;
         this.usuarioRepository = usuarioRepository;
+        this.inscripcionCarreraService = inscripcionCarreraService;
     }
 
     @Override
     public TramiteDTO nuevoTramite(Long carreraId, TipoTramite tipoTramite, String email) throws MessagingException {
         Carrera carrera = checkCarreraExistsYTienePlanEstudio(carreraId);
-
         Estudiante estudiante = getEstudianteByEmail(email);
 
         //Verificar si el estudiante ya tiene un trámite pendiente asociado con la misma carrera y con el mismo tipo
@@ -74,8 +78,8 @@ public class TramiteServiceImpl implements TramiteService {
     }
 
     @Override
-    public TramiteDTO aprobarTramiteInscripcionCarrera(Long tramiteId, String email) {
-        Tramite tramite = tramiteRepository.findById(tramiteId).orElseThrow(() -> new TramiteNotFoundException("Tramite not found with id " + tramiteId));
+    public TramiteDTO aprobarTramiteInscripcionCarrera(Long tramiteId, String email) throws MessagingException {
+        Tramite tramite = getTramiteById(tramiteId);
         if (!tramite.getEstado().equals(EstadoTramite.PENDIENTE)) {
             throw new TramiteNotPendienteException("Tramite is not in PENDIENTE state");
         }
@@ -86,12 +90,11 @@ public class TramiteServiceImpl implements TramiteService {
 
         Estudiante estudiante = (Estudiante) tramite.getUsuarioSolicitante();
         Carrera carrera = tramite.getCarrera();
-        InscripcionCarrera inscripcionCarrera = new InscripcionCarrera();
-        inscripcionCarrera.setCarrera(carrera);
-        inscripcionCarrera.setEstudiante(estudiante);
-        //inscripcionCarreraRepository.save(inscripcionCarrera);
-        // Send email to estudiante
-        // ...
+        inscripcionCarreraService.createInscripcionCarrera(carrera,estudiante);
+
+        //TODO cambiar a email del estudiante cuando se pase a produccion
+        emailService.sendAprobacionTramiteInscripcionCarreraEmail("gestedu.info@gmail.com", estudiante.getNombre(), carrera.getNombre(), funcionarioResponsable.getNombre());
+
         return modelMapper.map(savedTramite, TramiteDTO.class);
     }
 
@@ -109,6 +112,11 @@ public class TramiteServiceImpl implements TramiteService {
         }
 
         return carrera;
+    }
+
+    private Tramite getTramiteById(Long tramiteId) {
+        return tramiteRepository.findById(tramiteId)
+                .orElseThrow(() -> new TramiteNotFoundException("Tramite not found with id " + tramiteId));
     }
 
 }

@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.exceptions;
 
+import jakarta.mail.MessagingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -38,6 +39,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             FechaException.class,
             TramitePendienteExistenteException.class,
             TramiteNotPendienteException.class,
+            MessagingException.class,
             PeriodoInscripcionExeption.class,
             InscripcionExamenException.class,
             CalificacionExamenExeption.class,
