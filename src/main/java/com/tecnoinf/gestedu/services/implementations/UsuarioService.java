@@ -2,6 +2,7 @@ package com.tecnoinf.gestedu.services.implementations;
 
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.dtos.usuario.UsuarioDTO;
+import com.tecnoinf.gestedu.models.Estudiante;
 import com.tecnoinf.gestedu.models.Usuario;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,5 +48,13 @@ public class UsuarioService {
             basicInfoUsuarios.add(new BasicInfoUsuarioDTO(usuario));
         }
         return new PageImpl<>(basicInfoUsuarios, pageable, usuarios.getTotalElements());
+    }
+
+    public Optional<BasicInfoUsuarioDTO> obtenerUsuarioPorCi(String ci) {
+        Optional<Usuario> usuario = usuarioRepository.findByCi(ci);
+        if(usuario.isPresent()){
+            return Optional.of(new BasicInfoUsuarioDTO(usuario.get()));
+        }
+        return Optional.empty();
     }
 }
