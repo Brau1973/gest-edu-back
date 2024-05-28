@@ -77,9 +77,9 @@ public class UsuarioController {
     @GetMapping("/buscar/{ci}")
     //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO', 'ROL_ADMINISTRADOR', 'ROL_COORDINADOR')")
     public ResponseEntity<BasicInfoUsuarioDTO> buscarEstudiantePorCi(@PathVariable String ci) {
-        Optional<BasicInfoUsuarioDTO> estudiante = usuarioService.obtenerUsuarioPorCi(ci);
-        if(estudiante.isPresent()){
-            return new ResponseEntity<>(estudiante.get(), HttpStatus.OK);
+        Optional<BasicInfoUsuarioDTO> usuario = usuarioService.obtenerUsuarioPorCi(ci);
+        if(usuario.isPresent()){
+            return new ResponseEntity<>(usuario.get(), HttpStatus.OK);
         }else{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
