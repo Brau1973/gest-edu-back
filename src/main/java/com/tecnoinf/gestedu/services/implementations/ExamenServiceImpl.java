@@ -2,27 +2,27 @@ package com.tecnoinf.gestedu.services.implementations;
 
 import com.tecnoinf.gestedu.dtos.examen.CreateExamenDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
+import com.tecnoinf.gestedu.dtos.inscripcionExamen.CreateInscripcionExamenDTO;
+import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenDTO;
 import com.tecnoinf.gestedu.dtos.periodoExamen.PeriodoExamenDTO;
 import com.tecnoinf.gestedu.exceptions.FechaException;
+import com.tecnoinf.gestedu.exceptions.PeriodoInscripcionExeption;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.exceptions.UniqueFieldException;
-import com.tecnoinf.gestedu.models.Asignatura;
-import com.tecnoinf.gestedu.models.Docente;
-import com.tecnoinf.gestedu.models.Examen;
-import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
-import com.tecnoinf.gestedu.repositories.DocenteRepository;
-import com.tecnoinf.gestedu.repositories.ExamenRepository;
+import com.tecnoinf.gestedu.models.*;
+import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
+import com.tecnoinf.gestedu.models.enums.CalificacionExamen;
+import com.tecnoinf.gestedu.repositories.*;
 import com.tecnoinf.gestedu.services.interfaces.CarreraService;
-import com.tecnoinf.gestedu.services.interfaces.DocenteService;
 import com.tecnoinf.gestedu.services.interfaces.ExamenService;
 import com.tecnoinf.gestedu.services.interfaces.PeriodoExamenService;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ExamenServiceImpl implements ExamenService {
@@ -34,13 +34,22 @@ public class ExamenServiceImpl implements ExamenService {
     private final AsignaturaRepository asignaturaRepository;
     private final DocenteRepository docenteRepository;
     private final ExamenRepository examenRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final InscripcionExamenRepository inscripcionExamenRepository;
+    private final InscripcionCursoRepository inscripcionCursoRepository;
 
-    public ExamenServiceImpl(PeriodoExamenService periodoExamenService, CarreraService carreraService, AsignaturaRepository asignaturaRepository, DocenteRepository docenteRepository, ExamenRepository examenRepository){
+    public ExamenServiceImpl(PeriodoExamenService periodoExamenService, CarreraService carreraService,
+                             AsignaturaRepository asignaturaRepository, DocenteRepository docenteRepository,
+                             ExamenRepository examenRepository, UsuarioRepository usuarioRepository, InscripcionExamenRepository inscripcionExamenRepository,
+                             InscripcionCursoRepository inscripcionCursoRepository){
         this.periodoExamenService = periodoExamenService;
         this.carreraService = carreraService;
         this.asignaturaRepository = asignaturaRepository;
         this.docenteRepository = docenteRepository;
         this.examenRepository = examenRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.inscripcionExamenRepository = inscripcionExamenRepository;
+        this.inscripcionCursoRepository = inscripcionCursoRepository;
     }
 
     @Override
@@ -97,4 +106,128 @@ public class ExamenServiceImpl implements ExamenService {
                 (fechaExamen.isAfter(periodoExamen.getFechaInicio()) || fechaExamen.isEqual(periodoExamen.getFechaInicio())) &&
                         (fechaExamen.isBefore(periodoExamen.getFechaFin()) || fechaExamen.isEqual(periodoExamen.getFechaFin())));
     }
+
+    @Override
+    public InscripcionExamenDTO inscribirseExamen(CreateInscripcionExamenDTO inscripcionExamenDto){
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(inscripcionExamenDto.getEmail());
+        if (usuario.isEmpty()) {
+            throw new ResourceNotFoundException("Usuario no encontrado.");
+        }
+        Examen examen = examenRepository.findById(inscripcionExamenDto.getExamenId())
+                .orElseThrow(() -> new ResourceNotFoundException("Examen no encontrado."));
+
+        if (!isEnPeriodoInscripcion(examen)) {
+            throw new PeriodoInscripcionExeption("El examen no está en periodo de inscripción.");
+        }
+
+        if (isEstudianteInscripto(examen, usuario.get())) {
+            throw new UniqueFieldException("El estudiante ya está inscrpito en este examen.");
+        }
+
+        if(isEstudianteAprobado(examen.getAsignatura(), usuario.get())){
+            throw new UniqueFieldException("El estudiante ya aprobó la asignatura.");
+        }
+        if(!isEstudianteAExamen(examen.getAsignatura(), usuario.get())){
+            throw new UniqueFieldException("El estudiante no está en condición de rendir examen.");
+        }
+
+
+
+        return null;
+    }
+
+    private boolean isEnPeriodoInscripcion(Examen examen) {
+        LocalDateTime fechaActual = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime fechaInscripcion = examen.getFecha().minusDays(examen.getDiasPrevInsc()).withHour(0).withMinute(0).withSecond(0).withNano(0);;
+        return !fechaActual.isBefore(fechaInscripcion) && fechaActual.isBefore(examen.getFecha());
+    }
+
+    private boolean isEstudianteInscripto(Examen examen, Usuario usuario) {
+        return examen.getInscripciones().stream().anyMatch(inscripcion -> inscripcion.getEstudiante().equals(usuario));
+    }
+
+    private boolean isEstudianteAprobado(Asignatura asignatura, Usuario usuario){
+        List<InscripcionExamen> examenesInscripto =  inscripcionExamenRepository.findAllByEstudianteIdAndExamenAsignaturaId(asignatura.getId(),usuario.getId());
+        for(InscripcionExamen inscripcion : examenesInscripto){
+            if(inscripcion.getCalificacion() == CalificacionExamen.APROBADO){
+                return true;
+            }
+        }
+        List<InscripcionCurso> cursosInscripto =  inscripcionCursoRepository.findAllByEstudianteIdAndCursoAsignaturaId(asignatura.getId(),usuario.getId());
+        for(InscripcionCurso inscripcion : cursosInscripto){
+            if(inscripcion.getCalificacion().equals(CalificacionCurso.EXONERADO)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isEstudianteAExamen(Asignatura asignatura, Usuario usuario){
+        List<InscripcionCurso> cursosInscripto =  inscripcionCursoRepository.findAllByEstudianteIdAndCursoAsignaturaId(asignatura.getId(),usuario.getId());
+        for(InscripcionCurso inscripcion : cursosInscripto){
+            if(inscripcion.getCalificacion().equals(CalificacionCurso.AEXAMEN)){
+                return true;
+            }
+        }
+        return false;
+    }
+    ///------------------------
+
+    @Override
+    public InscripcionExamenDTO inscribirseExamen(CreateInscripcionExamenDTO inscripcionExamenDto){
+        Usuario usuario = usuarioRepository.findByEmail(inscripcionExamenDto.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado."));
+
+        Examen examen = examenRepository.findById(inscripcionExamenDto.getExamenId())
+                .orElseThrow(() -> new ResourceNotFoundException("Examen no encontrado."));
+
+        if (!isEnPeriodoInscripcion(examen)) {
+            throw new PeriodoInscripcionExeption("El examen no está en periodo de inscripción.");
+        }
+
+        if (isEstudianteInscripto(examen, usuario)) {
+            throw new UniqueFieldException("El estudiante ya está inscrito en este examen.");
+        }
+
+        if (!isEstudianteAExamen(examen.getAsignatura(), usuario) && !isEstudiantePuedeRendirExamen(examen.getAsignatura(), usuario)) {
+            throw new UniqueFieldException("El estudiante no está en condición de rendir examen.");
+        }
+
+        // Crear la inscripción y devolver el DTO
+        InscripcionExamen inscripcion = new InscripcionExamen();
+        inscripcion.setEstudiante(usuario);
+        inscripcion.setExamen(examen);
+        inscripcion.setFechaInscripcion(LocalDateTime.now());
+        inscripcion.setCalificacion(CalificacionExamen.PENDIENTE);
+
+        inscripcion = inscripcionExamenRepository.save(inscripcion);
+
+        return modelMapper.map(inscripcion, InscripcionExamenDTO.class);
+    }
+
+    private boolean isEnPeriodoInscripcion(Examen examen) {
+        LocalDateTime fechaActual = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime fechaInscripcion = examen.getFecha().minusDays(examen.getDiasPrevInsc()).withHour(0).withMinute(0).withSecond(0).withNano(0);
+        return !fechaActual.isBefore(fechaInscripcion) && fechaActual.isBefore(examen.getFecha());
+    }
+
+    private boolean isEstudianteInscripto(Examen examen, Usuario usuario) {
+        return examen.getInscripciones().stream().anyMatch(inscripcion -> inscripcion.getEstudiante().equals(usuario));
+    }
+
+    private boolean isEstudianteAExamen(Asignatura asignatura, Usuario usuario) {
+        return inscripcionCursoRepository.findAllByEstudianteIdAndCursoAsignaturaId(asignatura.getId(), usuario.getId()).stream()
+                .anyMatch(inscripcion -> inscripcion.getCalificacion().equals(CalificacionCurso.AEXAMEN));
+    }
+
+    private boolean isEstudiantePuedeRendirExamen(Asignatura asignatura, Usuario usuario) {
+        List<InscripcionExamen> examenesInscripto = inscripcionExamenRepository.findAllByEstudianteIdAndExamenAsignaturaId(asignatura.getId(), usuario.getId());
+        boolean noAprobado = examenesInscripto.stream().noneMatch(inscripcion -> inscripcion.getCalificacion() == CalificacionExamen.APROBADO);
+
+        List<InscripcionCurso> cursosInscripto = inscripcionCursoRepository.findAllByEstudianteIdAndCursoAsignaturaId(asignatura.getId(), usuario.getId());
+        boolean exonerado = cursosInscripto.stream().anyMatch(inscripcion -> inscripcion.getCalificacion().equals(CalificacionCurso.EXONERADO));
+
+        return noAprobado && exonerado;
+    }
+
 }

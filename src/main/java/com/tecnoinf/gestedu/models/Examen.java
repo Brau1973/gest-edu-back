@@ -2,9 +2,7 @@ package com.tecnoinf.gestedu.models;
 
 import com.tecnoinf.gestedu.models.enums.Estado;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,4 +33,8 @@ public class Examen {
     )
     private List<Docente> docentes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "examen")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<InscripcionExamen> inscripciones = new ArrayList<>();
 }

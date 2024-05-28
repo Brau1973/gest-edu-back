@@ -69,4 +69,11 @@ public class AsignaturaController {
         Page<ExamenDTO> examenes = asignaturaService.obtenerExamenes(asignaturaId, pageable);
         return ResponseEntity.ok().body(examenes);
     }
+
+    @Operation(summary = "Obtener examenes de una asignatura en fecha de inscripcion")
+    @GetMapping("/{asignaturaId}/examenes")
+    public ResponseEntity<Page<ExamenDTO>> getExamenesEnFechaInscripcion(@PathVariable Long asignaturaId, Pageable pageable) {
+        Page<ExamenDTO> examenes = asignaturaService.obtenerExamenesEnFechaInscripcion(asignaturaId, pageable);
+        return ResponseEntity.ok().body(examenes);
+    }
 }

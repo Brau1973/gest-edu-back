@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -146,4 +147,28 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         List<ExamenDTO> examenesDto = examenes.stream().map(examen -> modelMapper.map(examen, ExamenDTO.class)).collect(Collectors.toList());
         return new PageImpl<>(examenesDto, pageable, examenes.size());
     }
+
+    @Override
+    public Page<ExamenDTO> obtenerExamenesEnFechaInscripcion(Long asignaturaId, Pageable pageable) {
+        Asignatura asignatura = asignaturaRepository.findById(asignaturaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Asignatura no encontrada - id " + asignaturaId));
+        List<Examen> examenes = examenRepository.findByAsignaturaId(asignaturaId);
+        if (examenes.isEmpty()) {
+            throw new ResourceNotFoundException("No se encontraron examenes para la asignatura con id " + asignaturaId);
+        }
+        LocalDateTime fechaActual = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        List<Examen> examenesFiltrados = examenes.stream()
+                .filter(examen -> {
+                    LocalDateTime fecha = examen.getFecha();
+                    LocalDateTime fechaInscripcion = fecha.minusDays(examen.getDiasPrevInsc()).withHour(0).withMinute(0).withSecond(0).withNano(0);
+                    return !fechaActual.isBefore(fechaInscripcion) && fechaActual.isBefore(fecha);
+                })
+                .collect(Collectors.toList());
+        if (examenesFiltrados.isEmpty()) {
+            throw new ResourceNotFoundException("No se encontraron examenes en fecha de inscripcion para la asignatura con id " + asignaturaId);
+        }
+        List<ExamenDTO> examenesDto = examenesFiltrados.stream().map(examen -> modelMapper.map(examen, ExamenDTO.class)).collect(Collectors.toList());
+        return new PageImpl<>(examenesDto, pageable, examenesFiltrados.size());
+    }
+
 }
