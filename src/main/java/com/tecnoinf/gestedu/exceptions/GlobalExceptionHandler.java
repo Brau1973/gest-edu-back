@@ -15,6 +15,7 @@ import java.util.Map;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {
+            TramiteNotFoundException.class,
             ResourceNotFoundException.class,
             TokenInactivoException.class,
             TokenVencidoException.class,
@@ -35,6 +36,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             AsignaturaPreviaExistenteException.class,
             CicloEnAsignaturasException.class,
             FechaException.class,
+            TramitePendienteExistenteException.class,
+            TramiteNotPendienteException.class,
             PeriodoInscripcionExeption.class,
             InscripcionExamenException.class,
             CalificacionExamenExeption.class,

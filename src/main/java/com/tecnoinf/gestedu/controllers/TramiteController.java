@@ -32,11 +32,17 @@ public class TramiteController {
         return ResponseEntity.ok().body(tramiteService.nuevoTramite(carreraId, tipoTramite, email));
     }
 
-    //listar tramites tipo = inscripcion a carrera
     @Operation(summary = "Listar todos los trámites de inscripción a carrera PENDIENTES")
     @GetMapping("/inscripcion-carrera-pendientes")
     public ResponseEntity<?> listarTramitesInscripcionCarreraPendientes() {
         return ResponseEntity.ok().body(tramiteService.listarTramitesInscripcionCarreraPendientes());
     }
+
+    @PutMapping("/aprobar-tramite-inscripcion-carrera/{tramiteId}")
+    public ResponseEntity<TramiteDTO> aprobarTramiteInscripcionCarrera(@PathVariable Long tramiteId, Principal principal) {
+        String email = (principal != null) ? principal.getName() : null;
+        return ResponseEntity.ok().body(tramiteService.aprobarTramiteInscripcionCarrera(tramiteId, email));
+    }
+
 
 }
