@@ -13,7 +13,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,10 +33,17 @@ public class PeriodoExamenServiceImpl implements PeriodoExamenService {
 
     @Override
     public PeriodoExamenDTO registrarPeriodoExamen(PeriodoExamenDTO periodoExamenDTO) {
-        PeriodoExamen periodoExamen = new PeriodoExamen();
-        LocalDateTime fechaInicio = periodoExamenDTO.getFechaInicio().withHour(0).withMinute(0).withSecond(0).withNano(0);
-        LocalDateTime fechaFin = periodoExamenDTO.getFechaFin().withHour(23).withMinute(59).withSecond(59).withNano(999999999);
 
+//        LocalDateTime fechaInicio = periodoExamenDTO.getFechaInicio().withHour(0).withMinute(0).withSecond(0).withNano(0);
+//        LocalDateTime fechaFin = periodoExamenDTO.getFechaFin().withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+        LocalDate fechaInicioDate = LocalDate.parse(periodoExamenDTO.getFechaInicio(), formatter);
+        LocalDate fechaFinDate = LocalDate.parse(periodoExamenDTO.getFechaFin(), formatter);
+        LocalDateTime fechaInicio = fechaInicioDate.atTime(0, 0);
+        LocalDateTime fechaFin = fechaFinDate.atTime(23, 59, 59, 999999999);
+
+        PeriodoExamen periodoExamen = new PeriodoExamen();
         validarFechas(fechaInicio, fechaFin);
         verificarPeriodoExistente(fechaInicio, fechaFin, periodoExamenDTO.getCarreraid());
 
