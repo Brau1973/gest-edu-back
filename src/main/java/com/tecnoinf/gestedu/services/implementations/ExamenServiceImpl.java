@@ -5,10 +5,7 @@ import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.CreateInscripcionExamenDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenDTO;
 import com.tecnoinf.gestedu.dtos.periodoExamen.PeriodoExamenDTO;
-import com.tecnoinf.gestedu.exceptions.FechaException;
-import com.tecnoinf.gestedu.exceptions.PeriodoInscripcionExeption;
-import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
-import com.tecnoinf.gestedu.exceptions.UniqueFieldException;
+import com.tecnoinf.gestedu.exceptions.*;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
 import com.tecnoinf.gestedu.models.enums.CalificacionExamen;
@@ -121,14 +118,14 @@ public class ExamenServiceImpl implements ExamenService {
         }
 
         if (isEstudianteInscripto(examen, usuario.get())) {
-            throw new UniqueFieldException("El estudiante ya está inscripto en el examen.");
+            throw new InscripcionExamenException("El estudiante ya está inscripto en el examen.");
         }
 
         if(isEstudianteAprobado(examen.getAsignatura(), usuario.get())){
-            throw new UniqueFieldException("El estudiante ya aprobó la asignatura.");
+            throw new InscripcionExamenException("El estudiante ya aprobó la asignatura.");
         }
         if(!isEstudianteAExamen(examen.getAsignatura(), usuario.get())){
-            throw new UniqueFieldException("El estudiante no está en condición de rendir examen.");
+            throw new InscripcionExamenException("El estudiante no está en condición de rendir examen.");
         }
 
         InscripcionExamen inscripcion = new InscripcionExamen();
