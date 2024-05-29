@@ -13,6 +13,7 @@ import com.tecnoinf.gestedu.repositories.*;
 import com.tecnoinf.gestedu.services.interfaces.CarreraService;
 import com.tecnoinf.gestedu.services.interfaces.ExamenService;
 import com.tecnoinf.gestedu.services.interfaces.PeriodoExamenService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -193,4 +194,9 @@ public class ExamenServiceImpl implements ExamenService {
                 .toList();
     }
 
+    @Override
+    public Page<ExamenDTO> listarExamenesPendientes(Pageable pageable){
+        return examenRepository.findAllByFechaBeforeAndInscripcionesCalificacion(LocalDateTime.now(), CalificacionExamen.PENDIENTE, pageable)
+                .map(ExamenDTO::new);
+    }
 }

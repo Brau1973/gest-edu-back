@@ -2,7 +2,10 @@ package com.tecnoinf.gestedu.repositories;
 
 import com.tecnoinf.gestedu.models.Asignatura;
 import com.tecnoinf.gestedu.models.Examen;
+import com.tecnoinf.gestedu.models.enums.CalificacionExamen;
+import io.micrometer.observation.ObservationFilter;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +16,5 @@ import java.util.List;
 public interface ExamenRepository extends JpaRepository<Examen, Long> {
     boolean existsByFechaAndAsignatura(LocalDateTime fecha, Asignatura asignatura);
     List<Examen> findByAsignaturaId(Long asignaturaId);
+    Page<Examen> findAllByFechaBeforeAndInscripcionesCalificacion(LocalDateTime now, CalificacionExamen calificacionExamen, Pageable pageable);
 }
