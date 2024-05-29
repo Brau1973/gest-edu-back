@@ -45,9 +45,8 @@ public class ExamenController {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         inscripcionExamenDto.setEmail(principal.getName());
-        String email = principal.getName();
-
         InscripcionExamenDTO createdExamen = examenService.inscribirseExamen(inscripcionExamenDto);
+
         return ResponseEntity.ok().body(createdExamen);
     }
 }

@@ -117,11 +117,11 @@ public class ExamenServiceImpl implements ExamenService {
                 .orElseThrow(() -> new ResourceNotFoundException("Examen no encontrado."));
 
         if (!isEnPeriodoInscripcion(examen)) {
-            throw new PeriodoInscripcionExeption("El examen no está en periodo de inscripción.");
+            throw new PeriodoInscripcionExeption("El examen no está en período de inscripción.");
         }
 
         if (isEstudianteInscripto(examen, usuario.get())) {
-            throw new UniqueFieldException("El estudiante ya está inscrpito en este examen.");
+            throw new UniqueFieldException("El estudiante ya está inscripto en el examen.");
         }
 
         if(isEstudianteAprobado(examen.getAsignatura(), usuario.get())){
@@ -131,9 +131,13 @@ public class ExamenServiceImpl implements ExamenService {
             throw new UniqueFieldException("El estudiante no está en condición de rendir examen.");
         }
 
-
-
-        return null;
+        InscripcionExamen inscripcion = new InscripcionExamen();
+        inscripcion.setFechaInscripcion(LocalDateTime.now());
+        inscripcion.setCalificacion(CalificacionExamen.PENDIENTE);
+        inscripcion.setEstudiante((Estudiante) usuario.get());
+        inscripcion.setExamen(examen);
+        inscripcionExamenRepository.save(inscripcion);
+        return new InscripcionExamenDTO(inscripcion);
     }
 
     private boolean isEnPeriodoInscripcion(Examen examen) {
@@ -164,70 +168,15 @@ public class ExamenServiceImpl implements ExamenService {
 
     private boolean isEstudianteAExamen(Asignatura asignatura, Usuario usuario){
         List<InscripcionCurso> cursosInscripto =  inscripcionCursoRepository.findAllByEstudianteIdAndCursoAsignaturaId(asignatura.getId(),usuario.getId());
+        System.out.println("----- ESTUDIANTE " + usuario.getId() + " ----- "+ usuario.getEmail());
         for(InscripcionCurso inscripcion : cursosInscripto){
+            System.out.println("----- ESTUDIANTE calif " + inscripcion.getCalificacion() + " ----- "+ inscripcion.getCurso().getAsignatura().getNombre());
             if(inscripcion.getCalificacion().equals(CalificacionCurso.AEXAMEN)){
                 return true;
             }
         }
         return false;
     }
-    ///------------------------
 
-    @Override
-    public InscripcionExamenDTO inscribirseExamen(CreateInscripcionExamenDTO inscripcionExamenDto){
-        Usuario usuario = usuarioRepository.findByEmail(inscripcionExamenDto.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado."));
-
-        Examen examen = examenRepository.findById(inscripcionExamenDto.getExamenId())
-                .orElseThrow(() -> new ResourceNotFoundException("Examen no encontrado."));
-
-        if (!isEnPeriodoInscripcion(examen)) {
-            throw new PeriodoInscripcionExeption("El examen no está en periodo de inscripción.");
-        }
-
-        if (isEstudianteInscripto(examen, usuario)) {
-            throw new UniqueFieldException("El estudiante ya está inscrito en este examen.");
-        }
-
-        if (!isEstudianteAExamen(examen.getAsignatura(), usuario) && !isEstudiantePuedeRendirExamen(examen.getAsignatura(), usuario)) {
-            throw new UniqueFieldException("El estudiante no está en condición de rendir examen.");
-        }
-
-        // Crear la inscripción y devolver el DTO
-        InscripcionExamen inscripcion = new InscripcionExamen();
-        inscripcion.setEstudiante(usuario);
-        inscripcion.setExamen(examen);
-        inscripcion.setFechaInscripcion(LocalDateTime.now());
-        inscripcion.setCalificacion(CalificacionExamen.PENDIENTE);
-
-        inscripcion = inscripcionExamenRepository.save(inscripcion);
-
-        return modelMapper.map(inscripcion, InscripcionExamenDTO.class);
-    }
-
-    private boolean isEnPeriodoInscripcion(Examen examen) {
-        LocalDateTime fechaActual = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
-        LocalDateTime fechaInscripcion = examen.getFecha().minusDays(examen.getDiasPrevInsc()).withHour(0).withMinute(0).withSecond(0).withNano(0);
-        return !fechaActual.isBefore(fechaInscripcion) && fechaActual.isBefore(examen.getFecha());
-    }
-
-    private boolean isEstudianteInscripto(Examen examen, Usuario usuario) {
-        return examen.getInscripciones().stream().anyMatch(inscripcion -> inscripcion.getEstudiante().equals(usuario));
-    }
-
-    private boolean isEstudianteAExamen(Asignatura asignatura, Usuario usuario) {
-        return inscripcionCursoRepository.findAllByEstudianteIdAndCursoAsignaturaId(asignatura.getId(), usuario.getId()).stream()
-                .anyMatch(inscripcion -> inscripcion.getCalificacion().equals(CalificacionCurso.AEXAMEN));
-    }
-
-    private boolean isEstudiantePuedeRendirExamen(Asignatura asignatura, Usuario usuario) {
-        List<InscripcionExamen> examenesInscripto = inscripcionExamenRepository.findAllByEstudianteIdAndExamenAsignaturaId(asignatura.getId(), usuario.getId());
-        boolean noAprobado = examenesInscripto.stream().noneMatch(inscripcion -> inscripcion.getCalificacion() == CalificacionExamen.APROBADO);
-
-        List<InscripcionCurso> cursosInscripto = inscripcionCursoRepository.findAllByEstudianteIdAndCursoAsignaturaId(asignatura.getId(), usuario.getId());
-        boolean exonerado = cursosInscripto.stream().anyMatch(inscripcion -> inscripcion.getCalificacion().equals(CalificacionCurso.EXONERADO));
-
-        return noAprobado && exonerado;
-    }
 
 }
