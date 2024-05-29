@@ -183,5 +183,14 @@ public class ExamenServiceImpl implements ExamenService {
         return false;
     }
 
+    @Override
+    public List<InscripcionExamenDTO> listarInscriptosExamen(Long id){
+        Examen examen = examenRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Examen no encontrado."));
+        return examen.getInscripciones()
+                .stream()
+                .map(inscripcion -> new InscripcionExamenDTO(inscripcion))
+                .toList();
+    }
 
 }
