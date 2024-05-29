@@ -13,6 +13,11 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HorarioCursoDTO {
+    private DiaSemana dia;
+    private Time horaInicio;
+    private Time horaFin;
+
+
     private Long idCurso;
     private Date fechaInicio;
     private Date fechaFin;
@@ -21,8 +26,8 @@ public class HorarioCursoDTO {
     private Integer semestre;
     private Long asignaturaId;
     private Long idHorario;
-    private DiaSemana dia;
+    /*private DiaSemana dia;
     private Time horaInicio;
-    private Time horaFin;
+    private Time horaFin;*/
     private Long idDocente;
 }

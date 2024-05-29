@@ -10,5 +10,5 @@ import java.util.List;
 
 public interface CursoService {
     CursoDTO createCurso(CursoDTO nuevoCurso, HorarioDTO nuevoHorario, Long docente);
-
+    InscripcionACursoDTO inscriptingCurso(InscripcionACursoDTO inscripcionACursoDTO);
 }
