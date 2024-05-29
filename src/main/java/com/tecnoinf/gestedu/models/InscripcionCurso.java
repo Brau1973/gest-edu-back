@@ -1,13 +1,8 @@
 package com.tecnoinf.gestedu.models;
 
 import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
@@ -19,4 +14,18 @@ public class InscripcionCurso {
     private Long id;
 
     private CalificacionCurso calificacion = CalificacionCurso.PENDIENTE;
+
+    @ManyToOne
+    @JoinColumn(name = "estudiante_id")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Estudiante estudiante;
+
+    @ManyToOne
+    @JoinColumn(name = "curso_id")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Curso curso;
+
+
 }
