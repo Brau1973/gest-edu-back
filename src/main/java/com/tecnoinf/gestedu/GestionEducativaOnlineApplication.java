@@ -1,9 +1,7 @@
 package com.tecnoinf.gestedu;
 
 import com.tecnoinf.gestedu.models.*;
-import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCarrera;
-import com.tecnoinf.gestedu.models.enums.EstadoTramite;
-import com.tecnoinf.gestedu.models.enums.TipoTramite;
+import com.tecnoinf.gestedu.models.enums.*;
 import com.tecnoinf.gestedu.repositories.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -29,7 +27,10 @@ public class GestionEducativaOnlineApplication {
 
 	@Bean
 	public CommandLineRunner initData(UsuarioRepository usuarioRepository, CarreraRepository carreraRepository, AsignaturaRepository asignaturaRepository,
-                                      InscripcionCarreraRepository inscripcionCarreraRepository, TramiteRepository tramiteRepository,  DocenteRepository docenteRepository) {
+									  InscripcionCarreraRepository inscripcionCarreraRepository, TramiteRepository tramiteRepository,
+									  DocenteRepository docenteRepository,  CursoRepository cursoRepository, PeriodoExamenRepository periodoExamenRepository ,
+									  ExamenRepository examenRepository, InscripcionCursoRepository inscripcionCursoRepository,
+									  InscripcionExamenRepository inscripcionExamenRepository){
 
 		return (args) -> {
 			if(ddlAuto.equals("create") || ddlAuto.equals("create-drop")) {
@@ -226,13 +227,60 @@ public class GestionEducativaOnlineApplication {
 				docente3.setApellido("ApellidoDocente3");
 				docente3.setDocumento("1234569");
 				docenteRepository.save(docente3);
+
+				//----- CURSOS ----- volver a hacer cuando este curso
+				Curso curso1 = new Curso();
+				curso1.setEstado(Estado.FINALIZADO);
+				curso1.setAsignatura(asignaturaRepository.findById(1L).get());
+				cursoRepository.save(curso1);
+
+				//----- INSCRIPCIONCURSO -----
+				InscripcionCurso inscripcionCurso1 = new InscripcionCurso();
+				inscripcionCurso1.setEstudiante(estudiante2);
+				inscripcionCurso1.setCurso(curso1);
+				inscripcionCurso1.setCalificacion(CalificacionCurso.AEXAMEN);
+				inscripcionCursoRepository.save(inscripcionCurso1);
+
+				//----- PERIODO EXAMEN -----
+				PeriodoExamen periodoExamen1 = new PeriodoExamen();
+				periodoExamen1.setFechaInicio(LocalDateTime.now().plusDays(5));
+				periodoExamen1.setFechaFin(LocalDateTime.now().plusDays(10));
+				periodoExamen1.setCarrera(carreraRepository.findById(1L).get());
+				periodoExamenRepository.save(periodoExamen1);
+
+				//----- EXAMEN -----
+				Examen examen1 = new Examen();
+				examen1.setFecha(LocalDateTime.now().plusDays(7));
+				examen1.setDiasPrevInsc(20);
+				examen1.setEstado(Estado.ACTIVO);
+				examen1.setAsignatura(asignaturaRepository.findById(1L).get());
+				examen1.setDocentes(new ArrayList<>());
+				examen1.getDocentes().add(docenteRepository.findById(1L).get());
+				examenRepository.save(examen1);
+
+				Examen examen2 = new Examen();
+				examen2.setFecha(LocalDateTime.now().minusDays(30));
+				examen2.setDiasPrevInsc(20);
+				examen2.setEstado(Estado.FINALIZADO);
+				examen2.setAsignatura(asignaturaRepository.findById(1L).get());
+				examen2.setDocentes(new ArrayList<>());
+				examen2.getDocentes().add(docenteRepository.findById(1L).get());
+				examenRepository.save(examen2);
+
+				//----- INSCRIPCIONEXAMEN -----
+//				InscripcionExamen inscripcionExamen1 = new InscripcionExamen();
+//				inscripcionExamen1.setEstudiante(estudiante2);
+//				inscripcionExamen1.setExamen(examen2);
+//				inscripcionExamen1.setCalificacion(CalificacionExamen.APROBADO);
+//				inscripcionExamenRepository.save(inscripcionExamen1);
 			}
 		};
 	}
 
 	private void createAsignaturaInitData(AsignaturaRepository asignaturaRepository, String nombre, String descripcion, Integer creditos, Integer semestrePlanEstudio ,Carrera carrera) {
 		if(!asignaturaRepository.existsByNombreAndCarreraId(nombre, carrera.getId())){
-			Asignatura asignatura = new Asignatura(null, nombre, descripcion, creditos, semestrePlanEstudio, carrera, new ArrayList<>(), new ArrayList<>());
+
+			Asignatura asignatura = new Asignatura(null, nombre, descripcion, creditos, semestrePlanEstudio, carrera, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 			asignaturaRepository.save(asignatura);
 		}
 	}
