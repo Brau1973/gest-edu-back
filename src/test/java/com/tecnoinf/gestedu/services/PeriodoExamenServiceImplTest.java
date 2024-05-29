@@ -16,7 +16,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -42,8 +44,13 @@ public class PeriodoExamenServiceImplTest {
 
     private PeriodoExamenDTO crearPeriodoExamenDTO(LocalDateTime fechaInicio, LocalDateTime fechaFin, Long carreraId) {
         PeriodoExamenDTO periodoExamenDTO = new PeriodoExamenDTO();
-        periodoExamenDTO.setFechaInicio(fechaInicio);
-        periodoExamenDTO.setFechaFin(fechaFin);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+        String fechaInicioStr = fechaInicio.format(formatter);
+        String fechaFinStr = fechaFin.format(formatter);
+
+        periodoExamenDTO.setFechaInicio(fechaInicioStr);
+        periodoExamenDTO.setFechaFin(fechaFinStr);
         periodoExamenDTO.setCarreraid(carreraId);
         return periodoExamenDTO;
     }
@@ -133,10 +140,18 @@ public class PeriodoExamenServiceImplTest {
         when(periodoExamenRepository.findAllByCarreraId(periodoExamenDTO.getCarreraid()))
                 .thenReturn(Collections.emptyList());
 
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+        LocalDate fechaInicioDate = LocalDate.parse(periodoExamenDTO.getFechaInicio(), formatter);
+        LocalDate fechaFinDate = LocalDate.parse(periodoExamenDTO.getFechaFin(), formatter);
+
+        LocalDateTime fechaInicio = fechaInicioDate.atTime(0, 0); // Esto establece la hora a 00:00
+        LocalDateTime fechaFin = fechaFinDate.atTime(23, 59, 59, 999999999); // Esto establece la hora a 23:59:59.999999999
+
+
         PeriodoExamen periodoExamenGuardado = new PeriodoExamen();
         periodoExamenGuardado.setId(1L);
-        periodoExamenGuardado.setFechaInicio(periodoExamenDTO.getFechaInicio());
-        periodoExamenGuardado.setFechaFin(periodoExamenDTO.getFechaFin());
+        periodoExamenGuardado.setFechaInicio(fechaInicio);
+        periodoExamenGuardado.setFechaFin(fechaFin);
         periodoExamenGuardado.setCarrera(carrera);
 
         when(periodoExamenRepository.save(new PeriodoExamen())).thenReturn(periodoExamenGuardado);

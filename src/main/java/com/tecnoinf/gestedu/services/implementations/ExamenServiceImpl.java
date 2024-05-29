@@ -16,7 +16,9 @@ import com.tecnoinf.gestedu.services.interfaces.PeriodoExamenService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -63,7 +65,9 @@ public class ExamenServiceImpl implements ExamenService {
             throw new ResourceNotFoundException("Se requiere al menos un docente para crear un examen.");
         }
 
-        validarFechaExamen(createExamenDto.getFecha(), asignatura);
+        LocalDateTime fechaExamen = LocalDateTime.parse(createExamenDto.getFecha());
+
+        validarFechaExamen(fechaExamen, asignatura);
 
         Examen examen = crearExamen(createExamenDto, asignatura, docentes);
         examenRepository.save(examen);
@@ -90,8 +94,11 @@ public class ExamenServiceImpl implements ExamenService {
     }
 
     private Examen crearExamen(CreateExamenDTO createExamenDto, Asignatura asignatura, List<Docente> docentes) {
+
+        LocalDateTime fechaExamen = LocalDateTime.parse(createExamenDto.getFecha());
+
         Examen examen = new Examen();
-        examen.setFecha(createExamenDto.getFecha().withSecond(0).withNano(0));
+        examen.setFecha(fechaExamen.withSecond(0).withNano(0));
         examen.setDiasPrevInsc(createExamenDto.getDiasPrevInsc() != null ? createExamenDto.getDiasPrevInsc() : DIAS_PREV_INSC_DEFAULT);
         examen.setAsignatura(asignatura);
         examen.setDocentes(docentes);
@@ -99,9 +106,12 @@ public class ExamenServiceImpl implements ExamenService {
     }
 
     private boolean isFechaDentroDePeriodo(LocalDateTime fechaExamen, List<PeriodoExamenDTO> periodosExamen) {
-        return periodosExamen.stream().anyMatch(periodoExamen ->
-                (fechaExamen.isAfter(periodoExamen.getFechaInicio()) || fechaExamen.isEqual(periodoExamen.getFechaInicio())) &&
-                        (fechaExamen.isBefore(periodoExamen.getFechaFin()) || fechaExamen.isEqual(periodoExamen.getFechaFin())));
+        return periodosExamen.stream().anyMatch(periodoExamen -> {
+            LocalDateTime fechaInicio = LocalDateTime.parse(periodoExamen.getFechaInicio());
+            LocalDateTime fechaFin = LocalDateTime.parse(periodoExamen.getFechaFin());
+            return (fechaExamen.isAfter(fechaInicio) || fechaExamen.isEqual(fechaInicio)) &&
+                    (fechaExamen.isBefore(fechaFin) || fechaExamen.isEqual(fechaFin));
+        });
     }
 
     @Override
@@ -173,5 +183,14 @@ public class ExamenServiceImpl implements ExamenService {
         return false;
     }
 
+    @Override
+    public List<InscripcionExamenDTO> listarInscriptosExamen(Long id){
+        Examen examen = examenRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Examen no encontrado."));
+        return examen.getInscripciones()
+                .stream()
+                .map(inscripcion -> new InscripcionExamenDTO(inscripcion))
+                .toList();
+    }
 
 }

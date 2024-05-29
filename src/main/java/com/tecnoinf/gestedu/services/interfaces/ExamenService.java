@@ -5,7 +5,10 @@ import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.CreateInscripcionExamenDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenDTO;
 
+import java.util.List;
+
 public interface ExamenService {
     ExamenDTO altaExamen(CreateExamenDTO createExamenDto);
     InscripcionExamenDTO inscribirseExamen(CreateInscripcionExamenDTO inscripcionExamenDto);
+    List<InscripcionExamenDTO> listarInscriptosExamen(Long id);
 }
