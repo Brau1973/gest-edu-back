@@ -241,6 +241,12 @@ public class GestionEducativaOnlineApplication {
 				inscripcionCurso1.setCalificacion(CalificacionCurso.AEXAMEN);
 				inscripcionCursoRepository.save(inscripcionCurso1);
 
+				InscripcionCurso inscripcionCurso2 = new InscripcionCurso();
+				inscripcionCurso2.setEstudiante(estudiante3);
+				inscripcionCurso2.setCurso(curso1);
+				inscripcionCurso2.setCalificacion(CalificacionCurso.AEXAMEN);
+				inscripcionCursoRepository.save(inscripcionCurso2);
+
 				//----- PERIODO EXAMEN -----
 				PeriodoExamen periodoExamen1 = new PeriodoExamen();
 				periodoExamen1.setFechaInicio(LocalDateTime.now().plusDays(5));

@@ -16,11 +16,12 @@ public class InscripcionExamenDTO {
     private Long id;
     private UsuarioDTO estudiante;
     private ExamenDTO examen;
-    private LocalDateTime fechaInscripcion;
+    private String fechaInscripcion;
 
     public InscripcionExamenDTO(InscripcionExamen inscripcionExamen) {
         this.id = inscripcionExamen.getId();
         this.estudiante = new UsuarioDTO(inscripcionExamen.getEstudiante());
         this.examen = new ExamenDTO(inscripcionExamen.getExamen());
+        this.fechaInscripcion = inscripcionExamen.getFechaInscripcion().toString();
     }
 }

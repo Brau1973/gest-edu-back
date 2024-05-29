@@ -12,6 +12,7 @@ import com.tecnoinf.gestedu.services.implementations.ExamenServiceImpl;
 import com.tecnoinf.gestedu.services.interfaces.CarreraService;
 import com.tecnoinf.gestedu.services.interfaces.PeriodoExamenService;
 import com.tecnoinf.gestedu.exceptions.*;
+import net.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -68,9 +70,13 @@ public class ExamenServiceImplTest {
 
     @Test
     public void testAltaExamen() {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+
         CreateExamenDTO createExamenDto = new CreateExamenDTO();
         createExamenDto.setAsignaturaId(1L);
-        createExamenDto.setFecha(LocalDateTime.now().plusDays(3));
+        LocalDateTime fecha = LocalDateTime.now().plusDays(3);
+        createExamenDto.setFecha(fecha.format(formatter));
         createExamenDto.setDiasPrevInsc(5);
         Long[] docenteIds = new Long[1];
         docenteIds[0] = 1L;
@@ -82,8 +88,8 @@ public class ExamenServiceImplTest {
         PeriodoExamen periodoExamen = new PeriodoExamen();
         periodoExamen.setId(1L);
         periodoExamen.setCarrera(carrera);
-        periodoExamen.setFechaInicio(LocalDateTime.now());
-        periodoExamen.setFechaFin(LocalDateTime.now().plusDays(5));
+        periodoExamen.setFechaInicio(LocalDateTime.parse(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
+        periodoExamen.setFechaFin(LocalDateTime.parse(LocalDateTime.now().plusDays(5).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
 
         Asignatura asignatura = new Asignatura();
         asignatura.setId(1L);
@@ -93,10 +99,7 @@ public class ExamenServiceImplTest {
         docente.setId(1L);
 
         List<PeriodoExamenDTO> periodosExamen = new ArrayList<>();
-        PeriodoExamenDTO periodoExamenDTO = new PeriodoExamenDTO();
-        periodoExamenDTO.setId(1L);
-        periodoExamenDTO.setFechaInicio(LocalDateTime.now());
-        periodoExamenDTO.setFechaFin(LocalDateTime.now().plusDays(5));
+        PeriodoExamenDTO periodoExamenDTO = new PeriodoExamenDTO(periodoExamen);
         periodosExamen.add(periodoExamenDTO);
 
         Page<PeriodoExamenDTO> page = new PageImpl<>(periodosExamen);
