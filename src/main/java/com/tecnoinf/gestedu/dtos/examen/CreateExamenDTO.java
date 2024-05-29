@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateExamenDTO {
-    private LocalDateTime fecha;
+    private String fecha; //fecha y hora 2024-05-30T19:00
     private Integer diasPrevInsc;
     private Long asignaturaId;
     private Long[] docenteIds;

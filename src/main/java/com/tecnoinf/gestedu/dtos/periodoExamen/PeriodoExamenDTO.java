@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PeriodoExamenDTO {
     private Long id;
-    private String fechaInicio;
+    private String fechaInicio; //fecha 2024-05-30
     private String fechaFin;
     private Long carreraid;
 
@@ -22,7 +22,5 @@ public class PeriodoExamenDTO {
         this.fechaInicio = periodoExamen.getFechaInicio().toString();
         this.fechaFin = periodoExamen.getFechaFin().toString();
         this.carreraid = periodoExamen.getCarrera().getId();
-        System.out.println("DEVUELVE FECHA INICIO " + fechaInicio);
-        System.out.println("DEVUELVE FECHA FIN " + fechaInicio);
     }
 }
