@@ -8,6 +8,8 @@ import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenDTO;
 import com.tecnoinf.gestedu.services.interfaces.ExamenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,5 +54,12 @@ public class ExamenController {
     public ResponseEntity<List<InscripcionExamenDTO>> getEstudiantesInscriptos(@PathVariable Long id) {
         List<InscripcionExamenDTO> inscripciones = examenService.listarInscriptosExamen(id);
         return ResponseEntity.ok().body(inscripciones);
+    }
+
+    @Operation(summary = "Listar examenes pendientes de calificar")
+    @GetMapping("/examenes-pendientes")
+    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    public ResponseEntity<Page<ExamenDTO>> listarExamenesPendientes(Pageable pageable) {
+        return new ResponseEntity<>(examenService.listarExamenesPendientes(pageable), HttpStatus.OK);
     }
 }
