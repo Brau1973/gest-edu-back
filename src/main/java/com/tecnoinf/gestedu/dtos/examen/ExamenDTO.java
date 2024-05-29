@@ -18,14 +18,14 @@ import java.util.List;
 @NoArgsConstructor
 public class ExamenDTO {
     private Long id;
-    private LocalDateTime fecha;
+    private String fecha;
     private Integer diasPrevInsc;
     private AsignaturaDTO asignatura;
     private List<DocenteDTO> docentes;
 
     public ExamenDTO(Examen examen) {
         this.id = examen.getId();
-        this.fecha = examen.getFecha();
+        this.fecha = examen.getFecha().toString();
         this.diasPrevInsc = examen.getDiasPrevInsc();
         this.asignatura = new AsignaturaDTO(examen.getAsignatura());
 

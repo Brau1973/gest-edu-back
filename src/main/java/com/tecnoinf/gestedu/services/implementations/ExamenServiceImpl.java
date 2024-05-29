@@ -65,7 +65,9 @@ public class ExamenServiceImpl implements ExamenService {
             throw new ResourceNotFoundException("Se requiere al menos un docente para crear un examen.");
         }
 
-        validarFechaExamen(createExamenDto.getFecha(), asignatura);
+        LocalDateTime fechaExamen = LocalDateTime.parse(createExamenDto.getFecha());
+
+        validarFechaExamen(fechaExamen, asignatura);
 
         Examen examen = crearExamen(createExamenDto, asignatura, docentes);
         examenRepository.save(examen);
@@ -92,27 +94,21 @@ public class ExamenServiceImpl implements ExamenService {
     }
 
     private Examen crearExamen(CreateExamenDTO createExamenDto, Asignatura asignatura, List<Docente> docentes) {
+
+        LocalDateTime fechaExamen = LocalDateTime.parse(createExamenDto.getFecha());
+
         Examen examen = new Examen();
-        examen.setFecha(createExamenDto.getFecha().withSecond(0).withNano(0));
+        examen.setFecha(fechaExamen.withSecond(0).withNano(0));
         examen.setDiasPrevInsc(createExamenDto.getDiasPrevInsc() != null ? createExamenDto.getDiasPrevInsc() : DIAS_PREV_INSC_DEFAULT);
         examen.setAsignatura(asignatura);
         examen.setDocentes(docentes);
         return examen;
     }
 
-//    private boolean isFechaDentroDePeriodo(LocalDateTime fechaExamen, List<PeriodoExamenDTO> periodosExamen) {
-//        return periodosExamen.stream().anyMatch(periodoExamen ->
-//                (fechaExamen.isAfter(periodoExamen.getFechaInicio()) || fechaExamen.isEqual(periodoExamen.getFechaInicio())) &&
-//                        (fechaExamen.isBefore(periodoExamen.getFechaFin()) || fechaExamen.isEqual(periodoExamen.getFechaFin())));
-//    }
-
     private boolean isFechaDentroDePeriodo(LocalDateTime fechaExamen, List<PeriodoExamenDTO> periodosExamen) {
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
         return periodosExamen.stream().anyMatch(periodoExamen -> {
-            LocalDate fechaInicioDate = LocalDate.parse(periodoExamen.getFechaInicio(), formatter);
-            LocalDate fechaFinDate = LocalDate.parse(periodoExamen.getFechaFin(), formatter);
-            LocalDateTime fechaInicio = fechaInicioDate.atStartOfDay();
-            LocalDateTime fechaFin = fechaFinDate.atTime(23, 59, 59, 999999999);
+            LocalDateTime fechaInicio = LocalDateTime.parse(periodoExamen.getFechaInicio());
+            LocalDateTime fechaFin = LocalDateTime.parse(periodoExamen.getFechaFin());
             return (fechaExamen.isAfter(fechaInicio) || fechaExamen.isEqual(fechaInicio)) &&
                     (fechaExamen.isBefore(fechaFin) || fechaExamen.isEqual(fechaFin));
         });
