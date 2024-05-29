@@ -257,6 +257,22 @@ public class GestionEducativaOnlineApplication {
 				examen1.setDocentes(new ArrayList<>());
 				examen1.getDocentes().add(docenteRepository.findById(1L).get());
 				examenRepository.save(examen1);
+
+				Examen examen2 = new Examen();
+				examen2.setFecha(LocalDateTime.now().minusDays(30));
+				examen2.setDiasPrevInsc(20);
+				examen2.setEstado(Estado.FINALIZADO);
+				examen2.setAsignatura(asignaturaRepository.findById(1L).get());
+				examen2.setDocentes(new ArrayList<>());
+				examen2.getDocentes().add(docenteRepository.findById(1L).get());
+				examenRepository.save(examen2);
+
+				//----- INSCRIPCIONEXAMEN -----
+//				InscripcionExamen inscripcionExamen1 = new InscripcionExamen();
+//				inscripcionExamen1.setEstudiante(estudiante2);
+//				inscripcionExamen1.setExamen(examen2);
+//				inscripcionExamen1.setCalificacion(CalificacionExamen.APROBADO);
+//				inscripcionExamenRepository.save(inscripcionExamen1);
 			}
 		};
 	}

@@ -151,13 +151,13 @@ public class ExamenServiceImpl implements ExamenService {
     }
 
     private boolean isEstudianteAprobado(Asignatura asignatura, Usuario usuario){
-        List<InscripcionExamen> examenesInscripto =  inscripcionExamenRepository.findAllByEstudianteIdAndExamenAsignaturaId(asignatura.getId(),usuario.getId());
+        List<InscripcionExamen> examenesInscripto =  inscripcionExamenRepository.findAllByEstudianteIdAndExamenAsignaturaId(usuario.getId(), asignatura.getId());
         for(InscripcionExamen inscripcion : examenesInscripto){
             if(inscripcion.getCalificacion() == CalificacionExamen.APROBADO){
                 return true;
             }
         }
-        List<InscripcionCurso> cursosInscripto =  inscripcionCursoRepository.findAllByEstudianteIdAndCursoAsignaturaId(asignatura.getId(),usuario.getId());
+        List<InscripcionCurso> cursosInscripto =  inscripcionCursoRepository.findByEstudianteIdAndCursoAsignaturaId(usuario.getId(), asignatura.getId());
         for(InscripcionCurso inscripcion : cursosInscripto){
             if(inscripcion.getCalificacion().equals(CalificacionCurso.EXONERADO)){
                 return true;
@@ -167,10 +167,8 @@ public class ExamenServiceImpl implements ExamenService {
     }
 
     private boolean isEstudianteAExamen(Asignatura asignatura, Usuario usuario){
-        List<InscripcionCurso> cursosInscripto =  inscripcionCursoRepository.findAllByEstudianteIdAndCursoAsignaturaId(asignatura.getId(),usuario.getId());
-        System.out.println("----- ESTUDIANTE " + usuario.getId() + " ----- "+ usuario.getEmail());
+        List<InscripcionCurso> cursosInscripto =  inscripcionCursoRepository.findByEstudianteIdAndCursoAsignaturaId(usuario.getId(), asignatura.getId());
         for(InscripcionCurso inscripcion : cursosInscripto){
-            System.out.println("----- ESTUDIANTE calif " + inscripcion.getCalificacion() + " ----- "+ inscripcion.getCurso().getAsignatura().getNombre());
             if(inscripcion.getCalificacion().equals(CalificacionCurso.AEXAMEN)){
                 return true;
             }
