@@ -35,7 +35,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             AsignaturaPreviaExistenteException.class,
             CicloEnAsignaturasException.class,
             FechaException.class,
-            PeriodoInscripcionExeption.class
+            PeriodoInscripcionExeption.class,
+            InscripcionExamenException.class
             })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Map<String, Object>> handleBadRequest(RuntimeException ex) {

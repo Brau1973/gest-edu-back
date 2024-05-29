@@ -1,7 +1,5 @@
 package com.tecnoinf.gestedu.controllers;
 
-import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
-import com.tecnoinf.gestedu.dtos.asignatura.CreateAsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.examen.CreateExamenDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.CreateInscripcionExamenDTO;
