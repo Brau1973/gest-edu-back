@@ -16,7 +16,9 @@ import com.tecnoinf.gestedu.services.interfaces.PeriodoExamenService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -98,10 +100,22 @@ public class ExamenServiceImpl implements ExamenService {
         return examen;
     }
 
+//    private boolean isFechaDentroDePeriodo(LocalDateTime fechaExamen, List<PeriodoExamenDTO> periodosExamen) {
+//        return periodosExamen.stream().anyMatch(periodoExamen ->
+//                (fechaExamen.isAfter(periodoExamen.getFechaInicio()) || fechaExamen.isEqual(periodoExamen.getFechaInicio())) &&
+//                        (fechaExamen.isBefore(periodoExamen.getFechaFin()) || fechaExamen.isEqual(periodoExamen.getFechaFin())));
+//    }
+
     private boolean isFechaDentroDePeriodo(LocalDateTime fechaExamen, List<PeriodoExamenDTO> periodosExamen) {
-        return periodosExamen.stream().anyMatch(periodoExamen ->
-                (fechaExamen.isAfter(periodoExamen.getFechaInicio()) || fechaExamen.isEqual(periodoExamen.getFechaInicio())) &&
-                        (fechaExamen.isBefore(periodoExamen.getFechaFin()) || fechaExamen.isEqual(periodoExamen.getFechaFin())));
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+        return periodosExamen.stream().anyMatch(periodoExamen -> {
+            LocalDate fechaInicioDate = LocalDate.parse(periodoExamen.getFechaInicio(), formatter);
+            LocalDate fechaFinDate = LocalDate.parse(periodoExamen.getFechaFin(), formatter);
+            LocalDateTime fechaInicio = fechaInicioDate.atStartOfDay();
+            LocalDateTime fechaFin = fechaFinDate.atTime(23, 59, 59, 999999999);
+            return (fechaExamen.isAfter(fechaInicio) || fechaExamen.isEqual(fechaInicio)) &&
+                    (fechaExamen.isBefore(fechaFin) || fechaExamen.isEqual(fechaFin));
+        });
     }
 
     @Override
