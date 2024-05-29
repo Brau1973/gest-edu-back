@@ -2,6 +2,7 @@ package com.tecnoinf.gestedu.controllers;
 
 import com.tecnoinf.gestedu.dtos.examen.CreateExamenDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
+import com.tecnoinf.gestedu.dtos.inscripcionCarrera.InscripcionCarreraDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.CreateInscripcionExamenDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenDTO;
 import com.tecnoinf.gestedu.services.interfaces.ExamenService;
@@ -9,12 +10,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/examenes")
@@ -46,5 +45,12 @@ public class ExamenController {
         InscripcionExamenDTO createdExamen = examenService.inscribirseExamen(inscripcionExamenDto);
 
         return ResponseEntity.ok().body(createdExamen);
+    }
+
+    @Operation(summary = "Listar estudiantes inscriptos a un examen")
+    @GetMapping("/{id}/estudiantes-inscriptos")
+    public ResponseEntity<List<InscripcionExamenDTO>> getEstudiantesInscriptos(@PathVariable Long id) {
+        List<InscripcionExamenDTO> inscripciones = examenService.listarInscriptosExamen(id);
+        return ResponseEntity.ok().body(inscripciones);
     }
 }
