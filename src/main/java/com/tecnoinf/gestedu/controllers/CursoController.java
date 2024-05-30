@@ -36,6 +36,7 @@ public class CursoController {
     @Operation(summary = "Registrar Curso de Asignatura")
     @PostMapping("/{cursoId}/horarios")
     //PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+
     public ResponseEntity<HorarioDTO> addHorarioToCurso(@PathVariable Long cursoId, @RequestBody HorarioDTO nuevoHorario) {
         HorarioDTO horario = cursoService.addHorarioToCurso(cursoId, nuevoHorario);
         return ResponseEntity.ok(horario);
@@ -53,5 +54,9 @@ public class CursoController {
     public ResponseEntity<CursoDTO> getCursoById(@PathVariable Long cursoId){
         CursoDTO curso = cursoService.getCursoPorId(cursoId);
         return  ResponseEntity.ok(curso);
+
+    public ResponseEntity<CursoDTO> addHorarioToCurso(@PathVariable Long cursoId, @RequestBody HorarioDTO nuevoHorario) {
+        CursoDTO curso = cursoService.addHorarioToCurso(cursoId, nuevoHorario);
+        return ResponseEntity.ok(curso);
     }
 }

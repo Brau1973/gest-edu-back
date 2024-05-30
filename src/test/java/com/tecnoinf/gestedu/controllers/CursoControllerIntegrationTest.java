@@ -136,6 +136,7 @@ public class CursoControllerIntegrationTest {
         curso.setEstado(Estado.ACTIVO);
         curso.setDiasPrevInsc(30);
         curso = cursoRepository.save(curso);
+
         HorarioDTO horarioDTO = new HorarioDTO();
         horarioDTO.setDia(DiaSemana.LUNES);
         horarioDTO.setHoraInicio(LocalTime.of(9, 0));
