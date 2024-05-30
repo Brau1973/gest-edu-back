@@ -87,7 +87,7 @@ public class CursoServiceImpl implements CursoService {
     }
 
     @Override
-    public CursoDTO addHorarioToCurso(Long cursoId, HorarioDTO nuevoHorario) {
+    public HorarioDTO addHorarioToCurso(Long cursoId, HorarioDTO nuevoHorario) {
         Curso curso = cursoRepository.findById(cursoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Curso not found with id " + cursoId));
         List<Horario> horariosEnSemestre = horarioRepository.findHorariosBySemestreAndDia(curso.getAsignatura().getSemestrePlanEstudio(), nuevoHorario.getDia());
@@ -104,6 +104,6 @@ public class CursoServiceImpl implements CursoService {
         horarioRepository.save(horario);
         cursoRepository.save(curso);
 
-        return modelMapper.map(curso, CursoDTO.class);
+        return modelMapper.map(horario, HorarioDTO.class);
     }
 }

@@ -5,5 +5,5 @@ import com.tecnoinf.gestedu.dtos.curso.HorarioDTO;
 
 public interface CursoService {
     CursoDTO createCurso(CursoDTO nuevoCurso);
-    CursoDTO addHorarioToCurso(Long cursoId, HorarioDTO nuevoHorario);
+    HorarioDTO addHorarioToCurso(Long cursoId, HorarioDTO nuevoHorario);
 }

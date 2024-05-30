@@ -102,7 +102,7 @@ public class CursoControllerIntegrationTest {
         horarioDTO.setHoraFin(LocalTime.of(11, 0));
         horarioDTO.setCursoId(curso.getId());
 
-        mockMvc.perform(post("/cursos/horarios")
+        mockMvc.perform(post("/cursos/1/horarios")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(horarioDTO)))
                 .andExpect(status().isOk());
