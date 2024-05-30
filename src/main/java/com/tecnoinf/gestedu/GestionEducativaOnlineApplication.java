@@ -2,6 +2,10 @@ package com.tecnoinf.gestedu;
 
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.models.enums.*;
+import com.tecnoinf.gestedu.models.enums.Estado;
+import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCarrera;
+import com.tecnoinf.gestedu.models.enums.EstadoTramite;
+import com.tecnoinf.gestedu.models.enums.TipoTramite;
 import com.tecnoinf.gestedu.repositories.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -11,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -30,7 +35,7 @@ public class GestionEducativaOnlineApplication {
 									  InscripcionCarreraRepository inscripcionCarreraRepository, TramiteRepository tramiteRepository,
 									  DocenteRepository docenteRepository,  CursoRepository cursoRepository, PeriodoExamenRepository periodoExamenRepository ,
 									  ExamenRepository examenRepository, InscripcionCursoRepository inscripcionCursoRepository,
-									  InscripcionExamenRepository inscripcionExamenRepository){
+									  InscripcionExamenRepository inscripcionExamenRepository) {
 
 		return (args) -> {
 			if(ddlAuto.equals("create") || ddlAuto.equals("create-drop")) {
@@ -228,10 +233,16 @@ public class GestionEducativaOnlineApplication {
 				docente3.setDocumento("1234569");
 				docenteRepository.save(docente3);
 
-				//----- CURSOS ----- volver a hacer cuando este curso
+				//----- CURSOS -----
 				Curso curso1 = new Curso();
 				curso1.setEstado(Estado.FINALIZADO);
 				curso1.setAsignatura(asignaturaRepository.findById(1L).get());
+				LocalDate fechaInicio = LocalDate.of(2025, 3, 15); // Año, Mes (1-12), Día
+				curso1.setFechaInicio(fechaInicio);
+				LocalDate fechaFin = LocalDate.of(2025, 07, 15); // Año, Mes (1-12), Día
+				curso1.setFechaFin(fechaFin);
+				curso1.setDocente(docente1);
+				curso1.setDiasPrevInsc(30);
 				cursoRepository.save(curso1);
 
 				//----- INSCRIPCIONCURSO -----
@@ -279,6 +290,7 @@ public class GestionEducativaOnlineApplication {
 //				inscripcionExamen1.setExamen(examen2);
 //				inscripcionExamen1.setCalificacion(CalificacionExamen.APROBADO);
 //				inscripcionExamenRepository.save(inscripcionExamen1);
+
 			}
 		};
 	}
