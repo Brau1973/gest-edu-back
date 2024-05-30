@@ -235,7 +235,7 @@ public class GestionEducativaOnlineApplication {
 
 				//----- CURSOS -----
 				Curso curso1 = new Curso();
-				curso1.setEstado(Estado.FINALIZADO);
+				curso1.setEstado(Estado.ACTIVO);
 				curso1.setAsignatura(asignaturaRepository.findById(1L).get());
 				LocalDate fechaInicio = LocalDate.of(2025, 3, 15); // Año, Mes (1-12), Día
 				curso1.setFechaInicio(fechaInicio);
@@ -244,6 +244,17 @@ public class GestionEducativaOnlineApplication {
 				curso1.setDocente(docente1);
 				curso1.setDiasPrevInsc(30);
 				cursoRepository.save(curso1);
+
+				Curso curso2 = new Curso();
+				curso2.setEstado(Estado.FINALIZADO);
+				curso2.setAsignatura(asignaturaRepository.findById(1L).get());
+				fechaInicio = LocalDate.of(2023, 3, 15); // Año, Mes (1-12), Día
+				curso1.setFechaInicio(fechaInicio);
+				fechaFin = LocalDate.of(2023, 07, 15); // Año, Mes (1-12), Día
+				curso2.setFechaFin(fechaFin);
+				curso2.setDocente(docente1);
+				curso2.setDiasPrevInsc(30);
+				cursoRepository.save(curso2);
 
 				//----- INSCRIPCIONCURSO -----
 				InscripcionCurso inscripcionCurso1 = new InscripcionCurso();

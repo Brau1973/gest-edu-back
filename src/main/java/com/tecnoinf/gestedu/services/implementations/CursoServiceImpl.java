@@ -4,6 +4,7 @@ import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.curso.HorarioDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.models.*;
+import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.repositories.*;
 import com.tecnoinf.gestedu.services.interfaces.CursoService;
 import org.modelmapper.ModelMapper;
@@ -47,10 +48,16 @@ public class CursoServiceImpl implements CursoService {
         }
 
         if (cursoDTO.getFechaInicio().isBefore(cursoDTO.getFechaFin())) {
-            Curso curso = modelMapper.map(cursoDTO, Curso.class);
+            Curso curso = new Curso();
+            curso.setFechaInicio(cursoDTO.getFechaInicio());
+            curso.setFechaFin(cursoDTO.getFechaFin());
+            curso.setDiasPrevInsc(cursoDTO.getDiasPrevInsc());
+            curso.setEstado(Estado.ACTIVO);
+            curso.setAsignatura(asignatura);
+            /*Curso curso = modelMapper.map(cursoDTO, Curso.class);
             curso.setAsignatura(asignatura);
             curso.setId(null);
-
+            curso.setEstado(Estado.ACTIVO);*/
             Docente docente = docenteRepository.findById(cursoDTO.getDocenteId())
                     .orElseThrow(() -> new ResourceNotFoundException("Docente not found with id " + cursoDTO.getDocenteId()));
             curso.setDocente(docente);
@@ -61,16 +68,6 @@ public class CursoServiceImpl implements CursoService {
             throw new IllegalArgumentException("La fecha inicial debe ser anterior a la fecha final.");
         }
     }
-
-    private Curso obtenerCurso(Long cursoId) {
-        if (cursoId == null) {
-            throw new ResourceNotFoundException("Se requiere un curso al cual asignar un horario.");
-        }
-        return cursoRepository.findById(cursoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Curso no encontrado."));
-    }
-
-
 
     public boolean horarioSolapa(List<Horario> horarios, HorarioDTO nuevoHorario) {
         for (Horario horario : horarios) {
@@ -96,9 +93,6 @@ public class CursoServiceImpl implements CursoService {
         }
 
         Horario horario = modelMapper.map(nuevoHorario, Horario.class);
-        horario.setHoraInicio(nuevoHorario.getHoraInicio());
-        horario.setHoraFin(nuevoHorario.getHoraFin());
-        horario.setDia(nuevoHorario.getDia());
         horario.setCurso(curso);
         curso.getHorarios().add(horario);
         horarioRepository.save(horario);

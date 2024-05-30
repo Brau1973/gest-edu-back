@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CursoDTO {
-    private Long id;
+    //private Long id;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate fechaInicio;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -26,7 +26,7 @@ public class CursoDTO {
     private Long docenteId;
 
     public CursoDTO(Curso curso) {
-        this.id = curso.getId();
+        //this.id = curso.getId();
         this.fechaInicio = curso.getFechaInicio();
         this.fechaFin = curso.getFechaFin();
         this.diasPrevInsc = curso.getDiasPrevInsc();

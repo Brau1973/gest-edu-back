@@ -9,6 +9,7 @@ import com.tecnoinf.gestedu.models.Carrera;
 import com.tecnoinf.gestedu.models.Curso;
 import com.tecnoinf.gestedu.models.Docente;
 import com.tecnoinf.gestedu.models.enums.DiaSemana;
+import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.CursoRepository;
@@ -29,6 +30,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -60,53 +62,91 @@ public class CursoControllerIntegrationTest {
     private CursoRepository cursoRepository;
 
     @Autowired
+    private CarreraRepository carreraRepository;
+
+    @Autowired
     private CursoService cursoService;
 
     @Test
     @Transactional
     public void testRegisterCurso_Success() throws Exception {
+        // Crear carrera
+        Carrera carrera = new Carrera();
+        carrera.setNombre("Carrera Test");
+        carrera = carreraRepository.save(carrera);
+
+        // Crear asignatura
         Asignatura asignatura = new Asignatura();
         asignatura.setNombre("Asignatura Test");
+        asignatura.setCarrera(carrera);
         asignatura = asignaturaRepository.save(asignatura);
+
+        //Crear Docente
         Docente docente = new Docente();
         docente.setNombre("John");
-        docente.setApellido("Doe");
-        docente.setDocumento("12223334");
         docente = docenteRepository.save(docente);
-        CursoDTO cursoDTO = new CursoDTO();
 
+        CursoDTO cursoDTO = new CursoDTO();
         LocalDate fechaInicio = LocalDate.of(2025, 3, 15); // Año, Mes (1-12), Día
         cursoDTO.setFechaInicio(fechaInicio);
         LocalDate fechaFin = LocalDate.of(2025, 07, 15); // Año, Mes (1-12), Día
         cursoDTO.setFechaFin(fechaFin);
-
-        //cursoDTO.setSemestre(2);
         cursoDTO.setAsignaturaId(asignatura.getId());
         cursoDTO.setDocenteId(docente.getId());
 
         mockMvc.perform(post("/cursos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(cursoDTO)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.fechaInicio").value("2025-03-15"))
+                .andExpect(jsonPath("$.fechaFin").value("2025-07-15"))
+                .andExpect(jsonPath("$.asignaturaId").value(asignatura.getId()))
+                .andExpect(jsonPath("$.docenteId").value(docente.getId()));
     }
 
     @Test
     @Transactional
     public void testRegisterHorario_Curso_Success() throws Exception {
-        Curso curso = new Curso();
-        curso = cursoRepository.getReferenceById(1L);
+        // Crear carrera
+        Carrera carrera = new Carrera();
+        carrera.setNombre("Carrera Test");
+        carrera = carreraRepository.save(carrera);
 
+        // Crear asignatura
+        Asignatura asignatura = new Asignatura();
+        asignatura.setNombre("Asignatura Test 1");
+        asignatura.setCarrera(carrera);
+        asignatura = asignaturaRepository.save(asignatura);
+
+        //Crear Docente
+        Docente docente = new Docente();
+        docente.setNombre("John");
+        docente = docenteRepository.save(docente);
+
+        //Crear Curso
+        Curso curso = new Curso();
+        LocalDate fechaInicio = LocalDate.of(2025, 3, 15); // Año, Mes (1-12), Día
+        curso.setFechaInicio(fechaInicio);
+        LocalDate fechaFin = LocalDate.of(2025, 07, 15); // Año, Mes (1-12), Día
+        curso.setFechaFin(fechaFin);
+        curso.setAsignatura(asignatura);
+        curso.setDocente(docente);
+        curso.setEstado(Estado.ACTIVO);
+        curso.setDiasPrevInsc(30);
+        curso = cursoRepository.save(curso);
         HorarioDTO horarioDTO = new HorarioDTO();
         horarioDTO.setDia(DiaSemana.LUNES);
-        horarioDTO.setHoraInicio(LocalTime.of(9, 0));
+        horarioDTO.setHoraInicio(LocalTime.of(9, 0 ));
         horarioDTO.setHoraFin(LocalTime.of(11, 0));
-        horarioDTO.setCursoId(curso.getId());
+        //horarioDTO.setCursoId(curso.getId());
 
-        mockMvc.perform(post("/cursos/1/horarios")
+        mockMvc.perform(post("/cursos/" + curso.getId() + "/horarios")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(horarioDTO)))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.dia").value(DiaSemana.LUNES.name()))
+                .andExpect(jsonPath("$.horaInicio").value("09:00:00"))
+                .andExpect(jsonPath("$.horaFin").value("11:00:00"))
+                .andExpect(jsonPath("$.cursoId").value(curso.getId()));
     }
-
-
 }
