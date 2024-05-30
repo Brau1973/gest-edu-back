@@ -2,7 +2,7 @@ package com.tecnoinf.gestedu.controllers;
 
 import com.tecnoinf.gestedu.dtos.examen.CreateExamenDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
-import com.tecnoinf.gestedu.dtos.inscripcionCarrera.InscripcionCarreraDTO;
+import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenCalificacionDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.CreateInscripcionExamenDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenDTO;
 import com.tecnoinf.gestedu.services.interfaces.ExamenService;
@@ -49,6 +49,13 @@ public class ExamenController {
         return ResponseEntity.ok().body(createdExamen);
     }
 
+    @Operation(summary = "Listar examenes pendientes de calificar")
+    @GetMapping("/examenes-pendientes")
+    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    public ResponseEntity<Page<ExamenDTO>> listarExamenesPendientes(Pageable pageable) {
+        return new ResponseEntity<>(examenService.listarExamenesPendientes(pageable), HttpStatus.OK);
+    }
+
     @Operation(summary = "Listar estudiantes inscriptos a un examen")
     @GetMapping("/{id}/estudiantes-inscriptos")
     public ResponseEntity<List<InscripcionExamenDTO>> getEstudiantesInscriptos(@PathVariable Long id) {
@@ -56,10 +63,20 @@ public class ExamenController {
         return ResponseEntity.ok().body(inscripciones);
     }
 
-    @Operation(summary = "Listar examenes pendientes de calificar")
-    @GetMapping("/examenes-pendientes")
+    @Operation(summary = "Obtener calificaciones de examen")
+    @GetMapping("/{id}/calificar")
     //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
-    public ResponseEntity<Page<ExamenDTO>> listarExamenesPendientes(Pageable pageable) {
-        return new ResponseEntity<>(examenService.listarExamenesPendientes(pageable), HttpStatus.OK);
+    public ResponseEntity<List<InscripcionExamenCalificacionDTO>> getCalificacionesExamen(@PathVariable Long id) {
+        List<InscripcionExamenCalificacionDTO> calificacionesExamen = examenService.obtenerCalificaciones(id);
+        return ResponseEntity.ok().body(calificacionesExamen);
+    }
+
+
+    @Operation(summary = "Registrar calificaciones de examen")
+    @PutMapping("/{id}/calificar")
+    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    public ResponseEntity<List<InscripcionExamenCalificacionDTO>> registrarCalificaciones(@PathVariable Long id, @RequestBody List<InscripcionExamenCalificacionDTO> calificaciones) {
+        List<InscripcionExamenCalificacionDTO> calificacionesExamen = examenService.registrarCalificaciones(id, calificaciones);
+        return ResponseEntity.ok().body(calificacionesExamen);
     }
 }
