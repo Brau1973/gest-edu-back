@@ -46,6 +46,14 @@ public class EstudianteController {
         return ResponseEntity.ok(page);
     }
 
+    @Operation(summary = "Obtiene las carreras que tienen plan de estudio y que el estudiante está inscripto")
+    @GetMapping("/carreras-inscripto")
+    public ResponseEntity<Page<BasicInfoCarreraDTO>> getCarrerasInscripto(Principal principal, Pageable pageable) {
+        String email = principal.getName();
+        Page<BasicInfoCarreraDTO> page = estudianteService.getCarrerasInscripto(email, pageable);
+        return ResponseEntity.ok(page);
+    }
+
     @Operation(summary = "Buscar estudiante por ci")
     @GetMapping("/buscar/{ci}")
     //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")

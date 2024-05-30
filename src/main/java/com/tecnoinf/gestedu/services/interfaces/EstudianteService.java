@@ -12,4 +12,5 @@ public interface EstudianteService {
     Page<BasicInfoCarreraDTO> getCarrerasNoInscripto(String email, Pageable pageable);
     Page<BasicInfoUsuarioDTO> obtenerEstudiantes(Pageable pageable);
     Optional<BasicInfoUsuarioDTO> obtenerEstudiantePorCi(String ci);
+    Page<BasicInfoCarreraDTO> getCarrerasInscripto(String email, Pageable pageable);
 }
