@@ -1,12 +1,14 @@
 package com.tecnoinf.gestedu.services;
 
+import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
-import com.tecnoinf.gestedu.models.Carrera;
-import com.tecnoinf.gestedu.models.Estudiante;
+import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
+import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.EstudianteRepository;
+import com.tecnoinf.gestedu.repositories.InscripcionCursoRepository;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import com.tecnoinf.gestedu.services.implementations.EstudianteServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,14 +24,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 @Transactional
 public class EstudianteServiceImplTest {
@@ -42,6 +45,9 @@ public class EstudianteServiceImplTest {
 
     @Mock
     private UsuarioRepository usuarioRepository;
+
+    @Mock
+    private InscripcionCursoRepository inscripcionCursoRepository;
 
     @Mock
     private ModelMapper modelMapper;
@@ -143,6 +149,57 @@ public class EstudianteServiceImplTest {
         Page<BasicInfoCarreraDTO> result = estudianteService.getCarrerasNoInscripto(email, pageable);
         assertNotNull(result);
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testObtenerAsignaturasAExamen() {
+        // Datos de prueba
+        Long carreraId = 1L;
+        String email = "test@test.com";
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Estudiante estudiante = new Estudiante();
+        estudiante.setId(1L);
+        estudiante.setEmail(email);
+
+        Carrera carrera = new Carrera();
+        carrera.setId(carreraId);
+
+        Asignatura asignatura = new Asignatura();
+        asignatura.setId(1L);
+        asignatura.setCarrera(carrera);
+
+        Curso curso = new Curso();
+        curso.setId(1L);
+        curso.setAsignatura(asignatura);
+
+        InscripcionCurso inscripcionCurso = new InscripcionCurso();
+        inscripcionCurso.setId(1L);
+        inscripcionCurso.setCurso(curso);
+        inscripcionCurso.setEstudiante(estudiante);
+        inscripcionCurso.setCalificacion(CalificacionCurso.AEXAMEN);
+
+        List<InscripcionCurso> inscripciones = Arrays.asList(inscripcionCurso);
+
+        AsignaturaDTO asignaturaDTO = new AsignaturaDTO();
+        asignaturaDTO.setId(asignatura.getId());
+
+        // Configuración de los mocks
+        when(estudianteRepository.findByEmail(email)).thenReturn(Optional.of(estudiante));
+        when(inscripcionCursoRepository.findByCalificacionAndEstudianteId(CalificacionCurso.AEXAMEN, estudiante.getId())).thenReturn(inscripciones);
+        when(modelMapper.map(asignatura, AsignaturaDTO.class)).thenReturn(asignaturaDTO);
+
+        // Ejecución del servicio
+        Page<AsignaturaDTO> result = estudianteService.obtenerAsignaturasAExamen(carreraId, email, pageable);
+
+        // Verificaciones
+        assertNotNull(result);
+        assertEquals(1, result.getTotalElements());
+        assertEquals(asignaturaDTO.getId(), result.getContent().get(0).getId());
+
+        verify(estudianteRepository, times(1)).findByEmail(email);
+        verify(inscripcionCursoRepository, times(1)).findByCalificacionAndEstudianteId(CalificacionCurso.AEXAMEN, estudiante.getId());
+        verify(modelMapper, times(1)).map(asignatura, AsignaturaDTO.class);
     }
 
 }

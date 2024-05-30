@@ -1,14 +1,12 @@
 package com.tecnoinf.gestedu.services.implementations;
 
+import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
-import com.tecnoinf.gestedu.models.Carrera;
-import com.tecnoinf.gestedu.models.Estudiante;
-import com.tecnoinf.gestedu.models.Usuario;
-import com.tecnoinf.gestedu.repositories.CarreraRepository;
-import com.tecnoinf.gestedu.repositories.EstudianteRepository;
-import com.tecnoinf.gestedu.repositories.UsuarioRepository;
+import com.tecnoinf.gestedu.models.*;
+import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
+import com.tecnoinf.gestedu.repositories.*;
 import com.tecnoinf.gestedu.services.interfaces.EstudianteService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +28,19 @@ public class EstudianteServiceImpl implements EstudianteService {
     private final CarreraRepository carreraRepository;
     private final UsuarioRepository usuarioRepository;
     private final ModelMapper modelMapper;
+    private final AsignaturaRepository asignaturaRepository;
+    private final InscripcionCursoRepository inscripcionCursoRepository;
 
     @Autowired
-    public EstudianteServiceImpl(EstudianteRepository estudianteRepository ,CarreraRepository carreraRepository, UsuarioRepository usuarioRepository, ModelMapper modelMapper) {
+    public EstudianteServiceImpl(EstudianteRepository estudianteRepository , CarreraRepository carreraRepository,
+                                 UsuarioRepository usuarioRepository, ModelMapper modelMapper, AsignaturaRepository asignaturaRepository,
+                                 InscripcionCursoRepository inscripcionCursoRepository) {
         this.estudianteRepository = estudianteRepository;
         this.carreraRepository = carreraRepository;
         this.usuarioRepository = usuarioRepository;
         this.modelMapper = modelMapper;
+        this.asignaturaRepository = asignaturaRepository;
+        this.inscripcionCursoRepository = inscripcionCursoRepository;
     }
 
     @Override
@@ -87,5 +91,22 @@ public class EstudianteServiceImpl implements EstudianteService {
             return Optional.of(new BasicInfoUsuarioDTO(estudiante.get()));
         }
         return Optional.empty();
+    }
+
+    @Override
+    public Page<AsignaturaDTO> obtenerAsignaturasAExamen(Long carreraId, String email, Pageable pageable){
+        Optional<Usuario> estudiante = estudianteRepository.findByEmail(email);
+        if (estudiante.isEmpty()) {
+            throw new ResourceNotFoundException("Estudiante con email " + email + " no encontrado");
+        }
+        List<InscripcionCurso> inscripcionAExamen = inscripcionCursoRepository.findByCalificacionAndEstudianteId(CalificacionCurso.AEXAMEN, estudiante.get().getId());
+        List<AsignaturaDTO> asignaturaDTOs = new ArrayList<>();
+        for(InscripcionCurso inscripcionCurso : inscripcionAExamen){
+            if(inscripcionCurso.getCurso().getAsignatura().getCarrera().getId().equals(carreraId)){
+                AsignaturaDTO asignaturaDTO = modelMapper.map(inscripcionCurso.getCurso().getAsignatura(), AsignaturaDTO.class);
+                asignaturaDTOs.add(asignaturaDTO);
+            }
+        }
+        return new PageImpl<>(asignaturaDTOs, pageable, asignaturaDTOs.size());
     }
 }
