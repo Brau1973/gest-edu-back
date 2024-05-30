@@ -14,4 +14,7 @@ public interface CarreraRepository extends JpaRepository<Carrera, Long>, JpaSpec
 
     @Query("SELECT c FROM Carrera c WHERE c.id NOT IN (SELECT ic.carrera.id FROM InscripcionCarrera ic WHERE ic.estudiante.id = :estudianteId) AND c.existePlanEstudio = true")
     Page<Carrera> findCarrerasWithPlanEstudioAndEstudianteNotInscripto(@Param("estudianteId") Long estudianteId, Pageable pageable);
+
+    @Query("SELECT c FROM Carrera c WHERE c.id IN (SELECT ic.carrera.id FROM InscripcionCarrera ic WHERE ic.estudiante.id = :estudianteId) AND c.existePlanEstudio = true")
+    Page<Carrera> findCarrerasWithPlanEstudioAndEstudianteInscripto(@Param("estudianteId") Long estudianteId, Pageable pageable);
 }
