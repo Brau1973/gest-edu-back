@@ -71,7 +71,6 @@ public class ExamenController {
         return ResponseEntity.ok().body(calificacionesExamen);
     }
 
-
     @Operation(summary = "Registrar calificaciones de examen")
     @PutMapping("/{id}/calificar")
     //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
