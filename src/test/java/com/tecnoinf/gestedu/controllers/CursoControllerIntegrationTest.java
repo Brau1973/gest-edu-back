@@ -10,6 +10,11 @@ import com.tecnoinf.gestedu.models.enums.DiaSemana;
 import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCarrera;
 import com.tecnoinf.gestedu.repositories.*;
+import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
+import com.tecnoinf.gestedu.repositories.CarreraRepository;
+import com.tecnoinf.gestedu.repositories.CursoRepository;
+import com.tecnoinf.gestedu.repositories.DocenteRepository;
+import com.tecnoinf.gestedu.services.interfaces.AsignaturaService;
 import com.tecnoinf.gestedu.services.interfaces.CursoService;
 import jakarta.validation.constraints.Email;
 import org.junit.jupiter.api.Test;
@@ -27,7 +32,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -136,10 +140,9 @@ public class CursoControllerIntegrationTest {
         curso.setEstado(Estado.ACTIVO);
         curso.setDiasPrevInsc(30);
         curso = cursoRepository.save(curso);
-
         HorarioDTO horarioDTO = new HorarioDTO();
         horarioDTO.setDia(DiaSemana.LUNES);
-        horarioDTO.setHoraInicio(LocalTime.of(9, 0));
+        horarioDTO.setHoraInicio(LocalTime.of(9, 0 ));
         horarioDTO.setHoraFin(LocalTime.of(11, 0));
         //horarioDTO.setCursoId(curso.getId());
 
