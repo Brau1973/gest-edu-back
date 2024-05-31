@@ -7,8 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface InscripcionExamenRepository extends JpaRepository<InscripcionExamen, Long> {
+    Optional<InscripcionExamen> findByEstudianteIdAndExamenId(Long estudianteId, Long examenId);
     List<InscripcionExamen> findAllByEstudianteIdAndExamenAsignaturaId(Long estudianteId, Long asignaturaId);
 }
