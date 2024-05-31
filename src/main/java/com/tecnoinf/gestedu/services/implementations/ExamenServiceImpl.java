@@ -29,7 +29,6 @@ public class ExamenServiceImpl implements ExamenService {
 
     private static final int DIAS_PREV_INSC_DEFAULT = 10;
 
-    private final PeriodoExamenService periodoExamenService;
     private final CarreraService carreraService;
     private final AsignaturaRepository asignaturaRepository;
     private final DocenteRepository docenteRepository;
@@ -37,14 +36,11 @@ public class ExamenServiceImpl implements ExamenService {
     private final UsuarioRepository usuarioRepository;
     private final InscripcionExamenRepository inscripcionExamenRepository;
     private final InscripcionCursoRepository inscripcionCursoRepository;
-    private final EstudianteRepository estudianteRepository;
-    private final ExamenService examenService;
 
     public ExamenServiceImpl(PeriodoExamenService periodoExamenService, CarreraService carreraService,
                              AsignaturaRepository asignaturaRepository, DocenteRepository docenteRepository,
                              ExamenRepository examenRepository, UsuarioRepository usuarioRepository, InscripcionExamenRepository inscripcionExamenRepository,
-                             InscripcionCursoRepository inscripcionCursoRepository, EstudianteRepository estudianteRepository, ExamenService examenService){
-        this.periodoExamenService = periodoExamenService;
+                             InscripcionCursoRepository inscripcionCursoRepository, EstudianteRepository estudianteRepository){
         this.carreraService = carreraService;
         this.asignaturaRepository = asignaturaRepository;
         this.docenteRepository = docenteRepository;
@@ -52,8 +48,7 @@ public class ExamenServiceImpl implements ExamenService {
         this.usuarioRepository = usuarioRepository;
         this.inscripcionExamenRepository = inscripcionExamenRepository;
         this.inscripcionCursoRepository = inscripcionCursoRepository;
-        this.estudianteRepository = estudianteRepository;
-        this.examenService = examenService;
+
     }
 
     @Override
@@ -224,8 +219,17 @@ public class ExamenServiceImpl implements ExamenService {
         if (examen.getEstado() == Estado.FINALIZADO) {
             throw new CalificacionExamenExeption("El examen ya tiene calificaciones.");
         }
+        if (examen.getInscripciones().size() != calificaciones.size()) {
+            throw new CalificacionExamenExeption("No todos los estudiantes tienen una calificación.");
+        }
 
         for (InscripcionExamenCalificacionDTO calificacionDTO : calificaciones) {
+            if(calificacionDTO.getCalificacion() == null){
+                throw new CalificacionExamenExeption("La calificación no puede ser nula.");
+            }
+            if(calificacionDTO.getCalificacion() == CalificacionExamen.PENDIENTE){
+                throw new CalificacionExamenExeption("La calificación no puede ser PENDIENTE.");
+            }
             Optional<InscripcionExamen> inscripcionOpt = inscripcionExamenRepository.findByEstudianteIdAndExamenId(calificacionDTO.getEstudianteId(), id);
 
             if (!inscripcionOpt.isPresent()) {
@@ -236,6 +240,9 @@ public class ExamenServiceImpl implements ExamenService {
             inscripcion.setCalificacion(calificacionDTO.getCalificacion());
             inscripcionExamenRepository.save(inscripcion);
         }
+        examen.setEstado(Estado.FINALIZADO);
+        examenRepository.save(examen);
+
         return examen.getInscripciones()
                 .stream()
                 .map(InscripcionExamenCalificacionDTO::new)
