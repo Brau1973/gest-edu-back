@@ -8,6 +8,7 @@ import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenDTO;
 import com.tecnoinf.gestedu.services.interfaces.ExamenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ public class ExamenController {
 
     private final ExamenService examenService;
 
+    @Autowired
     public ExamenController(ExamenService examenService) {
         this.examenService = examenService;
     }
