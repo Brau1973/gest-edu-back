@@ -1,12 +1,15 @@
 package com.tecnoinf.gestedu.services;
 
 import com.tecnoinf.gestedu.dtos.examen.CreateExamenDTO;
+import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.CreateInscripcionExamenDTO;
+import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenCalificacionDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenDTO;
 import com.tecnoinf.gestedu.dtos.periodoExamen.PeriodoExamenDTO;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
 import com.tecnoinf.gestedu.models.enums.CalificacionExamen;
+import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.repositories.*;
 import com.tecnoinf.gestedu.services.implementations.ExamenServiceImpl;
 import com.tecnoinf.gestedu.services.interfaces.CarreraService;
@@ -21,14 +24,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -413,5 +414,176 @@ public class ExamenServiceImplTest {
         verify(inscripcionExamenRepository, never()).save(any(InscripcionExamen.class));
     }
 
+    @Test
+    public void testListarExamenesPendientes() {
+        Pageable pageable = PageRequest.of(0, 10);
+        LocalDateTime now = LocalDateTime.now();
 
+        Carrera carrera = new Carrera();
+        carrera.setId(1L);
+
+        Asignatura asignatura = new Asignatura();
+        asignatura.setId(1L);
+        asignatura.setCarrera(carrera);
+
+        Examen examen = new Examen();
+        examen.setId(1L);
+        examen.setAsignatura(asignatura);
+        examen.setFecha(now.minusDays(1));
+        examen.setEstado(Estado.ACTIVO);
+
+        List<Examen> examenes = Collections.singletonList(examen);
+        Page<Examen> pageExamenes = new PageImpl<>(examenes, pageable, examenes.size());
+
+        when(examenRepository.findAllByFechaBeforeAndEstado(any(LocalDateTime.class), eq(Estado.ACTIVO), eq(pageable))).thenReturn(pageExamenes);
+
+        Page<ExamenDTO> result = null;
+        try {
+            result = examenService.listarExamenesPendientes(pageable);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("El método lanzó una excepción: " + e.getMessage());
+        }
+
+        // Verificar los resultados
+        assertNotNull(result, "El resultado no debería ser nulo");
+        assertFalse(result.isEmpty(), "El resultado no debería estar vacío");
+        assertEquals(1, result.getTotalElements(), "Debería haber un examen pendiente");
+        verify(examenRepository, times(1)).findAllByFechaBeforeAndEstado(any(LocalDateTime.class), eq(Estado.ACTIVO), eq(pageable));
+    }
+
+    @Test
+    public void testListarInscriptosExamen() {
+        Long examenId = 1L;
+
+        Carrera carrera = new Carrera();
+        carrera.setId(1L);
+
+        Asignatura asignatura = new Asignatura();
+        asignatura.setId(1L);
+        asignatura.setCarrera(carrera);
+
+        Examen examen = new Examen();
+        examen.setId(examenId);
+        examen.setAsignatura(asignatura);
+        examen.setFecha(LocalDateTime.now().plusDays(5));
+        examen.setEstado(Estado.ACTIVO);
+
+        Estudiante estudiante = new Estudiante();
+        estudiante.setId(1L);
+
+        InscripcionExamen inscripcion = new InscripcionExamen();
+        inscripcion.setId(1L);
+        inscripcion.setExamen(examen);
+        inscripcion.setEstudiante(estudiante);
+
+        examen.setInscripciones(Collections.singletonList(inscripcion));
+
+        when(examenRepository.findById(examenId)).thenReturn(Optional.of(examen));
+
+        // Ejecutar el método del servicio una vez
+        List<InscripcionExamenDTO> result = examenService.listarInscriptosExamen(examenId);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(examenRepository, times(1)).findById(examenId);
+    }
+
+    @Test
+    public void testObtenerCalificaciones() {
+        Long examenId = 1L;
+
+        Carrera carrera = new Carrera();
+        carrera.setId(1L);
+
+        Asignatura asignatura = new Asignatura();
+        asignatura.setId(1L);
+        asignatura.setCarrera(carrera);
+
+        Examen examen = new Examen();
+        examen.setId(examenId);
+        examen.setAsignatura(asignatura);
+
+        Estudiante estudiante = new Estudiante();
+        estudiante.setId(1L);
+
+        InscripcionExamen inscripcion = new InscripcionExamen();
+        inscripcion.setId(1L);
+        inscripcion.setExamen(examen);
+        inscripcion.setEstudiante(estudiante);
+
+        examen.setInscripciones(Collections.singletonList(inscripcion));
+
+        when(examenRepository.findById(examenId)).thenReturn(Optional.of(examen));
+
+        List<InscripcionExamenCalificacionDTO> result = examenService.obtenerCalificaciones(examenId);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(examenRepository, times(1)).findById(examenId);
+    }
+
+    @Test
+    public void testRegistrarCalificaciones() {
+        Long examenId = 1L;
+
+        Carrera carrera = new Carrera();
+        carrera.setId(1L);
+
+        Asignatura asignatura = new Asignatura();
+        asignatura.setId(1L);
+        asignatura.setCarrera(carrera);
+
+        Examen examen = new Examen();
+        examen.setId(examenId);
+        examen.setAsignatura(asignatura);
+        examen.setEstado(Estado.ACTIVO);
+
+        Estudiante estudiante1 = new Estudiante();
+        estudiante1.setId(1L);
+
+        InscripcionExamen inscripcion1 = new InscripcionExamen();
+        inscripcion1.setId(1L);
+        inscripcion1.setEstudiante(estudiante1);
+        inscripcion1.setExamen(examen);
+
+        List<InscripcionExamen> inscripciones = Collections.singletonList(inscripcion1);
+        examen.setInscripciones(inscripciones);
+
+        InscripcionExamenCalificacionDTO calificacionDTO = new InscripcionExamenCalificacionDTO();
+        calificacionDTO.setEstudianteId(estudiante1.getId());
+        calificacionDTO.setCalificacion(CalificacionExamen.APROBADO);
+
+        List<InscripcionExamenCalificacionDTO> calificaciones = Collections.singletonList(calificacionDTO);
+
+        when(examenRepository.findById(examenId)).thenReturn(Optional.of(examen));
+        when(inscripcionExamenRepository.findByEstudianteIdAndExamenId(estudiante1.getId(), examenId)).thenReturn(Optional.of(inscripcion1));
+
+        List<InscripcionExamenCalificacionDTO> result = examenService.registrarCalificaciones(examenId, calificaciones);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(examenRepository, times(1)).findById(examenId);
+        verify(inscripcionExamenRepository, times(1)).findByEstudianteIdAndExamenId(estudiante1.getId(), examenId);
+        verify(inscripcionExamenRepository, times(1)).save(inscripcion1);
+    }
+
+    @Test
+    public void testRegistrarCalificaciones_ExamenNoEncontrado() {
+        Long examenId = 1L;
+        InscripcionExamenCalificacionDTO calificacionDTO = new InscripcionExamenCalificacionDTO();
+        calificacionDTO.setEstudianteId(1L);
+        calificacionDTO.setCalificacion(CalificacionExamen.APROBADO);
+
+        List<InscripcionExamenCalificacionDTO> calificaciones = Collections.singletonList(calificacionDTO);
+        when(examenRepository.findById(examenId)).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            examenService.registrarCalificaciones(examenId, calificaciones);
+        });
+
+        assertEquals("Examen no encontrado.", exception.getMessage());
+        verify(examenRepository, times(1)).findById(examenId);
+        verify(inscripcionExamenRepository, never()).findByEstudianteIdAndExamenId(anyLong(), anyLong());
+    }
 }
