@@ -5,6 +5,7 @@ import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCurso;
 import jakarta.persistence.*;
 import lombok.*;
 
+
 import java.time.LocalDateTime;
 
 @Data
