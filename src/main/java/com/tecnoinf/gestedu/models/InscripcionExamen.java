@@ -6,10 +6,10 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-
 @Entity
 @Table(name="inscripciones_examenes")
 public class InscripcionExamen {

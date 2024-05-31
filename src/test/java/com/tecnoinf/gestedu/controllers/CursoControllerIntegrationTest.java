@@ -64,6 +64,9 @@ public class CursoControllerIntegrationTest {
     @Autowired
     private CarreraRepository carreraRepository;
 
+    @Autowired
+    private CursoService cursoService;
+
     @Test
     @Transactional
     public void testRegisterCurso_Success() throws Exception {

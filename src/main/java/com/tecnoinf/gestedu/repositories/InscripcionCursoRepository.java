@@ -4,6 +4,7 @@ import com.tecnoinf.gestedu.models.Curso;
 import com.tecnoinf.gestedu.models.InscripcionCarrera;
 import com.tecnoinf.gestedu.models.InscripcionCurso;
 import com.tecnoinf.gestedu.models.InscripcionExamen;
+import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,4 +18,6 @@ public interface InscripcionCursoRepository extends JpaRepository<InscripcionCur
 
     @Query("SELECT ic FROM InscripcionCurso ic JOIN ic.estudiante e WHERE ic.estudiante.id = :estudianteId")
     List<InscripcionCurso> findInscripcionCursoEstudianteById(Long estudianteId);
+
+    List<InscripcionCurso> findByCalificacionAndEstudianteId(CalificacionCurso calificacionCurso, Long estudianteId);
 }

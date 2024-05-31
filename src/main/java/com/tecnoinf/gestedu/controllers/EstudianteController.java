@@ -1,6 +1,8 @@
 package com.tecnoinf.gestedu.controllers;
 
+import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
+import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.services.interfaces.EstudianteService;
 import com.tecnoinf.gestedu.models.Carrera;
@@ -64,5 +66,13 @@ public class EstudianteController {
         }else{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @Operation(summary = "Listar asignaturas de estudiante inscripto, con última calificación de curso A EXAMEN para una carrera")
+    @GetMapping("/{carreraId}/asignaturas-a-examen")
+    public ResponseEntity<Page<AsignaturaDTO>> getAsignaturasAExamen(@PathVariable Long carreraId, Principal principal, Pageable pageable) {
+        String email = principal.getName();
+        Page<AsignaturaDTO> page = estudianteService.obtenerAsignaturasAExamen(carreraId, email, pageable);
+        return ResponseEntity.ok(page);
     }
 }

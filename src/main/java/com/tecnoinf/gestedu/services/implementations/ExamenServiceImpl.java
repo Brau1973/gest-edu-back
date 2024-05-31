@@ -2,6 +2,7 @@ package com.tecnoinf.gestedu.services.implementations;
 
 import com.tecnoinf.gestedu.dtos.examen.CreateExamenDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
+import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenCalificacionDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.CreateInscripcionExamenDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenDTO;
 import com.tecnoinf.gestedu.dtos.periodoExamen.PeriodoExamenDTO;
@@ -9,16 +10,16 @@ import com.tecnoinf.gestedu.exceptions.*;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
 import com.tecnoinf.gestedu.models.enums.CalificacionExamen;
+import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.repositories.*;
 import com.tecnoinf.gestedu.services.interfaces.CarreraService;
 import com.tecnoinf.gestedu.services.interfaces.ExamenService;
 import com.tecnoinf.gestedu.services.interfaces.PeriodoExamenService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +29,6 @@ public class ExamenServiceImpl implements ExamenService {
 
     private static final int DIAS_PREV_INSC_DEFAULT = 10;
 
-    private final PeriodoExamenService periodoExamenService;
     private final CarreraService carreraService;
     private final AsignaturaRepository asignaturaRepository;
     private final DocenteRepository docenteRepository;
@@ -40,8 +40,7 @@ public class ExamenServiceImpl implements ExamenService {
     public ExamenServiceImpl(PeriodoExamenService periodoExamenService, CarreraService carreraService,
                              AsignaturaRepository asignaturaRepository, DocenteRepository docenteRepository,
                              ExamenRepository examenRepository, UsuarioRepository usuarioRepository, InscripcionExamenRepository inscripcionExamenRepository,
-                             InscripcionCursoRepository inscripcionCursoRepository){
-        this.periodoExamenService = periodoExamenService;
+                             InscripcionCursoRepository inscripcionCursoRepository, EstudianteRepository estudianteRepository){
         this.carreraService = carreraService;
         this.asignaturaRepository = asignaturaRepository;
         this.docenteRepository = docenteRepository;
@@ -49,6 +48,7 @@ public class ExamenServiceImpl implements ExamenService {
         this.usuarioRepository = usuarioRepository;
         this.inscripcionExamenRepository = inscripcionExamenRepository;
         this.inscripcionCursoRepository = inscripcionCursoRepository;
+
     }
 
     @Override
@@ -190,6 +190,65 @@ public class ExamenServiceImpl implements ExamenService {
         return examen.getInscripciones()
                 .stream()
                 .map(inscripcion -> new InscripcionExamenDTO(inscripcion))
+                .toList();
+    }
+
+    @Override
+    public Page<ExamenDTO> listarExamenesPendientes(Pageable pageable){
+        Page<Examen> examenes = examenRepository.findAllByFechaBeforeAndEstado(LocalDateTime.now(), Estado.ACTIVO, pageable);
+        if(examenes.isEmpty()){
+            throw new ResourceNotFoundException("No hay examenes pendientes.");
+        }
+        return examenes.map(ExamenDTO::new);
+    }
+
+    @Override
+    public List<InscripcionExamenCalificacionDTO> obtenerCalificaciones(Long id){
+        Examen examen = examenRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Examen no encontrado."));
+        return examen.getInscripciones()
+                .stream()
+                .map(InscripcionExamenCalificacionDTO::new)
+                .toList();
+    }
+
+    @Override
+    public List<InscripcionExamenCalificacionDTO> registrarCalificaciones(Long id, List<InscripcionExamenCalificacionDTO> calificaciones) {
+        Examen examen = examenRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Examen no encontrado."));
+        if (calificaciones.isEmpty()) {
+            throw new CalificacionExamenExeption("No se han enviado calificaciones para registrar.");
+        }
+        if (examen.getEstado() == Estado.FINALIZADO) {
+            throw new CalificacionExamenExeption("El examen ya tiene calificaciones.");
+        }
+        if (examen.getInscripciones().size() != calificaciones.size()) {
+            throw new CalificacionExamenExeption("No todos los estudiantes tienen una calificación.");
+        }
+
+        for (InscripcionExamenCalificacionDTO calificacionDTO : calificaciones) {
+            if(calificacionDTO.getCalificacion() == null){
+                throw new CalificacionExamenExeption("La calificación no puede ser nula.");
+            }
+            if(calificacionDTO.getCalificacion() == CalificacionExamen.PENDIENTE){
+                throw new CalificacionExamenExeption("La calificación no puede ser PENDIENTE.");
+            }
+            Optional<InscripcionExamen> inscripcionOpt = inscripcionExamenRepository.findByEstudianteIdAndExamenId(calificacionDTO.getEstudianteId(), id);
+
+            if (!inscripcionOpt.isPresent()) {
+                throw new ResourceNotFoundException("No se encontró la inscripción del estudiante id " + calificacionDTO.getEstudianteId());
+            }
+
+            InscripcionExamen inscripcion = inscripcionOpt.get();
+            inscripcion.setCalificacion(calificacionDTO.getCalificacion());
+            inscripcionExamenRepository.save(inscripcion);
+        }
+        examen.setEstado(Estado.FINALIZADO);
+        examenRepository.save(examen);
+
+        return examen.getInscripciones()
+                .stream()
+                .map(InscripcionExamenCalificacionDTO::new)
                 .toList();
     }
 
