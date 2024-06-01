@@ -202,9 +202,7 @@ public class InscripcionCursoControllerIntegrationTest {
 
         List<InscripcionCursoCalificacionDTO> inscripcionesCalificadas = new ArrayList<>();
         inscripcionesCalificadas.add(calificacion);
-
-        System.out.println(estudiante.toString() + calificacion.getEstudianteId());
-
+        
         mockMvc.perform(put("/inscripcionCurso/" + curso.getId() + "/calificar")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(inscripcionesCalificadas)))
