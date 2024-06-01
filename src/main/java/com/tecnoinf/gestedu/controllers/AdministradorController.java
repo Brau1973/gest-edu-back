@@ -1,7 +1,11 @@
 package com.tecnoinf.gestedu.controllers;
 
 import com.tecnoinf.gestedu.dtos.TipoUsuario;
+import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.dtos.usuario.CrearUsuarioDTO;
+import com.tecnoinf.gestedu.models.Coordinador;
+import com.tecnoinf.gestedu.models.Funcionario;
+import com.tecnoinf.gestedu.models.Usuario;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import com.tecnoinf.gestedu.services.implementations.UserDetailsServiceImpl;
 import com.tecnoinf.gestedu.services.implementations.UsuarioService;
@@ -17,6 +21,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/administrador")
@@ -44,9 +50,19 @@ public class AdministradorController {
     }
 
     @Operation(summary = "Desactivar cuenta usuario (coordinador/funcionario)")
-    //@PreAuthorize("hasAuthority('ROL_ADMINISTRADOR')")
     @PostMapping("/desactivarUsuario")
+    //@PreAuthorize("hasAuthority('ROL_ADMINISTRADOR')")
     public ResponseEntity<?> desactivarUsuario(@RequestBody Long id) {
-       return new ResponseEntity<>(usuarioService.desactivarCuentaUsuario(id), HttpStatus.OK);
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        if (usuario.isEmpty()) {
+            return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
+        }
+        Usuario user = usuario.get();
+        if (user instanceof Coordinador || user instanceof Funcionario) {
+            usuarioService.desactivarCuentaUsuario(id);
+            return new ResponseEntity<>(new BasicInfoUsuarioDTO(user), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("No puede desactivar este usuario.", HttpStatus.BAD_REQUEST);
+        }
     }
 }

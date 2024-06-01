@@ -64,7 +64,7 @@ public class UsuarioService {
         if(usuario.isPresent()){
             Usuario user = usuario.get();
             if (user instanceof Funcionario || user instanceof Administrador) {
-                user.setActivo(false);
+                user.setIsEnable(false);
                 usuarioRepository.save(user);
                 return new BasicInfoUsuarioDTO(user);
             }else{
