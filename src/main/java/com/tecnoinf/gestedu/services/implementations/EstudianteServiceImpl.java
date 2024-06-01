@@ -2,11 +2,13 @@ package com.tecnoinf.gestedu.services.implementations;
 
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
+import com.tecnoinf.gestedu.dtos.certificado.CertificadoDTO;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
 import com.tecnoinf.gestedu.repositories.*;
+import com.tecnoinf.gestedu.services.interfaces.CertificadoService;
 import com.tecnoinf.gestedu.services.interfaces.EstudianteService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +18,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,17 +34,22 @@ public class EstudianteServiceImpl implements EstudianteService {
     private final ModelMapper modelMapper;
     private final AsignaturaRepository asignaturaRepository;
     private final InscripcionCursoRepository inscripcionCursoRepository;
+    private final InscripcionCarreraRepository inscripcionCarreraRepository;
+    private final CertificadoService certificadoService;
 
     @Autowired
     public EstudianteServiceImpl(EstudianteRepository estudianteRepository , CarreraRepository carreraRepository,
                                  UsuarioRepository usuarioRepository, ModelMapper modelMapper, AsignaturaRepository asignaturaRepository,
-                                 InscripcionCursoRepository inscripcionCursoRepository) {
+                                 InscripcionCursoRepository inscripcionCursoRepository, InscripcionCarreraRepository inscripcionCarreraRepository,
+                                 CertificadoService certificadoService) {
         this.estudianteRepository = estudianteRepository;
         this.carreraRepository = carreraRepository;
         this.usuarioRepository = usuarioRepository;
         this.modelMapper = modelMapper;
         this.asignaturaRepository = asignaturaRepository;
         this.inscripcionCursoRepository = inscripcionCursoRepository;
+        this.inscripcionCarreraRepository = inscripcionCarreraRepository;
+        this.certificadoService = certificadoService;
     }
 
     @Override
@@ -108,5 +117,21 @@ public class EstudianteServiceImpl implements EstudianteService {
             }
         }
         return new PageImpl<>(asignaturaDTOs, pageable, asignaturaDTOs.size());
+    }
+
+    @Override
+    public CertificadoDTO solicitarCertificado(Long carreraId, String email){
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
+        if(usuario.isEmpty()) {
+            throw new ResourceNotFoundException("Usuario no encontrado");
+        }
+        if(!(usuario.get() instanceof Estudiante estudiante)){
+            throw new ResourceNotFoundException("El usuario no es un estudiante");
+        }
+        InscripcionCarrera inscripcionCarrera = inscripcionCarreraRepository.findByEstudianteIdAndCarreraId(estudiante.getId(), carreraId);
+        if(inscripcionCarrera == null){
+            throw new ResourceNotFoundException("El estudiante no esta inscripto en la carrera");
+        }
+        return certificadoService.generarCertificado(inscripcionCarrera.getCarrera().getNombre(), estudiante);
     }
 }
