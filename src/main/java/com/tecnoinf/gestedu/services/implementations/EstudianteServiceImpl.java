@@ -6,6 +6,7 @@ import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
+import com.tecnoinf.gestedu.models.enums.CalificacionExamen;
 import com.tecnoinf.gestedu.repositories.*;
 import com.tecnoinf.gestedu.services.interfaces.EstudianteService;
 import org.modelmapper.ModelMapper;
@@ -30,17 +31,19 @@ public class EstudianteServiceImpl implements EstudianteService {
     private final ModelMapper modelMapper;
     private final AsignaturaRepository asignaturaRepository;
     private final InscripcionCursoRepository inscripcionCursoRepository;
+    private final InscripcionExamenRepository inscripcionExamenRepository;
 
     @Autowired
     public EstudianteServiceImpl(EstudianteRepository estudianteRepository , CarreraRepository carreraRepository,
                                  UsuarioRepository usuarioRepository, ModelMapper modelMapper, AsignaturaRepository asignaturaRepository,
-                                 InscripcionCursoRepository inscripcionCursoRepository) {
+                                 InscripcionCursoRepository inscripcionCursoRepository, InscripcionExamenRepository inscripcionExamenRepository) {
         this.estudianteRepository = estudianteRepository;
         this.carreraRepository = carreraRepository;
         this.usuarioRepository = usuarioRepository;
         this.modelMapper = modelMapper;
         this.asignaturaRepository = asignaturaRepository;
         this.inscripcionCursoRepository = inscripcionCursoRepository;
+        this.inscripcionExamenRepository = inscripcionExamenRepository;
     }
 
     @Override
@@ -107,6 +110,27 @@ public class EstudianteServiceImpl implements EstudianteService {
                 asignaturaDTOs.add(asignaturaDTO);
             }
         }
+        return new PageImpl<>(asignaturaDTOs, pageable, asignaturaDTOs.size());
+    }
+
+    @Override
+    public Page<AsignaturaDTO> obtenerAsignaturasPendientes(Long carreraId, String name, Pageable pageable){
+        Optional<Usuario> estudiante = Optional.ofNullable(estudianteRepository.findByEmail(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Estudiante no encontrado")));
+        List<Asignatura> asignaturasCarrera = new ArrayList<>(asignaturaRepository.findByCarreraId(carreraId));
+        List<Asignatura> cursosAprobados = inscripcionCursoRepository.findByCalificacionAndEstudianteId(CalificacionCurso.EXONERADO, estudiante.get().getId() )
+                .stream()
+                .map(inscripcionCurso -> inscripcionCurso.getCurso().getAsignatura())
+                .collect(Collectors.toList());
+        asignaturasCarrera.removeAll(cursosAprobados);
+        List<Asignatura> examenesAprobados = inscripcionExamenRepository.findByCalificacionAndEstudianteId(CalificacionExamen.APROBADO, estudiante.get().getId())
+                .stream()
+                .map(inscripcionCurso -> inscripcionCurso.getExamen().getAsignatura())
+                .collect(Collectors.toList());
+        asignaturasCarrera.removeAll(examenesAprobados);
+        List<AsignaturaDTO> asignaturaDTOs = asignaturasCarrera.stream()
+                .map(asignatura -> modelMapper.map(asignatura, AsignaturaDTO.class))
+                .collect(Collectors.toList());
         return new PageImpl<>(asignaturaDTOs, pageable, asignaturaDTOs.size());
     }
 }
