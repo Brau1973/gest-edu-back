@@ -17,5 +17,5 @@ public interface ExamenService {
     Page<ExamenDTO> listarExamenesPendientes(Pageable pageable);
     List<InscripcionExamenCalificacionDTO> obtenerCalificaciones(Long id);
     List<InscripcionExamenCalificacionDTO> registrarCalificaciones(Long id, List<InscripcionExamenCalificacionDTO> calificaciones);
-
+    InscripcionExamenDTO darseDeBajaExamen(Long id, String name);
 }

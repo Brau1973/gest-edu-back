@@ -51,6 +51,21 @@ public class ExamenController {
         return ResponseEntity.ok().body(createdExamen);
     }
 
+    @Operation(summary = "Darse de baja de un examen")
+    @DeleteMapping("/{id}/baja")
+    //@PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
+    public ResponseEntity<InscripcionExamenDTO> darseDeBajaExamen(@PathVariable Long id, Principal principal) {
+        System.out.print("A" + principal.getName());
+        if(principal == null) {
+            System.out.print("B");
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        System.out.print("C");
+        InscripcionExamenDTO bajaExamen = examenService.darseDeBajaExamen(id, principal.getName());
+        System.out.print("D");
+        return ResponseEntity.ok().body(bajaExamen);
+    }
+
     @Operation(summary = "Listar examenes pendientes de calificar")
     @GetMapping("/examenes-pendientes")
     //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
