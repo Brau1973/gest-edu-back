@@ -2,6 +2,7 @@ package com.tecnoinf.gestedu.controllers;
 
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
+import com.tecnoinf.gestedu.dtos.certificado.CertificadoDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.services.interfaces.EstudianteService;
@@ -76,10 +77,10 @@ public class EstudianteController {
         return ResponseEntity.ok(page);
     }
 
-    @Operation(summary = "Listar asignaturas pendiente de aprobacion para finalizar carrera.")
-    @GetMapping("/{carreraId}/asignaturas-pendientes")
-    public ResponseEntity<Page<AsignaturaDTO>> getAsignaturasPendientes(@PathVariable Long carreraId, Principal principal, Pageable pageable) {
-        Page<AsignaturaDTO> page = estudianteService.obtenerAsignaturasPendientes(carreraId, principal.getName(), pageable);
-        return ResponseEntity.ok(page);
+    @Operation(summary = "Solicitar certificado de estudiante de una carrera")
+    @GetMapping("/{carreraId}/certificado")
+    public ResponseEntity<CertificadoDTO> solicitarCertificado(@PathVariable Long carreraId, Principal principal) {
+        CertificadoDTO certificado = estudianteService.solicitarCertificado(carreraId, principal.getName());
+        return ResponseEntity.ok(certificado);
     }
 }
