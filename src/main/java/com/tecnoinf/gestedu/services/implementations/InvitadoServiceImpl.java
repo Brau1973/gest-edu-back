@@ -3,6 +3,7 @@ package com.tecnoinf.gestedu.services.implementations;
 import com.tecnoinf.gestedu.dtos.EmailValuesDTO;
 import com.tecnoinf.gestedu.dtos.usuario.AuthLoginRequest;
 import com.tecnoinf.gestedu.dtos.usuario.AuthResponse;
+import com.tecnoinf.gestedu.models.Usuario;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import com.tecnoinf.gestedu.services.interfaces.InvitadoService;
 import com.tecnoinf.gestedu.util.JwtUtils;
@@ -77,7 +78,14 @@ public class InvitadoServiceImpl implements InvitadoService {
         if(userDetails == null){
             throw new BadCredentialsException("Usuario no encontrado");
         }
-
+        // Verificar si el usuario está activo
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
+        if(usuario.isPresent()){
+            Usuario user = usuario.get();
+            if (!user.getIsEnable()) {
+                throw new BadCredentialsException("El usuario está inactivo");
+            }
+        }
         if(!passwordEncoder.matches(password, userDetails.getPassword())){
             throw new BadCredentialsException("Contraseña incorrecta");
         }

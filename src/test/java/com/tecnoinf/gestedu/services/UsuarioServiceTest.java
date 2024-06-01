@@ -1,11 +1,13 @@
 package com.tecnoinf.gestedu.services;
 
+import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.dtos.usuario.UsuarioDTO;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import com.tecnoinf.gestedu.services.implementations.UsuarioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -104,4 +106,65 @@ class UsuarioServiceTest {
         assertNull(result);
         verify(usuarioRepository, times(1)).findByEmail("email@example.com");
     }
+
+    @Test
+    public void testDesactivarCuentaUsuario_Funcionario() {
+        Long usuarioId = 1L;
+        Funcionario funcionario = new Funcionario();
+        funcionario.setId(usuarioId);
+        funcionario.setIsEnable(true);
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(funcionario));
+
+        when(usuarioRepository.save(any(Usuario.class))).thenAnswer(i -> i.getArguments()[0]);
+
+        usuarioService.desactivarCuentaUsuario(usuarioId);
+
+        ArgumentCaptor<Usuario> argumentCaptor = ArgumentCaptor.forClass(Usuario.class);
+        verify(usuarioRepository).save(argumentCaptor.capture());
+
+        Usuario savedUsuario = argumentCaptor.getValue();
+
+        assertFalse(savedUsuario.getIsEnable());
+        verify(usuarioRepository, times(1)).findById(usuarioId);
+        verify(usuarioRepository, times(1)).save(any(Usuario.class));
+    }
+
+    @Test
+    public void testDesactivarCuentaUsuario_Administrador() {
+        Long usuarioId = 1L;
+        Administrador administrador = new Administrador();
+        administrador.setId(usuarioId);
+        administrador.setIsEnable(true);
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(administrador));
+
+        when(usuarioRepository.save(any(Usuario.class))).thenAnswer(i -> i.getArguments()[0]);
+
+        usuarioService.desactivarCuentaUsuario(usuarioId);
+
+        ArgumentCaptor<Usuario> argumentCaptor = ArgumentCaptor.forClass(Usuario.class);
+        verify(usuarioRepository).save(argumentCaptor.capture());
+
+        Usuario savedUsuario = argumentCaptor.getValue();
+
+        assertFalse(savedUsuario.getIsEnable());
+        verify(usuarioRepository, times(1)).findById(usuarioId);
+        verify(usuarioRepository, times(1)).save(any(Usuario.class));
+    }
+
+    @Test
+    public void testDesactivarCuentaUsuario_Otro() {
+        Long usuarioId = 1L;
+        Estudiante estudiante = new Estudiante();
+        estudiante.setId(usuarioId);
+        estudiante.setIsEnable(true);
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(estudiante));
+
+        usuarioService.desactivarCuentaUsuario(usuarioId);
+        verify(usuarioRepository, times(1)).findById(usuarioId);
+    }
+
+
 }
