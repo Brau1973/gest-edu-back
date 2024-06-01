@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.controllers;
 
+import com.tecnoinf.gestedu.dtos.examen.ActaExamenDTO;
 import com.tecnoinf.gestedu.dtos.examen.CreateExamenDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenCalificacionDTO;
@@ -76,6 +77,14 @@ public class ExamenController {
         return ResponseEntity.ok().body(inscripciones);
     }
 
+    @Operation(summary = "Generar acta de examen")
+    @GetMapping("/{id}/acta")
+    public ResponseEntity<ActaExamenDTO> getActaExamen(@PathVariable Long id) {
+        ActaExamenDTO actaExamen = examenService.generarActaExamen(id);
+        return ResponseEntity.ok().body(actaExamen);
+    }
+
+
     @Operation(summary = "Obtener calificaciones de examen")
     @GetMapping("/{id}/calificar")
     //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
@@ -91,4 +100,6 @@ public class ExamenController {
         List<InscripcionExamenCalificacionDTO> calificacionesExamen = examenService.registrarCalificaciones(id, calificaciones);
         return ResponseEntity.ok().body(calificacionesExamen);
     }
+
+
 }

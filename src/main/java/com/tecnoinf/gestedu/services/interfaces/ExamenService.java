@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.services.interfaces;
 
+import com.tecnoinf.gestedu.dtos.examen.ActaExamenDTO;
 import com.tecnoinf.gestedu.dtos.examen.CreateExamenDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenCalificacionDTO;
@@ -18,4 +19,5 @@ public interface ExamenService {
     List<InscripcionExamenCalificacionDTO> obtenerCalificaciones(Long id);
     List<InscripcionExamenCalificacionDTO> registrarCalificaciones(Long id, List<InscripcionExamenCalificacionDTO> calificaciones);
     InscripcionExamenDTO darseDeBajaExamen(Long id, String name);
+    ActaExamenDTO generarActaExamen(Long id);
 }

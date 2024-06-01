@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.services;
 
+import com.tecnoinf.gestedu.dtos.examen.ActaExamenDTO;
 import com.tecnoinf.gestedu.dtos.examen.CreateExamenDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.CreateInscripcionExamenDTO;
@@ -704,5 +705,72 @@ public class ExamenServiceImplTest {
         verify(examenRepository, times(1)).findById(examenId);
         verify(usuarioRepository, times(1)).findByEmail(email);
         verify(inscripcionExamenRepository, never()).findByEstudianteIdAndExamenId(anyLong(), anyLong());
+    }
+
+    @Test
+    public void testGenerarActaExamen() {
+        Long examenId = 1L;
+        LocalDateTime fecha = LocalDateTime.now();
+
+        Carrera carrera = new Carrera();
+        carrera.setId(1L);
+
+        Asignatura asignatura = new Asignatura();
+        asignatura.setId(1L);
+        asignatura.setCarrera(carrera);
+        asignatura.setNombre("Matemáticas");
+
+        Docente docente = new Docente();
+        docente.setId(1L);
+        docente.setNombre("Profesor X");
+
+        Estudiante estudiante = new Estudiante();
+        estudiante.setId(1L);
+        estudiante.setNombre("Estudiante Y");
+
+        Examen examen = new Examen();
+        examen.setId(examenId);
+        examen.setFecha(fecha);
+        examen.setAsignatura(asignatura);
+        examen.setDocentes(Collections.singletonList(docente));
+
+        InscripcionExamen inscripcion = new InscripcionExamen();
+        inscripcion.setId(1L);
+        inscripcion.setEstudiante(estudiante);
+        inscripcion.setExamen(examen);
+        examen.setInscripciones(Collections.singletonList(inscripcion));
+
+        // Verificación de que el examen se ha configurado correctamente
+        assertNotNull(examen);
+        assertEquals(examenId, examen.getId());
+
+        when(examenRepository.findById(examenId)).thenReturn(Optional.of(examen));
+
+        ActaExamenDTO result = examenService.generarActaExamen(examenId);
+
+        assertNotNull(result);
+        assertEquals(examenId, result.getId());
+        assertEquals(fecha.toString(), result.getFecha());
+        assertEquals("Matemáticas", result.getAsignatura().getNombre());
+        assertEquals(1, result.getDocentes().size());
+        assertEquals("Profesor X", result.getDocentes().get(0).getNombre());
+        assertEquals(1, result.getInscripciones().size());
+        assertEquals("Estudiante Y", result.getInscripciones().get(0).getEstudiante().getNombre());
+
+        verify(examenRepository, times(1)).findById(examenId);
+    }
+
+    @Test
+    public void testGenerarActaExamen_ExamenNoEncontrado() {
+        Long examenId = 1L;
+
+        when(examenRepository.findById(examenId)).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            examenService.generarActaExamen(examenId);
+        });
+
+        assertEquals("Examen no encontrado.", exception.getMessage());
+        verify(examenRepository, times(1)).findById(examenId);
     }
 }
