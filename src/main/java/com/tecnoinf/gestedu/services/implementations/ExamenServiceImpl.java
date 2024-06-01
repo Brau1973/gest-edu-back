@@ -252,4 +252,31 @@ public class ExamenServiceImpl implements ExamenService {
                 .toList();
     }
 
+    @Override
+    public InscripcionExamenDTO darseDeBajaExamen(Long id, String name){
+        Examen examen = examenRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Examen no encontrado."));
+        LocalDateTime hoy = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime fechaExamen = examen.getFecha().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        System.out.print("HOY "+ hoy);
+        System.out.print("FECHA EXAMEN "+ fechaExamen);
+        if(fechaExamen.isBefore(hoy)){
+            throw new BajaExamenException("El examen ya pasó, no puede darse de baja.");
+        }
+        if(fechaExamen.isEqual(hoy)){
+            throw new BajaExamenException("No puede darse de baja el mismo día del examen.");
+        }
+        System.out.print("2 ");
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(name);
+        if (usuario.isEmpty()) {
+            throw new ResourceNotFoundException("Usuario no encontrado.");
+        }
+        System.out.print("3 ");
+        Estudiante estudiante = (Estudiante) usuario.get();
+        InscripcionExamen inscripcion = inscripcionExamenRepository.findByEstudianteIdAndExamenId(estudiante.getId(), id)
+                .orElseThrow(() -> new ResourceNotFoundException("Inscripción no encontrada."));
+        inscripcionExamenRepository.delete(inscripcion);
+        System.out.print("4 ");
+        return new InscripcionExamenDTO(inscripcion);
+    }
 }

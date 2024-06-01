@@ -296,11 +296,17 @@ public class GestionEducativaOnlineApplication {
 				examenRepository.save(examen2);
 
 				//----- INSCRIPCIONEXAMEN -----
-//				InscripcionExamen inscripcionExamen1 = new InscripcionExamen();
-//				inscripcionExamen1.setEstudiante(estudiante2);
-//				inscripcionExamen1.setExamen(examen2);
-//				inscripcionExamen1.setCalificacion(CalificacionExamen.APROBADO);
-//				inscripcionExamenRepository.save(inscripcionExamen1);
+				InscripcionExamen inscripcionExamen1 = new InscripcionExamen();
+				inscripcionExamen1.setEstudiante(estudiante1);
+				inscripcionExamen1.setExamen(examen1);
+				inscripcionExamen1.setCalificacion(CalificacionExamen.PENDIENTE);
+				inscripcionExamenRepository.save(inscripcionExamen1);
+
+				InscripcionExamen inscripcionExamen2 = new InscripcionExamen();
+				inscripcionExamen2.setEstudiante(estudiante2);
+				inscripcionExamen2.setExamen(examen2);
+				inscripcionExamen2.setCalificacion(CalificacionExamen.PENDIENTE);
+				inscripcionExamenRepository.save(inscripcionExamen2);
 
 			}
 		};
