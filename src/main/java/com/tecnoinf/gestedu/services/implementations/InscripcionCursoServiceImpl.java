@@ -1,5 +1,7 @@
 package com.tecnoinf.gestedu.services.implementations;
 
+import com.tecnoinf.gestedu.dtos.curso.CursoHorarioDTO;
+import com.tecnoinf.gestedu.dtos.curso.HorarioDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoDTO;
 import com.tecnoinf.gestedu.exceptions.CalificacionCursoException;
@@ -16,7 +18,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class InscripcionCursoServiceImpl implements InscripcionCursoService {
@@ -212,5 +216,49 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
         else {
             throw new IllegalStateException("No se puede eliminar la inscripción al curso cuando el curso ya ha comenzado.");
         }
+    }
+
+    @Override
+    public List<CursoHorarioDTO> listarCursosHorariosInscriptos(Long idEstudiante){
+        //La lista que voy a devolver al final
+        List<CursoHorarioDTO> cursoHorarioDTOS = new ArrayList<>();
+        //Busco todas las inscripciones de un alumno
+        List<InscripcionCurso> inscripcionCursos = inscripcionCursoRepository.findInscripcionCursoEstudianteById(idEstudiante);
+        //Si no es null...
+        if(inscripcionCursos != null){
+            //Recorro cada una de las inscripciones
+            for(InscripcionCurso inscripciones: inscripcionCursos){
+                //un CursoHorario para agregar a la lista a devolver
+                CursoHorarioDTO auxCursoHorario = new CursoHorarioDTO();
+                //Buscamos el curso
+                Optional<Curso> cursoOptional = cursoRepository.findById(inscripciones.getCurso().getId());
+                Curso curso = cursoOptional.orElseThrow(() -> new RuntimeException("Curso no encontrado"));
+                //Ponemos los datos
+                auxCursoHorario.setFechaInicio(curso.getFechaInicio());
+                auxCursoHorario.setFechaFin(curso.getFechaFin());
+                auxCursoHorario.setEstado(curso.getEstado());
+                auxCursoHorario.setDocenteNombre(curso.getDocente().getNombre());
+                auxCursoHorario.setDocenteApellido(curso.getDocente().getApellido());
+                auxCursoHorario.setAsignaturaNombre(curso.getAsignatura().getNombre());
+                auxCursoHorario.setDiasPrevInsc(curso.getDiasPrevInsc());
+
+                List<HorarioDTO> dtoHorarios = new ArrayList<>();
+                List<Horario> horarios = curso.getHorarios();
+                for(Horario auxHorarios: horarios){
+                    HorarioDTO auxDtoHorario = new HorarioDTO();
+                    auxDtoHorario.setDia(auxHorarios.getDia());
+                    auxDtoHorario.setHoraInicio(auxHorarios.getHoraInicio());
+                    auxDtoHorario.setHoraFin(auxHorarios.getHoraFin());
+                    dtoHorarios.add(auxDtoHorario);
+                }
+                auxCursoHorario.setHorarios(dtoHorarios);
+
+                cursoHorarioDTOS.add(auxCursoHorario);
+            }
+        }
+        else{
+            throw new IllegalStateException("Inscripciones no encontradas.");
+        }
+        return cursoHorarioDTOS;
     }
 }

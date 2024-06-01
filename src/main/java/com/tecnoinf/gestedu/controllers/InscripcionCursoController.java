@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.controllers;
 
+import com.tecnoinf.gestedu.dtos.curso.CursoHorarioDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoDTO;
 import com.tecnoinf.gestedu.services.interfaces.InscripcionCursoService;
@@ -42,8 +43,17 @@ public class InscripcionCursoController {
 
     @Operation(summary = "Cancelar Inscripción a un Curso")
     @DeleteMapping("/cancelarInscripcion/{inscripcionCursoId}")
+    //@PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
     public ResponseEntity<Void> cancelInscripcionCurso(@PathVariable Long inscripcionCursoId) {
         inscripcionCursoService.deleteInscripcionCurso(inscripcionCursoId);
         return ResponseEntity.noContent().build();  // 204 No Content
+    }
+
+    @Operation(summary = "Listar Cursos y Horarios de Estudiante Inscripto al Curso")
+    @GetMapping("/{idEstudiante}/cursos-inscripto")
+    //@PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
+    public ResponseEntity<List<CursoHorarioDTO>> getCursosHorariosInscriptos(@PathVariable Long idEstudiante){
+        List<CursoHorarioDTO> cursos = inscripcionCursoService.listarCursosHorariosInscriptos(idEstudiante);
+        return ResponseEntity.ok().body(cursos);
     }
 }
