@@ -39,9 +39,8 @@ public class EstudianteServiceImpl implements EstudianteService {
     @Autowired
     public EstudianteServiceImpl(EstudianteRepository estudianteRepository , CarreraRepository carreraRepository,
                                  UsuarioRepository usuarioRepository, ModelMapper modelMapper, AsignaturaRepository asignaturaRepository,
-                                 InscripcionCursoRepository inscripcionCursoRepository, InscripcionExamenRepository inscripcionExamenRepository) {
-                                 InscripcionCursoRepository inscripcionCursoRepository, InscripcionCarreraRepository inscripcionCarreraRepository,
-                                 CertificadoService certificadoService) {
+                                 InscripcionCursoRepository inscripcionCursoRepository, InscripcionExamenRepository inscripcionExamenRepository,
+                                 InscripcionCarreraRepository inscripcionCarreraRepository, CertificadoService certificadoService) {
         this.estudianteRepository = estudianteRepository;
         this.carreraRepository = carreraRepository;
         this.usuarioRepository = usuarioRepository;
