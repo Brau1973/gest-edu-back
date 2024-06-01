@@ -55,14 +55,10 @@ public class ExamenController {
     @DeleteMapping("/{id}/baja")
     //@PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
     public ResponseEntity<InscripcionExamenDTO> darseDeBajaExamen(@PathVariable Long id, Principal principal) {
-        System.out.print("A" + principal.getName());
         if(principal == null) {
-            System.out.print("B");
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        System.out.print("C");
         InscripcionExamenDTO bajaExamen = examenService.darseDeBajaExamen(id, principal.getName());
-        System.out.print("D");
         return ResponseEntity.ok().body(bajaExamen);
     }
 
