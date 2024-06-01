@@ -1,16 +1,18 @@
 package com.tecnoinf.gestedu.services.implementations;
 
+import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoDTO;
+import com.tecnoinf.gestedu.exceptions.CalificacionCursoException;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
+import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCarrera;
 import com.tecnoinf.gestedu.repositories.*;
 import com.tecnoinf.gestedu.services.interfaces.InscripcionCursoService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -142,5 +144,45 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
         } else {
             throw new IllegalArgumentException("El curso no corresponde con su carrera.");
         }
+    }
+
+    @Override
+    public List<InscripcionCursoCalificacionDTO> registrarCalificaciones(Long id, List<InscripcionCursoCalificacionDTO> calificaciones){
+        Curso curso = cursoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Curso no encontrado."));
+        if (calificaciones.isEmpty()) {
+            throw new CalificacionCursoException("No se han enviado calificaciones para registrar.");
+        }
+        if(curso.getEstado().equals(Estado.FINALIZADO)){
+            throw new CalificacionCursoException("El curso ya tiene calificaciones.");
+        }
+        if(curso.getInscripciones().size() != calificaciones.size()){
+            throw new CalificacionCursoException("No todos los estudiantes fueron calificados");
+        }
+
+        for (InscripcionCursoCalificacionDTO calificacionDTO: calificaciones){
+            if(calificacionDTO.getCalificacionCurso() == null){
+                throw new CalificacionCursoException("La calificación no puede ser nula.");
+            }
+            if(calificacionDTO.getCalificacionCurso().equals(CalificacionCurso.PENDIENTE)){
+                throw new CalificacionCursoException("No pueden quedar calificaciones pendientes.");
+            }
+
+            InscripcionCurso inscripcionCurso = inscripcionCursoRepository.findInscripcionCursoEstudianteByEstudianteIdAndCursoId(calificacionDTO.getEstudianteId(), id);
+            if(inscripcionCurso == null){
+                throw new ResourceNotFoundException("No se encontró la inscripción del estudiante id " + calificacionDTO.getEstudianteId());
+            }
+
+            inscripcionCurso.setCalificacion(calificacionDTO.getCalificacionCurso());
+            inscripcionCursoRepository.save(inscripcionCurso);
+        }
+
+        curso.setEstado(Estado.FINALIZADO);
+        cursoRepository.save(curso);
+
+        return curso.getInscripciones()
+                .stream()
+                .map(InscripcionCursoCalificacionDTO::new)
+                .toList();
     }
 }

@@ -227,10 +227,10 @@ public class ExamenServiceImpl implements ExamenService {
         }
 
         for (InscripcionExamenCalificacionDTO calificacionDTO : calificaciones) {
-            if(calificacionDTO.getCalificacion() == null){
+            if (calificacionDTO.getCalificacion() == null) {
                 throw new CalificacionExamenExeption("La calificación no puede ser nula.");
             }
-            if(calificacionDTO.getCalificacion() == CalificacionExamen.PENDIENTE){
+            if (calificacionDTO.getCalificacion() == CalificacionExamen.PENDIENTE) {
                 throw new CalificacionExamenExeption("La calificación no puede ser PENDIENTE.");
             }
             Optional<InscripcionExamen> inscripcionOpt = inscripcionExamenRepository.findByEstudianteIdAndExamenId(calificacionDTO.getEstudianteId(), id);
@@ -251,5 +251,4 @@ public class ExamenServiceImpl implements ExamenService {
                 .map(InscripcionExamenCalificacionDTO::new)
                 .toList();
     }
-
 }

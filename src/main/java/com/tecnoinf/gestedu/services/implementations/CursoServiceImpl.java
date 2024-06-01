@@ -10,7 +10,6 @@ import com.tecnoinf.gestedu.services.interfaces.CursoService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.time.LocalTime;
@@ -22,16 +21,18 @@ public class CursoServiceImpl implements CursoService {
     private final DocenteRepository docenteRepository;
     private final EstudianteRepository estudianteRepository;
     private final HorarioRepository horarioRepository;
+    private final InscripcionCursoRepository inscripcionCursoRepository;
     private final ModelMapper modelMapper;
 
 
     @Autowired
-    public CursoServiceImpl(CursoRepository cursoRepository, AsignaturaRepository asignaturaRepository, DocenteRepository docenteRepository, EstudianteRepository estudianteRepository, HorarioRepository horarioRepository, ModelMapper modelMapper) {
+    public CursoServiceImpl(CursoRepository cursoRepository, AsignaturaRepository asignaturaRepository, DocenteRepository docenteRepository, EstudianteRepository estudianteRepository, HorarioRepository horarioRepository, InscripcionCursoRepository inscripcionCursoRepository, ModelMapper modelMapper) {
         this.cursoRepository = cursoRepository;
         this.asignaturaRepository = asignaturaRepository;
         this.docenteRepository = docenteRepository;
         this.estudianteRepository = estudianteRepository;
         this.horarioRepository = horarioRepository;
+        this.inscripcionCursoRepository = inscripcionCursoRepository;
         this.modelMapper = modelMapper;
     }
 
