@@ -33,10 +33,17 @@ public class InscripcionCursoController {
     }
 
     @Operation(summary = "Registrar calificaciones del curso")
-    @PutMapping("/{id}/calificar")
+    @PutMapping("/{cursoId}/calificar")
     //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
-    public ResponseEntity<List<InscripcionCursoCalificacionDTO>> registrarCalificaciones(@PathVariable Long id, @RequestBody List<InscripcionCursoCalificacionDTO> calificaciones) {
-        List<InscripcionCursoCalificacionDTO> calificacionesCurso = inscripcionCursoService.registrarCalificaciones(id, calificaciones);
+    public ResponseEntity<List<InscripcionCursoCalificacionDTO>> registrarCalificaciones(@PathVariable Long cursoId, @RequestBody List<InscripcionCursoCalificacionDTO> calificaciones) {
+        List<InscripcionCursoCalificacionDTO> calificacionesCurso = inscripcionCursoService.registrarCalificaciones(cursoId, calificaciones);
         return ResponseEntity.ok().body(calificacionesCurso);
+    }
+
+    @Operation(summary = "Cancelar Inscripción a un Curso")
+    @DeleteMapping("/cancelarInscripcion/{inscripcionCursoId}")
+    public ResponseEntity<Void> cancelInscripcionCurso(@PathVariable Long inscripcionCursoId) {
+        inscripcionCursoService.deleteInscripcionCurso(inscripcionCursoId);
+        return ResponseEntity.noContent().build();  // 204 No Content
     }
 }

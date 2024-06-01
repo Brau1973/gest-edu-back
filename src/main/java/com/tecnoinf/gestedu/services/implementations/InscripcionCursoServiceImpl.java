@@ -13,6 +13,8 @@ import com.tecnoinf.gestedu.services.interfaces.InscripcionCursoService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -184,5 +186,31 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                 .stream()
                 .map(InscripcionCursoCalificacionDTO::new)
                 .toList();
+    }
+
+    @Override
+    public void deleteInscripcionCurso(Long inscripcionCursoId){
+        InscripcionCurso inscripcionCurso = inscripcionCursoRepository.findById(inscripcionCursoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Inscripción no encontrada."));
+
+        Curso curso = inscripcionCurso.getCurso();
+
+        LocalDate fechaActual = LocalDate.now();
+        LocalDate fechaInicioCurso = curso.getFechaInicio();
+        int plazoDiasPrevios = curso.getDiasPrevInsc();
+
+        LocalDate limiteFechaInicio = fechaInicioCurso.minusDays(plazoDiasPrevios);
+
+        if (fechaActual.isBefore(fechaInicioCurso)) {
+            if (fechaActual.isAfter(limiteFechaInicio)) {
+                inscripcionCursoRepository.deleteById(inscripcionCursoId);
+            }
+            else {
+                throw new IllegalStateException("Aún no comienza el plazo de inscripción.");
+            }
+        }
+        else {
+            throw new IllegalStateException("No se puede eliminar la inscripción al curso cuando el curso ya ha comenzado.");
+        }
     }
 }

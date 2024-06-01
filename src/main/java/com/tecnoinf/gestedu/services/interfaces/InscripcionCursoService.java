@@ -7,4 +7,5 @@ import java.util.List;
 public interface InscripcionCursoService {
     InscripcionCursoDTO createInscripcionCurso(InscripcionCursoDTO inscripcionCursoDTO);
     List<InscripcionCursoCalificacionDTO> registrarCalificaciones(Long id, List<InscripcionCursoCalificacionDTO> calificaciones);
+    void deleteInscripcionCurso(Long inscripcionCursoId);
 }
