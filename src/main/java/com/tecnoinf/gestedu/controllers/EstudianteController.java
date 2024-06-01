@@ -75,4 +75,11 @@ public class EstudianteController {
         Page<AsignaturaDTO> page = estudianteService.obtenerAsignaturasAExamen(carreraId, email, pageable);
         return ResponseEntity.ok(page);
     }
+
+    @Operation(summary = "Listar asignaturas pendiente de aprobacion para finalizar carrera.")
+    @GetMapping("/{carreraId}/asignaturas-pendientes")
+    public ResponseEntity<Page<AsignaturaDTO>> getAsignaturasPendientes(@PathVariable Long carreraId, Principal principal, Pageable pageable) {
+        Page<AsignaturaDTO> page = estudianteService.obtenerAsignaturasPendientes(carreraId, principal.getName(), pageable);
+        return ResponseEntity.ok(page);
+    }
 }

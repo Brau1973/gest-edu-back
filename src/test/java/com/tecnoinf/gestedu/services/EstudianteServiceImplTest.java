@@ -6,10 +6,8 @@ import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
-import com.tecnoinf.gestedu.repositories.CarreraRepository;
-import com.tecnoinf.gestedu.repositories.EstudianteRepository;
-import com.tecnoinf.gestedu.repositories.InscripcionCursoRepository;
-import com.tecnoinf.gestedu.repositories.UsuarioRepository;
+import com.tecnoinf.gestedu.models.enums.CalificacionExamen;
+import com.tecnoinf.gestedu.repositories.*;
 import com.tecnoinf.gestedu.services.implementations.EstudianteServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,7 +45,13 @@ public class EstudianteServiceImplTest {
     private UsuarioRepository usuarioRepository;
 
     @Mock
+    private AsignaturaRepository asignaturaRepository;
+
+    @Mock
     private InscripcionCursoRepository inscripcionCursoRepository;
+
+    @Mock
+    private InscripcionExamenRepository inscripcionExamenRepository;
 
     @Mock
     private ModelMapper modelMapper;
@@ -60,6 +64,7 @@ public class EstudianteServiceImplTest {
         MockitoAnnotations.openMocks(this);
         Mockito.reset(estudianteRepository, carreraRepository, usuarioRepository);
     }
+
 
 // MANUAL ANDA OK
 //    @Test
@@ -200,6 +205,75 @@ public class EstudianteServiceImplTest {
         verify(estudianteRepository, times(1)).findByEmail(email);
         verify(inscripcionCursoRepository, times(1)).findByCalificacionAndEstudianteId(CalificacionCurso.AEXAMEN, estudiante.getId());
         verify(modelMapper, times(1)).map(asignatura, AsignaturaDTO.class);
+    }
+
+    @Test
+    public void testObtenerAsignaturasPendientes() {
+        Long carreraId = 1L;
+        String email = "test@example.com";
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Estudiante estudiante = new Estudiante();
+        estudiante.setId(1L);
+        estudiante.setEmail(email);
+
+        Asignatura asignatura1 = new Asignatura();
+        asignatura1.setId(1L);
+        Asignatura asignatura2 = new Asignatura();
+        asignatura2.setId(2L);
+
+        InscripcionCurso inscripcionCurso = new InscripcionCurso();
+        Curso curso = new Curso();
+        curso.setAsignatura(asignatura1);
+        inscripcionCurso.setCurso(curso);
+        inscripcionCurso.setCalificacion(CalificacionCurso.EXONERADO);
+
+        InscripcionExamen inscripcionExamen = new InscripcionExamen();
+        Examen examen = new Examen();
+        examen.setAsignatura(asignatura2);
+        inscripcionExamen.setExamen(examen);
+        inscripcionExamen.setCalificacion(CalificacionExamen.APROBADO);
+
+        when(estudianteRepository.findByEmail(email)).thenReturn(Optional.of(estudiante));
+        when(asignaturaRepository.findByCarreraId(carreraId)).thenReturn(List.of(asignatura1, asignatura2));
+        when(inscripcionCursoRepository.findByCalificacionAndEstudianteId(CalificacionCurso.EXONERADO, estudiante.getId()))
+                .thenReturn(List.of(inscripcionCurso));
+        when(inscripcionExamenRepository.findByCalificacionAndEstudianteId(CalificacionExamen.APROBADO, estudiante.getId()))
+                .thenReturn(List.of(inscripcionExamen));
+
+        AsignaturaDTO asignaturaDTO1 = new AsignaturaDTO();
+        AsignaturaDTO asignaturaDTO2 = new AsignaturaDTO();
+        when(modelMapper.map(asignatura1, AsignaturaDTO.class)).thenReturn(asignaturaDTO1);
+        when(modelMapper.map(asignatura2, AsignaturaDTO.class)).thenReturn(asignaturaDTO2);
+
+        Page<AsignaturaDTO> result = estudianteService.obtenerAsignaturasPendientes(carreraId, email, pageable);
+
+        assertNotNull(result);
+        assertEquals(0, result.getTotalElements()); // Ambas asignaturas deberían haber sido removidas
+
+        verify(estudianteRepository, times(1)).findByEmail(email);
+        verify(asignaturaRepository, times(1)).findByCarreraId(carreraId);
+        verify(inscripcionCursoRepository, times(1)).findByCalificacionAndEstudianteId(CalificacionCurso.EXONERADO, estudiante.getId());
+        verify(inscripcionExamenRepository, times(1)).findByCalificacionAndEstudianteId(CalificacionExamen.APROBADO, estudiante.getId());
+    }
+
+    @Test
+    public void testObtenerAsignaturasPendientes_EstudianteNoEncontrado() {
+        Long carreraId = 1L;
+        String email = "test@example.com";
+        Pageable pageable = PageRequest.of(0, 10);
+
+        when(estudianteRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            estudianteService.obtenerAsignaturasPendientes(carreraId, email, pageable);
+        });
+
+        assertEquals("Estudiante no encontrado", exception.getMessage());
+        verify(estudianteRepository, times(1)).findByEmail(email);
+        verify(asignaturaRepository, never()).findByCarreraId(anyLong());
+        verify(inscripcionCursoRepository, never()).findByCalificacionAndEstudianteId(any(CalificacionCurso.class), anyLong());
+        verify(inscripcionExamenRepository, never()).findByCalificacionAndEstudianteId(any(CalificacionExamen.class), anyLong());
     }
 
 }
