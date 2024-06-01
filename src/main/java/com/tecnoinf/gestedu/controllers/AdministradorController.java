@@ -2,11 +2,14 @@ package com.tecnoinf.gestedu.controllers;
 
 import com.tecnoinf.gestedu.dtos.TipoUsuario;
 import com.tecnoinf.gestedu.dtos.usuario.CrearUsuarioDTO;
+import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import com.tecnoinf.gestedu.services.implementations.UserDetailsServiceImpl;
+import com.tecnoinf.gestedu.services.implementations.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +25,11 @@ public class AdministradorController {
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+    @Qualifier("usuarioRepository")
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+    @Autowired
+    private UsuarioService usuarioService;
 
     @Operation(summary = "Registrar un coordinador o funcionario")
     @PreAuthorize("hasAuthority('ROL_ADMINISTRADOR')")
@@ -33,5 +41,12 @@ public class AdministradorController {
         } else {
             return new ResponseEntity<>("Tipo de usuario no permitido", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @Operation(summary = "Desactivar cuenta usuario (coordinador/funcionario)")
+    //@PreAuthorize("hasAuthority('ROL_ADMINISTRADOR')")
+    @PostMapping("/desactivarUsuario")
+    public ResponseEntity<?> desactivarUsuario(@RequestBody Long id) {
+       return new ResponseEntity<>(usuarioService.desactivarCuentaUsuario(id), HttpStatus.OK);
     }
 }
