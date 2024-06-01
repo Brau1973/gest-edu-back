@@ -117,7 +117,7 @@ public class EstudianteServiceImpl implements EstudianteService {
     public Page<AsignaturaDTO> obtenerAsignaturasPendientes(Long carreraId, String name, Pageable pageable){
         Optional<Usuario> estudiante = Optional.ofNullable(estudianteRepository.findByEmail(name)
                 .orElseThrow(() -> new ResourceNotFoundException("Estudiante no encontrado")));
-        List<Asignatura> asignaturasCarrera = asignaturaRepository.findByCarreraId(carreraId);
+        List<Asignatura> asignaturasCarrera = new ArrayList<>(asignaturaRepository.findByCarreraId(carreraId));
         List<Asignatura> cursosAprobados = inscripcionCursoRepository.findByCalificacionAndEstudianteId(CalificacionCurso.EXONERADO, estudiante.get().getId() )
                 .stream()
                 .map(inscripcionCurso -> inscripcionCurso.getCurso().getAsignatura())
