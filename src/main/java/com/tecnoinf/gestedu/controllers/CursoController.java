@@ -50,12 +50,8 @@ public class CursoController {
 
     @Operation(summary = "Obtener Curso mediante Id")
     @GetMapping("/{cursoId}")
-    public ResponseEntity<CursoDTO> getCursoById(@PathVariable Long cursoId){
+    public ResponseEntity<CursoDTO> getCursoById(@PathVariable Long cursoId) {
         CursoDTO curso = cursoService.getCursoPorId(cursoId);
-        return  ResponseEntity.ok(curso);
-
-    public ResponseEntity<CursoDTO> addHorarioToCurso(@PathVariable Long cursoId, @RequestBody HorarioDTO nuevoHorario) {
-        CursoDTO curso = cursoService.addHorarioToCurso(cursoId, nuevoHorario);
         return ResponseEntity.ok(curso);
     }
 }

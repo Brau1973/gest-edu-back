@@ -14,7 +14,6 @@ import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.CursoRepository;
 import com.tecnoinf.gestedu.repositories.DocenteRepository;
-import com.tecnoinf.gestedu.services.interfaces.AsignaturaService;
 import com.tecnoinf.gestedu.services.interfaces.CursoService;
 import jakarta.validation.constraints.Email;
 import org.junit.jupiter.api.Test;
