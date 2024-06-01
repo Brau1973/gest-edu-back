@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.services;
 
+import com.tecnoinf.gestedu.dtos.examen.ActaExamenDTO;
 import com.tecnoinf.gestedu.dtos.examen.CreateExamenDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.CreateInscripcionExamenDTO;
@@ -585,5 +586,191 @@ public class ExamenServiceImplTest {
         assertEquals("Examen no encontrado.", exception.getMessage());
         verify(examenRepository, times(1)).findById(examenId);
         verify(inscripcionExamenRepository, never()).findByEstudianteIdAndExamenId(anyLong(), anyLong());
+    }
+
+    @Test
+    public void testDarseDeBajaExamen() {
+        Long examenId = 1L;
+        String email = "test@example.com";
+
+        Carrera carrera = new Carrera();
+        carrera.setId(1L);
+
+        Asignatura asignatura = new Asignatura();
+        asignatura.setId(1L);
+        asignatura.setCarrera(carrera);
+
+        Examen examen = new Examen();
+        examen.setId(examenId);
+        examen.setAsignatura(asignatura);
+        examen.setFecha(LocalDateTime.now().plusDays(5));
+        examen.setEstado(Estado.ACTIVO);
+
+        Estudiante estudiante = new Estudiante();
+        estudiante.setId(1L);
+        estudiante.setEmail(email);
+
+        InscripcionExamen inscripcion = new InscripcionExamen();
+        inscripcion.setId(1L);
+        inscripcion.setExamen(examen);
+        inscripcion.setEstudiante(estudiante);
+
+        when(examenRepository.findById(examenId)).thenReturn(Optional.of(examen));
+        when(usuarioRepository.findByEmail(email)).thenReturn(Optional.of(estudiante));
+        when(inscripcionExamenRepository.findByEstudianteIdAndExamenId(estudiante.getId(), examenId)).thenReturn(Optional.of(inscripcion));
+
+        InscripcionExamenDTO result = examenService.darseDeBajaExamen(examenId, email);
+
+        assertNotNull(result);
+        assertEquals(inscripcion.getId(), result.getId());
+        verify(inscripcionExamenRepository, times(1)).delete(inscripcion);
+    }
+
+    @Test
+    public void testDarseDeBajaExamen_ExamenNoEncontrado() {
+        Long examenId = 1L;
+        String email = "test@example.com";
+
+        when(examenRepository.findById(examenId)).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            examenService.darseDeBajaExamen(examenId, email);
+        });
+
+        assertEquals("Examen no encontrado.", exception.getMessage());
+        verify(examenRepository, times(1)).findById(examenId);
+        verify(usuarioRepository, never()).findByEmail(anyString());
+        verify(inscripcionExamenRepository, never()).findByEstudianteIdAndExamenId(anyLong(), anyLong());
+    }
+
+    @Test
+    public void testDarseDeBajaExamen_BajaExamenException_ExamenPasado() {
+        Long examenId = 1L;
+        String email = "test@example.com";
+
+        Examen examen = new Examen();
+        examen.setId(examenId);
+        examen.setFecha(LocalDateTime.now().minusDays(1));
+
+        when(examenRepository.findById(examenId)).thenReturn(Optional.of(examen));
+
+        BajaExamenException exception = assertThrows(BajaExamenException.class, () -> {
+            examenService.darseDeBajaExamen(examenId, email);
+        });
+
+        assertEquals("El examen ya pasó, no puede darse de baja.", exception.getMessage());
+        verify(examenRepository, times(1)).findById(examenId);
+        verify(usuarioRepository, never()).findByEmail(anyString());
+        verify(inscripcionExamenRepository, never()).findByEstudianteIdAndExamenId(anyLong(), anyLong());
+    }
+
+    @Test
+    public void testDarseDeBajaExamen_BajaExamenException_MismoDia() {
+        Long examenId = 1L;
+        String email = "test@example.com";
+
+        Examen examen = new Examen();
+        examen.setId(examenId);
+        examen.setFecha(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0));  // Mismo día
+
+        when(examenRepository.findById(examenId)).thenReturn(Optional.of(examen));
+
+        BajaExamenException exception = assertThrows(BajaExamenException.class, () -> {
+            examenService.darseDeBajaExamen(examenId, email);
+        });
+
+        assertEquals("No puede darse de baja el mismo día del examen.", exception.getMessage());
+        verify(examenRepository, times(1)).findById(examenId);
+        verify(usuarioRepository, never()).findByEmail(anyString());
+        verify(inscripcionExamenRepository, never()).findByEstudianteIdAndExamenId(anyLong(), anyLong());
+    }
+
+    @Test
+    public void testDarseDeBajaExamen_UsuarioNoEncontrado() {
+        Long examenId = 1L;
+        String email = "test@example.com";
+
+        Examen examen = new Examen();
+        examen.setId(examenId);
+        examen.setFecha(LocalDateTime.now().plusDays(5));  // Fecha futura
+
+        when(examenRepository.findById(examenId)).thenReturn(Optional.of(examen));
+        when(usuarioRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            examenService.darseDeBajaExamen(examenId, email);
+        });
+
+        assertEquals("Usuario no encontrado.", exception.getMessage());
+        verify(examenRepository, times(1)).findById(examenId);
+        verify(usuarioRepository, times(1)).findByEmail(email);
+        verify(inscripcionExamenRepository, never()).findByEstudianteIdAndExamenId(anyLong(), anyLong());
+    }
+
+    @Test
+    public void testGenerarActaExamen() {
+        Long examenId = 1L;
+        LocalDateTime fecha = LocalDateTime.now();
+
+        Carrera carrera = new Carrera();
+        carrera.setId(1L);
+
+        Asignatura asignatura = new Asignatura();
+        asignatura.setId(1L);
+        asignatura.setCarrera(carrera);
+        asignatura.setNombre("Matemáticas");
+
+        Docente docente = new Docente();
+        docente.setId(1L);
+        docente.setNombre("Profesor X");
+
+        Estudiante estudiante = new Estudiante();
+        estudiante.setId(1L);
+        estudiante.setNombre("Estudiante Y");
+
+        Examen examen = new Examen();
+        examen.setId(examenId);
+        examen.setFecha(fecha);
+        examen.setAsignatura(asignatura);
+        examen.setDocentes(Collections.singletonList(docente));
+
+        InscripcionExamen inscripcion = new InscripcionExamen();
+        inscripcion.setId(1L);
+        inscripcion.setEstudiante(estudiante);
+        inscripcion.setExamen(examen);
+        examen.setInscripciones(Collections.singletonList(inscripcion));
+
+        // Verificación de que el examen se ha configurado correctamente
+        assertNotNull(examen);
+        assertEquals(examenId, examen.getId());
+
+        when(examenRepository.findById(examenId)).thenReturn(Optional.of(examen));
+
+        ActaExamenDTO result = examenService.generarActaExamen(examenId);
+
+        assertNotNull(result);
+        assertEquals(examenId, result.getId());
+        assertEquals(fecha.toString(), result.getFecha());
+        assertEquals("Matemáticas", result.getAsignatura().getNombre());
+        assertEquals(1, result.getDocentes().size());
+        assertEquals("Profesor X", result.getDocentes().get(0).getNombre());
+        assertEquals(1, result.getInscripciones().size());
+        assertEquals("Estudiante Y", result.getInscripciones().get(0).getEstudiante().getNombre());
+
+        verify(examenRepository, times(1)).findById(examenId);
+    }
+
+    @Test
+    public void testGenerarActaExamen_ExamenNoEncontrado() {
+        Long examenId = 1L;
+
+        when(examenRepository.findById(examenId)).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            examenService.generarActaExamen(examenId);
+        });
+
+        assertEquals("Examen no encontrado.", exception.getMessage());
+        verify(examenRepository, times(1)).findById(examenId);
     }
 }

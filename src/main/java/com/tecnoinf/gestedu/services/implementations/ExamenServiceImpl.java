@@ -1,11 +1,14 @@
 package com.tecnoinf.gestedu.services.implementations;
 
+import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
+import com.tecnoinf.gestedu.dtos.examen.ActaExamenDTO;
 import com.tecnoinf.gestedu.dtos.examen.CreateExamenDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenCalificacionDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.CreateInscripcionExamenDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenDTO;
 import com.tecnoinf.gestedu.dtos.periodoExamen.PeriodoExamenDTO;
+import com.tecnoinf.gestedu.dtos.DocenteDTO;
 import com.tecnoinf.gestedu.exceptions.*;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
@@ -252,4 +255,39 @@ public class ExamenServiceImpl implements ExamenService {
                 .toList();
     }
 
+    @Override
+    public InscripcionExamenDTO darseDeBajaExamen(Long id, String name){
+        Examen examen = examenRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Examen no encontrado."));
+        LocalDateTime hoy = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime fechaExamen = examen.getFecha().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        if(fechaExamen.isBefore(hoy)){
+            throw new BajaExamenException("El examen ya pasó, no puede darse de baja.");
+        }
+        if(fechaExamen.isEqual(hoy)){
+            throw new BajaExamenException("No puede darse de baja el mismo día del examen.");
+        }
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(name);
+        if (usuario.isEmpty()) {
+            throw new ResourceNotFoundException("Usuario no encontrado.");
+        }
+        Estudiante estudiante = (Estudiante) usuario.get();
+        InscripcionExamen inscripcion = inscripcionExamenRepository.findByEstudianteIdAndExamenId(estudiante.getId(), id)
+                .orElseThrow(() -> new ResourceNotFoundException("Inscripción no encontrada."));
+        inscripcionExamenRepository.delete(inscripcion);
+        return new InscripcionExamenDTO(inscripcion);
+    }
+
+    @Override
+    public ActaExamenDTO generarActaExamen(Long id){
+        Examen examen = examenRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Examen no encontrado."));
+        ActaExamenDTO actaExamen = new ActaExamenDTO();
+        actaExamen.setId(examen.getId());
+        actaExamen.setFecha(examen.getFecha().toString());
+        actaExamen.setAsignatura(new AsignaturaDTO(examen.getAsignatura()));
+        actaExamen.setDocentes(examen.getDocentes().stream().map(DocenteDTO::new).toList());
+        actaExamen.setInscripciones(examen.getInscripciones().stream().map(InscripcionExamenDTO::new).toList());
+        return actaExamen;
+    }
 }
