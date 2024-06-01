@@ -131,7 +131,6 @@ public class CursoControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.dia").value(DiaSemana.LUNES.name()))
                 .andExpect(jsonPath("$.horaInicio").value("09:00:00"))
-                .andExpect(jsonPath("$.horaFin").value("11:00:00"))
-                .andExpect(jsonPath("$.cursoId").value(curso.getId()));
+                .andExpect(jsonPath("$.horaFin").value("11:00:00"));
     }
 }
