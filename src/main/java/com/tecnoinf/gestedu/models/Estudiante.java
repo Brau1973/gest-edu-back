@@ -24,4 +24,7 @@ public class Estudiante extends Usuario {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<InscripcionCurso> inscripcionesCursos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "estudiante")
+    private List<Certificado> certificados;
 }
