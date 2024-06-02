@@ -2,6 +2,8 @@ package com.tecnoinf.gestedu.services.implementations;
 
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.dtos.usuario.UsuarioDTO;
+import com.tecnoinf.gestedu.models.Administrador;
+import com.tecnoinf.gestedu.models.Funcionario;
 import com.tecnoinf.gestedu.models.Usuario;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,5 +57,20 @@ public class UsuarioService {
             return Optional.of(new BasicInfoUsuarioDTO(usuario.get()));
         }
         return Optional.empty();
+    }
+
+    public Object desactivarCuentaUsuario(Long id) {
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        if(usuario.isPresent()){
+            Usuario user = usuario.get();
+            if (user instanceof Funcionario || user instanceof Administrador) {
+                user.setIsEnable(false);
+                usuarioRepository.save(user);
+                return new BasicInfoUsuarioDTO(user);
+            }else{
+                return "El usuario seleccionado no es coordinador o funcionario.";
+            }
+        }
+        return null;
     }
 }
