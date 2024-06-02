@@ -3,6 +3,7 @@ package com.tecnoinf.gestedu.services.implementations;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.certificado.CertificadoDTO;
+import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.models.*;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -55,6 +57,30 @@ public class EstudianteServiceImpl implements EstudianteService {
     }
 
     @Override
+    public Page<BasicInfoUsuarioDTO> obtenerEstudiantes(Pageable pageable) {
+        List<BasicInfoUsuarioDTO> estudianteList = new ArrayList<>();
+        Page<Usuario> estudiantes = usuarioRepository.findAll(pageable);
+        if(estudiantes != null){
+            for(Usuario estudiante : estudiantes){
+                if(estudiante instanceof Estudiante){
+                    BasicInfoUsuarioDTO dto = new BasicInfoUsuarioDTO(estudiante);
+                    estudianteList.add(dto);
+                }
+            }
+        }
+        return new PageImpl<>(estudianteList, pageable, estudianteList.size());
+    }
+
+    @Override
+    public Optional<BasicInfoUsuarioDTO> obtenerEstudiantePorCi(String ci) {
+        Optional<Usuario> estudiante = usuarioRepository.findByCi(ci);
+        if(estudiante.isPresent() && estudiante.get() instanceof Estudiante){
+            return Optional.of(new BasicInfoUsuarioDTO(estudiante.get()));
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public Page<BasicInfoCarreraDTO> getCarrerasNoInscripto(String email, Pageable pageable) {
         Optional<Usuario> estudiante = estudianteRepository.findByEmail(email);
         if (estudiante.isEmpty()) {
@@ -81,30 +107,6 @@ public class EstudianteServiceImpl implements EstudianteService {
     }
 
     @Override
-    public Page<BasicInfoUsuarioDTO> obtenerEstudiantes(Pageable pageable) {
-        List<BasicInfoUsuarioDTO> estudianteList = new ArrayList<>();
-        Page<Usuario> estudiantes = usuarioRepository.findAll(pageable);
-        if(estudiantes != null){
-            for(Usuario estudiante : estudiantes){
-                if(estudiante instanceof Estudiante){
-                    BasicInfoUsuarioDTO dto = new BasicInfoUsuarioDTO(estudiante);
-                    estudianteList.add(dto);
-                }
-            }
-        }
-        return new PageImpl<>(estudianteList, pageable, estudianteList.size());
-    }
-
-    @Override
-    public Optional<BasicInfoUsuarioDTO> obtenerEstudiantePorCi(String ci) {
-        Optional<Usuario> estudiante = usuarioRepository.findByCi(ci);
-        if(estudiante.isPresent() && estudiante.get() instanceof Estudiante){
-            return Optional.of(new BasicInfoUsuarioDTO(estudiante.get()));
-        }
-        return Optional.empty();
-    }
-
-    @Override
     public Page<AsignaturaDTO> obtenerAsignaturasAExamen(Long carreraId, String email, Pageable pageable){
         Optional<Usuario> estudiante = estudianteRepository.findByEmail(email);
         if (estudiante.isEmpty()) {
@@ -119,6 +121,20 @@ public class EstudianteServiceImpl implements EstudianteService {
             }
         }
         return new PageImpl<>(asignaturaDTOs, pageable, asignaturaDTOs.size());
+    }
+
+    public Page<ExamenDTO> listarExamenesInscriptoVigentes(String name, Pageable pageable){
+        Optional<Usuario> estudiante = Optional.ofNullable(estudianteRepository.findByEmail(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Estudiante no encontrado")));
+        if(!(estudiante.get() instanceof Estudiante)){
+            throw new ResourceNotFoundException("El usuario no es un estudiante");
+        }
+        List<InscripcionExamen> inscripciones = inscripcionExamenRepository.findByEstudianteIdAndExamenFechaIsAfter(estudiante.get().getId(), LocalDateTime.now());
+
+        List<ExamenDTO> examenes = inscripciones.stream()
+                .map(inscripcion -> modelMapper.map(inscripcion.getExamen(), ExamenDTO.class))
+                .collect(Collectors.toList());
+        return new PageImpl<>(examenes, pageable, examenes.size());
     }
 
     @Override
