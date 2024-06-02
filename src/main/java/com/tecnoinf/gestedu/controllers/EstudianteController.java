@@ -2,6 +2,7 @@ package com.tecnoinf.gestedu.controllers;
 
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
+import com.tecnoinf.gestedu.dtos.certificado.CertificadoDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.services.interfaces.EstudianteService;
@@ -74,5 +75,12 @@ public class EstudianteController {
         String email = principal.getName();
         Page<AsignaturaDTO> page = estudianteService.obtenerAsignaturasAExamen(carreraId, email, pageable);
         return ResponseEntity.ok(page);
+    }
+
+    @Operation(summary = "Solicitar certificado de estudiante de una carrera")
+    @GetMapping("/{carreraId}/certificado")
+    public ResponseEntity<CertificadoDTO> solicitarCertificado(@PathVariable Long carreraId, Principal principal) {
+        CertificadoDTO certificado = estudianteService.solicitarCertificado(carreraId, principal.getName());
+        return ResponseEntity.ok(certificado);
     }
 }
