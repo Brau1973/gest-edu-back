@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -25,6 +26,7 @@ public class TramiteController {
         this.tramiteService = tramiteService;
     }
 
+    //@PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
     @Operation(summary = "Crear un nuevo trámite (inscripción a una carrera o solicitud de titulo)")
     @PostMapping("/nuevo-tramite")
     public ResponseEntity<TramiteDTO> nuevoTramite(@RequestParam Long carreraId, @Parameter(example = "INSCRIPCION_A_CARRERA") @RequestParam TipoTramite tipoTramite, Principal principal) throws MessagingException {
@@ -32,12 +34,14 @@ public class TramiteController {
         return ResponseEntity.ok().body(tramiteService.nuevoTramite(carreraId, tipoTramite, email));
     }
 
+    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     @Operation(summary = "Listar todos los trámites de inscripción a carrera PENDIENTES")
     @GetMapping("/inscripcion-carrera-pendientes")
     public ResponseEntity<?> listarTramitesInscripcionCarreraPendientes() {
         return ResponseEntity.ok().body(tramiteService.listarTramitesInscripcionCarreraPendientes());
     }
 
+    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     @PutMapping("/aprobar-tramite-inscripcion-carrera/{tramiteId}")
     public ResponseEntity<TramiteDTO> aprobarTramiteInscripcionCarrera(@PathVariable Long tramiteId, Principal principal) throws MessagingException {
         String email = (principal != null) ? principal.getName() : null;

@@ -80,9 +80,8 @@ public class TramiteServiceImpl implements TramiteService {
     @Override
     public TramiteDTO aprobarTramiteInscripcionCarrera(Long tramiteId, String email) throws MessagingException {
         Tramite tramite = getTramiteById(tramiteId);
-        if (!tramite.getEstado().equals(EstadoTramite.PENDIENTE)) {
-            throw new TramiteNotPendienteException("Tramite is not in PENDIENTE state");
-        }
+        verificarEstadoPendienteTramite(tramite);
+
         Funcionario funcionarioResponsable = (Funcionario) usuarioRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("Usuario not found with email " + email));
         tramite.setEstado(EstadoTramite.ACEPTADO);
         tramite.setUsuarioResponsable(funcionarioResponsable);
@@ -117,6 +116,12 @@ public class TramiteServiceImpl implements TramiteService {
     private Tramite getTramiteById(Long tramiteId) {
         return tramiteRepository.findById(tramiteId)
                 .orElseThrow(() -> new TramiteNotFoundException("Tramite not found with id " + tramiteId));
+    }
+
+    private void verificarEstadoPendienteTramite(Tramite tramite) {
+        if (!tramite.getEstado().equals(EstadoTramite.PENDIENTE)) {
+            throw new TramiteNotPendienteException("Tramite is not in PENDIENTE state");
+        }
     }
 
 }
