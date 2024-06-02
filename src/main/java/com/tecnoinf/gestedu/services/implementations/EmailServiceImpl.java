@@ -20,6 +20,20 @@ public class EmailServiceImpl implements EmailService {
         this.mailSender = mailSender;
     }
 
+    // ---------------------------------------- RESETEO CONTRASEÑA -----------------------------------------
+    @Override
+    @Async
+    public void sendResetPasswordEmail(String to, String usuarioName, String link) throws MessagingException{
+        String subject = "Recuperar contraseña";
+        String htmlBody = "<h1>Hola " + usuarioName + ",</h1>"
+                + "<p>Para recuperar tu contraseña, haz click en el siguiente enlace: " +
+                "<a href='" + link + "'>Recuperar contraseña</a><br>" +
+                " Saludos,<br>" +
+                " Equipo GestEdu</p>"
+                + "<img src='cid:image' style='width:200px; height:auto;' />";
+        sendEmail(to, subject, htmlBody);
+    }
+
     // ---------------------------------------- INSCRIPCION CARRERA ----------------------------------------
     @Override
     @Async
@@ -95,6 +109,23 @@ public class EmailServiceImpl implements EmailService {
                 + "<img src='cid:image' style='width:200px; height:auto;' />";
         sendEmail(to, subject, htmlBody);
     }
+
+    //----------------------------------- CALIFICACIONES ----------------------------------------
+
+    @Override
+    @Async
+    public void sendCalificacionesExamenEmail(String to, String estudianteName, String carreraName, String asignatura, String calificacion) throws MessagingException{
+        String subject = "Calificación de examen";
+        String htmlBody = "<h1> Hola " + estudianteName + ",</h1>"
+                + "<p>Tu calificación en la asignatura " + asignatura + " de la carrera " + carreraName + " fue " + calificacion + ".<br>" +
+                " Saludos,<br>" +
+                " Equipo GestEdu</p>"
+                + "<img src='cid:image' style='width:200px; height:auto;' />";
+        sendEmail(to, subject, htmlBody);
+    }
+
+
+    //----------------------------------- EMAIL ----------------------------------------
 
     @Async
     public void sendEmail(String to, String subject, String htmlBody) throws MessagingException {

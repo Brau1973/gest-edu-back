@@ -16,8 +16,10 @@ import com.tecnoinf.gestedu.models.enums.CalificacionExamen;
 import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.repositories.*;
 import com.tecnoinf.gestedu.services.interfaces.CarreraService;
+import com.tecnoinf.gestedu.services.interfaces.EmailService;
 import com.tecnoinf.gestedu.services.interfaces.ExamenService;
 import com.tecnoinf.gestedu.services.interfaces.PeriodoExamenService;
+import jakarta.mail.MessagingException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -39,11 +41,12 @@ public class ExamenServiceImpl implements ExamenService {
     private final UsuarioRepository usuarioRepository;
     private final InscripcionExamenRepository inscripcionExamenRepository;
     private final InscripcionCursoRepository inscripcionCursoRepository;
+    private final EmailService emailService;
 
     public ExamenServiceImpl(PeriodoExamenService periodoExamenService, CarreraService carreraService,
                              AsignaturaRepository asignaturaRepository, DocenteRepository docenteRepository,
                              ExamenRepository examenRepository, UsuarioRepository usuarioRepository, InscripcionExamenRepository inscripcionExamenRepository,
-                             InscripcionCursoRepository inscripcionCursoRepository, EstudianteRepository estudianteRepository){
+                             InscripcionCursoRepository inscripcionCursoRepository, EstudianteRepository estudianteRepository, EmailService emailService) {
         this.carreraService = carreraService;
         this.asignaturaRepository = asignaturaRepository;
         this.docenteRepository = docenteRepository;
@@ -51,6 +54,7 @@ public class ExamenServiceImpl implements ExamenService {
         this.usuarioRepository = usuarioRepository;
         this.inscripcionExamenRepository = inscripcionExamenRepository;
         this.inscripcionCursoRepository = inscripcionCursoRepository;
+        this.emailService = emailService;
 
     }
 
@@ -216,7 +220,7 @@ public class ExamenServiceImpl implements ExamenService {
     }
 
     @Override
-    public List<InscripcionExamenCalificacionDTO> registrarCalificaciones(Long id, List<InscripcionExamenCalificacionDTO> calificaciones) {
+    public List<InscripcionExamenCalificacionDTO> registrarCalificaciones(Long id, List<InscripcionExamenCalificacionDTO> calificaciones) throws MessagingException {
         Examen examen = examenRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Examen no encontrado."));
         if (calificaciones.isEmpty()) {
@@ -245,6 +249,10 @@ public class ExamenServiceImpl implements ExamenService {
             InscripcionExamen inscripcion = inscripcionOpt.get();
             inscripcion.setCalificacion(calificacionDTO.getCalificacion());
             inscripcionExamenRepository.save(inscripcion);
+
+            emailService.sendCalificacionesExamenEmail(inscripcion.getEstudiante().getEmail(),
+                    inscripcion.getEstudiante().getNombre(), inscripcion.getExamen().getAsignatura().getCarrera().getNombre(),
+                    inscripcion.getExamen().getAsignatura().getNombre(), inscripcion.getCalificacion().toString());
         }
         examen.setEstado(Estado.FINALIZADO);
         examenRepository.save(examen);

@@ -6,6 +6,7 @@ import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenCalificacionDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.CreateInscripcionExamenDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenDTO;
+import jakarta.mail.MessagingException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,7 +18,7 @@ public interface ExamenService {
     List<InscripcionExamenDTO> listarInscriptosExamen(Long id);
     Page<ExamenDTO> listarExamenesPendientes(Pageable pageable);
     List<InscripcionExamenCalificacionDTO> obtenerCalificaciones(Long id);
-    List<InscripcionExamenCalificacionDTO> registrarCalificaciones(Long id, List<InscripcionExamenCalificacionDTO> calificaciones);
+    List<InscripcionExamenCalificacionDTO> registrarCalificaciones(Long id, List<InscripcionExamenCalificacionDTO> calificaciones) throws MessagingException;
     InscripcionExamenDTO darseDeBajaExamen(Long id, String name);
     ActaExamenDTO generarActaExamen(Long id);
 }

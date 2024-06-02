@@ -19,6 +19,7 @@ import com.tecnoinf.gestedu.services.interfaces.InvitadoService;
 import com.tecnoinf.gestedu.util.JwtUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -76,21 +77,14 @@ public class InvitadoController {
 
     @Operation(summary = "Enviar correo para recuperar contraseña")
     @PostMapping("/correoPassword")
-    public ResponseEntity<?> sendEmailResetPassword(@RequestBody EmailValuesDTO dto) {
-
+    public ResponseEntity<?> sendEmailResetPassword(@RequestBody EmailValuesDTO dto) throws MessagingException {
         Optional<Usuario> usuario = usuarioService.getByEmail(dto.getMailTo());
-
         if(usuario.isEmpty()) {
             return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
         }
-
-        Usuario user = usuario.get();
-        String token = tokenPassService.crearTokenPassword(user);
-        dto.setMailFrom(emailFrom);
-        dto.setMailTo(user.getEmail());
-        dto.setMailSubject("Recuperar de contraseña");
+        String token = tokenPassService.crearTokenPassword(usuario.get());
         dto.setTokenPassword(token);
-        invitadoService.sendEmailResetPass(dto);
+        invitadoService.sendEmailResetPass(dto, usuario.get());
         return new ResponseEntity<>("Correo enviado con éxito", HttpStatusCode.valueOf(200));
     }
 

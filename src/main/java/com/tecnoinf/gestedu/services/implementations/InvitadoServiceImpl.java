@@ -47,6 +47,9 @@ public class InvitadoServiceImpl implements InvitadoService {
     @Autowired
     TemplateEngine templateEngine;
 
+    @Autowired
+    EmailServiceImpl emailService;
+
     @Value("${mail.urlFront}")
     private String urlFront;
 
@@ -94,24 +97,8 @@ public class InvitadoServiceImpl implements InvitadoService {
     }
 
     @Override
-    public void sendEmailResetPass(EmailValuesDTO dto) {
-        MimeMessage message = javaMailSender.createMimeMessage();
-
-        try{
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            Context context = new Context();
-            Map<String, Object> model = new HashMap<>();
-            model.put("email", dto.getMailTo());
-            model.put("url", urlFront + dto.getTokenPassword());
-            context.setVariables(model);
-            String  htmlText = templateEngine.process("emailPass", context);
-            helper.setFrom(dto.getMailFrom());
-            helper.setTo(dto.getMailTo());
-            helper.setSubject(dto.getMailSubject());
-            helper.setText(htmlText, true);
-            javaMailSender.send(message);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
+    public void sendEmailResetPass(EmailValuesDTO dto, Usuario usuario) throws MessagingException {
+        String link = urlFront + dto.getTokenPassword();
+        emailService.sendResetPasswordEmail(dto.getMailTo(), usuario.getNombre(), link);
     }
 }
