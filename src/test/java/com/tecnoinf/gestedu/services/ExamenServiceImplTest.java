@@ -14,8 +14,10 @@ import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.repositories.*;
 import com.tecnoinf.gestedu.services.implementations.ExamenServiceImpl;
 import com.tecnoinf.gestedu.services.interfaces.CarreraService;
+import com.tecnoinf.gestedu.services.interfaces.EmailService;
 import com.tecnoinf.gestedu.services.interfaces.PeriodoExamenService;
 import com.tecnoinf.gestedu.exceptions.*;
+import jakarta.mail.MessagingException;
 import net.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -45,6 +48,9 @@ public class ExamenServiceImplTest {
 
     @Mock
     private CarreraService carreraService;
+
+    @Mock
+    private EmailService emailService;
 
     @Mock
     private AsignaturaRepository asignaturaRepository;
@@ -525,7 +531,7 @@ public class ExamenServiceImplTest {
     }
 
     @Test
-    public void testRegistrarCalificaciones() {
+    public void testRegistrarCalificaciones() throws MessagingException {
         Long examenId = 1L;
 
         Carrera carrera = new Carrera();
