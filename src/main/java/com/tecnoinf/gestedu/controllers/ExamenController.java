@@ -100,6 +100,4 @@ public class ExamenController {
         List<InscripcionExamenCalificacionDTO> calificacionesExamen = examenService.registrarCalificaciones(id, calificaciones);
         return ResponseEntity.ok().body(calificacionesExamen);
     }
-
-
 }

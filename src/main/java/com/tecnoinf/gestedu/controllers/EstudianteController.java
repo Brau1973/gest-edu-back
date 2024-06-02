@@ -83,4 +83,11 @@ public class EstudianteController {
         CertificadoDTO certificado = estudianteService.solicitarCertificado(carreraId, principal.getName());
         return ResponseEntity.ok(certificado);
     }
+
+    @Operation(summary = "Listar asignaturas pendiente de aprobacion para finalizar carrera.")
+    @GetMapping("/{carreraId}/asignaturas-pendientes")
+    public ResponseEntity<Page<AsignaturaDTO>> getAsignaturasPendientes(@PathVariable Long carreraId, Principal principal, Pageable pageable) {
+        Page<AsignaturaDTO> page = estudianteService.obtenerAsignaturasPendientes(carreraId, principal.getName(), pageable);
+        return ResponseEntity.ok(page);
+    }
 }
