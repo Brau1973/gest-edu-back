@@ -2,6 +2,7 @@ package com.tecnoinf.gestedu.controllers;
 
 import com.tecnoinf.gestedu.dtos.EmailValuesDTO;
 import com.tecnoinf.gestedu.dtos.TipoUsuario;
+import com.tecnoinf.gestedu.dtos.certificado.CertificadoDTO;
 import com.tecnoinf.gestedu.dtos.usuario.AuthLoginRequest;
 import com.tecnoinf.gestedu.dtos.usuario.AuthResponse;
 import com.tecnoinf.gestedu.dtos.usuario.ChangePasswordDTO;
@@ -13,6 +14,7 @@ import com.tecnoinf.gestedu.models.Usuario;
 import com.tecnoinf.gestedu.services.implementations.TokenPassService;
 import com.tecnoinf.gestedu.services.implementations.UserDetailsServiceImpl;
 import com.tecnoinf.gestedu.services.implementations.UsuarioService;
+import com.tecnoinf.gestedu.services.interfaces.CertificadoService;
 import com.tecnoinf.gestedu.services.interfaces.InvitadoService;
 import com.tecnoinf.gestedu.util.JwtUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,6 +50,9 @@ public class InvitadoController {
 
     @Autowired
     TokenPassService tokenPassService;
+
+    @Autowired
+    CertificadoService certificadoService;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -117,4 +122,10 @@ public class InvitadoController {
         }
     }
 
+    @Operation(summary = "Validar certificado de estudiante")
+    @GetMapping("/validar/{codigoValidacion}")
+    public ResponseEntity<CertificadoDTO> validarCertificado(@PathVariable String codigoValidacion) {
+        CertificadoDTO certificado = certificadoService.validarCertificado(codigoValidacion);
+        return ResponseEntity.ok(certificado);
+    }
 }
