@@ -1,10 +1,10 @@
 package com.tecnoinf.gestedu.models;
 
 import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
+import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCurso;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -13,10 +13,11 @@ import java.time.LocalDateTime;
 @Entity
 public class InscripcionCurso {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime fechaInscripcion;
-
+    private EstadoInscripcionCurso estado;
     private CalificacionCurso calificacion = CalificacionCurso.PENDIENTE;
 
     @ManyToOne
@@ -30,6 +31,4 @@ public class InscripcionCurso {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Curso curso;
-
-
 }

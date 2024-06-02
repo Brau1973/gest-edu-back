@@ -10,8 +10,10 @@ import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
 import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCarrera;
+import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCurso;
 import com.tecnoinf.gestedu.repositories.*;
 import com.tecnoinf.gestedu.services.interfaces.InscripcionCursoService;
+import jakarta.mail.MessagingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,16 +31,18 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
     private final InscripcionCursoRepository inscripcionCursoRepository;
     private final InscripcionCarreraRepository inscripcionCarreraRepository;
     private final AsignaturaRepository asignaturaRepository;
+    private final EmailServiceImpl emailService;
     private final ModelMapper modelMapper;
 
 
     @Autowired
-    public InscripcionCursoServiceImpl(CursoRepository cursoRepository, EstudianteRepository estudianteRepository, InscripcionCursoRepository inscripcionCursoRepository, InscripcionCarreraRepository inscripcionCarreraRepository, AsignaturaRepository asignaturaRepository, ModelMapper modelMapper) {
+    public InscripcionCursoServiceImpl(CursoRepository cursoRepository, EstudianteRepository estudianteRepository, InscripcionCursoRepository inscripcionCursoRepository, InscripcionCarreraRepository inscripcionCarreraRepository, AsignaturaRepository asignaturaRepository, EmailServiceImpl emailService, ModelMapper modelMapper) {
         this.cursoRepository = cursoRepository;
         this.estudianteRepository = estudianteRepository;
         this.inscripcionCursoRepository = inscripcionCursoRepository;
         this.inscripcionCarreraRepository = inscripcionCarreraRepository;
         this.asignaturaRepository = asignaturaRepository;
+        this.emailService = emailService;
         this.modelMapper = modelMapper;
     }
 
@@ -114,6 +118,7 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                             //Crea la inscripción.
                             InscripcionCurso inscripcionCurso = new InscripcionCurso();
                             inscripcionCurso.setCalificacion(CalificacionCurso.PENDIENTE);
+                            inscripcionCurso.setEstado(EstadoInscripcionCurso.CURSANDO);
                             inscripcionCurso.setEstudiante((Estudiante) estudiante);
                             inscripcionCurso.setCurso(curso);
                             inscripcionCurso.setFechaInscripcion(LocalDateTime.now());
@@ -167,6 +172,8 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
         }
 
         for (InscripcionCursoCalificacionDTO calificacionDTO: calificaciones){
+            Usuario estudiante = estudianteRepository.findById(calificacionDTO.getEstudianteId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Curso no encontrado."));;
             if(calificacionDTO.getCalificacionCurso() == null){
                 throw new CalificacionCursoException("La calificación no puede ser nula.");
             }
@@ -180,7 +187,15 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
             }
 
             inscripcionCurso.setCalificacion(calificacionDTO.getCalificacionCurso());
+            inscripcionCurso.setEstado(EstadoInscripcionCurso.COMPLETADA);
             inscripcionCursoRepository.save(inscripcionCurso);
+
+            //TODO Chequear el mandado de mails
+            /*try {
+                emailService.sendCalificacionCursoEmail("gestedu.info@gmail.com", estudiante.getNombre(), inscripcionCurso.getCurso().getAsignatura().getNombre(), inscripcionCurso.getCalificacion());
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }*/
         }
 
         curso.setEstado(Estado.FINALIZADO);

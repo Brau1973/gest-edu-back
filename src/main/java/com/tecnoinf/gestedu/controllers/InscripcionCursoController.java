@@ -27,7 +27,7 @@ public class InscripcionCursoController {
     @Operation(summary = "Inscribirse a un Curso")
     @PostMapping()
     //PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
-    public ResponseEntity<InscripcionCursoDTO> registerCurso(@RequestBody InscripcionCursoDTO inscripcionCursoDTO) throws ParseException {
+    public ResponseEntity<InscripcionCursoDTO> createInscripcionCurso(@RequestBody InscripcionCursoDTO inscripcionCursoDTO) throws ParseException {
         InscripcionCursoDTO createdInscripcionCurso = inscripcionCursoService.createInscripcionCurso(inscripcionCursoDTO);
 
         return ResponseEntity.ok().body(createdInscripcionCurso);

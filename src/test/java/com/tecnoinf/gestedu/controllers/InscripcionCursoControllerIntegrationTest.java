@@ -139,7 +139,7 @@ public class InscripcionCursoControllerIntegrationTest {
         estudiante.setCi("12345678");
         estudiante.setNombre("John");
         estudiante.setApellido("Doe");
-        estudiante.setEmail("estudiante@gmail.com");
+        estudiante.setEmail("gcanepa28@gmail.com");
         estudiante.setPassword("12345678");
         estudiante = usuarioRepository.save(estudiante);
 
@@ -203,7 +203,7 @@ public class InscripcionCursoControllerIntegrationTest {
         List<InscripcionCursoCalificacionDTO> inscripcionesCalificadas = new ArrayList<>();
         inscripcionesCalificadas.add(calificacion);
 
-        System.out.println(curso.toString());
+        System.out.println(estudiante.toString() + calificacion.getEstudianteId());
 
         mockMvc.perform(put("/inscripcionCurso/" + curso.getId() + "/calificar")
                         .contentType(MediaType.APPLICATION_JSON)
