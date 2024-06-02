@@ -6,7 +6,6 @@ import com.tecnoinf.gestedu.dtos.certificado.CertificadoDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.services.interfaces.EstudianteService;
-import com.tecnoinf.gestedu.models.Carrera;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +40,18 @@ public class EstudianteController {
         return new ResponseEntity<>(estudianteService.obtenerEstudiantes(pageable), HttpStatus.OK);
     }
 
+    @Operation(summary = "Buscar estudiante por ci")
+    @GetMapping("/buscar/{ci}")
+    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    public ResponseEntity<BasicInfoUsuarioDTO> buscarEstudiantePorCi(@PathVariable String ci) {
+        Optional<BasicInfoUsuarioDTO> estudiante = estudianteService.obtenerEstudiantePorCi(ci);
+        if(estudiante.isPresent()){
+            return new ResponseEntity<>(estudiante.get(), HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @Operation(summary = "Obtiene las carreras que tienen plan de estudio y que el estudiante no esta inscripto")
     @GetMapping("/carreras-no-inscripto")
     public ResponseEntity<Page<BasicInfoCarreraDTO>> getCarrerasNoInscripto(Principal principal, Pageable pageable) {
@@ -57,16 +68,15 @@ public class EstudianteController {
         return ResponseEntity.ok(page);
     }
 
-    @Operation(summary = "Buscar estudiante por ci")
-    @GetMapping("/buscar/{ci}")
-    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
-    public ResponseEntity<BasicInfoUsuarioDTO> buscarEstudiantePorCi(@PathVariable String ci) {
-        Optional<BasicInfoUsuarioDTO> estudiante = estudianteService.obtenerEstudiantePorCi(ci);
-        if(estudiante.isPresent()){
-            return new ResponseEntity<>(estudiante.get(), HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @Operation(summary = "Listar examenes inscripto y vigentes")
+    @GetMapping("/inscripto")
+    //@PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
+    public ResponseEntity<Page<ExamenDTO>> listarExamenesInscriptoVigentes(Principal principal, Pageable pageable) {
+        if(principal == null) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+        Page<ExamenDTO> page = estudianteService.listarExamenesInscriptoVigentes(principal.getName(), pageable);
+        return ResponseEntity.ok().body(page);
     }
 
     @Operation(summary = "Listar asignaturas de estudiante inscripto, con última calificación de curso A EXAMEN para una carrera")
