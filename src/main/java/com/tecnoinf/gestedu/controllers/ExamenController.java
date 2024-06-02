@@ -9,6 +9,7 @@ import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenDTO;
 import com.tecnoinf.gestedu.services.interfaces.ExamenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -96,7 +97,7 @@ public class ExamenController {
     @Operation(summary = "Registrar calificaciones de examen")
     @PutMapping("/{id}/calificar")
     //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
-    public ResponseEntity<List<InscripcionExamenCalificacionDTO>> registrarCalificaciones(@PathVariable Long id, @RequestBody List<InscripcionExamenCalificacionDTO> calificaciones) {
+    public ResponseEntity<List<InscripcionExamenCalificacionDTO>> registrarCalificaciones(@PathVariable Long id, @RequestBody List<InscripcionExamenCalificacionDTO> calificaciones) throws MessagingException {
         List<InscripcionExamenCalificacionDTO> calificacionesExamen = examenService.registrarCalificaciones(id, calificaciones);
         return ResponseEntity.ok().body(calificacionesExamen);
     }
