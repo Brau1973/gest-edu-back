@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.services.interfaces;
 
+import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
 import jakarta.mail.MessagingException;
 import org.springframework.scheduling.annotation.Async;
 
@@ -24,4 +25,8 @@ public interface EmailService {
 
     @Async
     void sendRechazoTramiteTituloCarreraEmail(String to, String estudianteName, String carreraName, String userName, String motivoRechazo) throws MessagingException;
+
+    //---------------------------------REGISTRAR CALIFICACIONES DE CURSO--------------------------------------
+    @Async
+    void sendCalificacionCursoEmail(String to, String estudianteName, String asignaturaName, CalificacionCurso calificacion) throws MessagingException;
 }

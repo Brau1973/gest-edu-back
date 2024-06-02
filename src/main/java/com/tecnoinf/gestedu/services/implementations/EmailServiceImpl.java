@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.services.implementations;
 
+import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
 import com.tecnoinf.gestedu.services.interfaces.EmailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -96,6 +97,21 @@ public class EmailServiceImpl implements EmailService {
         sendEmail(to, subject, htmlBody);
     }
 
+    //---------------------------------REGISTRAR CALIFICACIONES DE CURSO--------------------------------------
+    @Override
+    @Async
+    public void sendCalificacionCursoEmail(String to, String estudianteName, String asignaturaName, CalificacionCurso calificacion) throws MessagingException {
+        String subject = "Calificación del curso " + asignaturaName;
+        String htmlBody = "<h1> Saludos " + estudianteName + ". </h1>"
+                + "<p>Tu calificación para el curso " + asignaturaName + " es: " + calificacion.toString()
+                + ".<br>" +
+                " Saludos,<br>" +
+                " Equipo GestEdu</p>"
+                + "<img src='cid:image' style='width:200px; height:auto;' />";
+
+        sendEmail(to, subject, htmlBody);
+    }
+
     @Async
     public void sendEmail(String to, String subject, String htmlBody) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
@@ -117,5 +133,4 @@ public class EmailServiceImpl implements EmailService {
     protected MimeMessageHelper createMimeMessageHelper(MimeMessage message, boolean multipart) throws MessagingException {
         return new MimeMessageHelper(message, multipart);
     }
-
 }
