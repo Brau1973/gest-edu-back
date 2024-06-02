@@ -42,6 +42,7 @@ public class EstudianteServiceImpl implements EstudianteService {
                                  UsuarioRepository usuarioRepository, ModelMapper modelMapper, AsignaturaRepository asignaturaRepository,
                                  InscripcionCursoRepository inscripcionCursoRepository, InscripcionExamenRepository inscripcionExamenRepository,
                                  InscripcionCarreraRepository inscripcionCarreraRepository, CertificadoService certificadoService) {
+
         this.estudianteRepository = estudianteRepository;
         this.carreraRepository = carreraRepository;
         this.usuarioRepository = usuarioRepository;
