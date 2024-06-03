@@ -88,7 +88,7 @@ public class InscripcionCursoControllerIntegrationTest {
         InscripcionCarrera inscCarrera = new InscripcionCarrera();
         inscCarrera.setCarrera(carrera);
         inscCarrera.setEstado(EstadoInscripcionCarrera.CURSANDO);
-        inscCarrera.setFechaInscripcion(LocalDateTime.of(2025, 7, 15,0,0,0));
+        inscCarrera.setFechaInscripcion(LocalDate.of(2025, 7, 15));
         inscCarrera.setCreditosObtenidos(15);
         inscCarrera.setEstudiante(estudiante);
         inscCarrera = inscripcionCarreraRepository.save(inscCarrera);
@@ -152,7 +152,7 @@ public class InscripcionCursoControllerIntegrationTest {
         InscripcionCarrera inscCarrera = new InscripcionCarrera();
         inscCarrera.setCarrera(carrera);
         inscCarrera.setEstado(EstadoInscripcionCarrera.CURSANDO);
-        inscCarrera.setFechaInscripcion(LocalDateTime.of(2025, 7, 15,0,0,0));
+        inscCarrera.setFechaInscripcion(LocalDate.of(2025, 7, 15));
         inscCarrera.setCreditosObtenidos(15);
         inscCarrera.setEstudiante(estudiante);
         inscCarrera = inscripcionCarreraRepository.save(inscCarrera);
@@ -236,7 +236,7 @@ public class InscripcionCursoControllerIntegrationTest {
         InscripcionCarrera inscCarrera = new InscripcionCarrera();
         inscCarrera.setCarrera(carrera);
         inscCarrera.setEstado(EstadoInscripcionCarrera.CURSANDO);
-        inscCarrera.setFechaInscripcion(LocalDateTime.of(2025, 7, 15,0,0,0));
+        inscCarrera.setFechaInscripcion(LocalDate.of(2025, 7, 15));
         inscCarrera.setCreditosObtenidos(15);
         inscCarrera.setEstudiante(estudiante);
         inscCarrera = inscripcionCarreraRepository.save(inscCarrera);
@@ -306,7 +306,7 @@ public class InscripcionCursoControllerIntegrationTest {
         InscripcionCarrera inscCarrera = new InscripcionCarrera();
         inscCarrera.setCarrera(carrera);
         inscCarrera.setEstado(EstadoInscripcionCarrera.CURSANDO);
-        inscCarrera.setFechaInscripcion(LocalDateTime.of(2025, 7, 15,0,0,0));
+        inscCarrera.setFechaInscripcion(LocalDate.of(2025, 7, 15));
         inscCarrera.setCreditosObtenidos(15);
         inscCarrera.setEstudiante(estudiante);
         inscCarrera = inscripcionCarreraRepository.save(inscCarrera);

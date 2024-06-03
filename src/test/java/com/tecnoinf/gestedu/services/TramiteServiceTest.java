@@ -1,18 +1,24 @@
 package com.tecnoinf.gestedu.services;
 
 import com.tecnoinf.gestedu.dtos.Tramite.TramiteDTO;
+import com.tecnoinf.gestedu.dtos.inscripcionCarrera.InscripcionCarreraDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
+import com.tecnoinf.gestedu.exceptions.TramiteNotFoundException;
+import com.tecnoinf.gestedu.exceptions.TramiteNotPendienteException;
 import com.tecnoinf.gestedu.exceptions.TramitePendienteExistenteException;
 import com.tecnoinf.gestedu.models.Carrera;
 import com.tecnoinf.gestedu.models.Estudiante;
+import com.tecnoinf.gestedu.models.Funcionario;
 import com.tecnoinf.gestedu.models.Tramite;
 import com.tecnoinf.gestedu.models.enums.EstadoTramite;
 import com.tecnoinf.gestedu.models.enums.TipoTramite;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.EstudianteRepository;
 import com.tecnoinf.gestedu.repositories.TramiteRepository;
+import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import com.tecnoinf.gestedu.services.implementations.TramiteServiceImpl;
 import com.tecnoinf.gestedu.services.interfaces.EmailService;
+import com.tecnoinf.gestedu.services.interfaces.InscripcionCarreraService;
 import jakarta.mail.MessagingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +41,9 @@ public class TramiteServiceTest {
     private TramiteServiceImpl tramiteService;
 
     @Mock
+    private InscripcionCarreraService inscripcionCarreraService;
+
+    @Mock
     private EstudianteRepository estudianteRepository;
 
     @Mock
@@ -42,6 +51,9 @@ public class TramiteServiceTest {
 
     @Mock
     private TramiteRepository tramiteRepository;
+
+    @Mock
+    private UsuarioRepository usuarioRepository;
 
     @Mock
     private EmailService emailService;
@@ -193,6 +205,42 @@ public class TramiteServiceTest {
 
         // Then
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void aprobarTramiteInscripcionCarrera_throwsException_whenTramiteNotFound() {
+        when(tramiteRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(TramiteNotFoundException.class, () -> {
+            tramiteService.aprobarTramiteInscripcionCarrera(1L, "test@test.com");
+        });
+    }
+
+    @Test
+    public void aprobarTramiteInscripcionCarrera_throwsException_whenTramiteNotPending() throws MessagingException {
+        Tramite tramite = new Tramite();
+        tramite.setId(1L);
+        tramite.setEstado(EstadoTramite.ACEPTADO);
+
+        when(tramiteRepository.findById(1L)).thenReturn(Optional.of(tramite));
+
+        assertThrows(TramiteNotPendienteException.class, () -> {
+            tramiteService.aprobarTramiteInscripcionCarrera(1L, "test@test.com");
+        });
+    }
+
+    @Test
+    public void aprobarTramiteInscripcionCarrera_throwsException_whenFuncionarioNotFound() throws MessagingException {
+        Tramite tramite = new Tramite();
+        tramite.setId(1L);
+        tramite.setEstado(EstadoTramite.PENDIENTE);
+
+        when(tramiteRepository.findById(1L)).thenReturn(Optional.of(tramite));
+        when(usuarioRepository.findByEmail("test@test.com")).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            tramiteService.aprobarTramiteInscripcionCarrera(1L, "test@test.com");
+        });
     }
 
 }

@@ -4,6 +4,7 @@ import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCarrera;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -37,5 +38,5 @@ public class InscripcionCarrera {
 
     @Enumerated(EnumType.STRING)
     private EstadoInscripcionCarrera estado = EstadoInscripcionCarrera.CURSANDO;
-    private LocalDateTime fechaInscripcion = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+    private LocalDate fechaInscripcion = LocalDate.now();
 }
