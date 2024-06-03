@@ -4,8 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tecnoinf.gestedu.dtos.asignatura.CreateAsignaturaDTO;
 import com.tecnoinf.gestedu.models.Asignatura;
 import com.tecnoinf.gestedu.models.Carrera;
+import com.tecnoinf.gestedu.models.Curso;
+import com.tecnoinf.gestedu.models.Docente;
+import com.tecnoinf.gestedu.models.enums.DiaSemana;
+import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
+import com.tecnoinf.gestedu.repositories.CursoRepository;
+import com.tecnoinf.gestedu.repositories.DocenteRepository;
 import com.tecnoinf.gestedu.services.interfaces.AsignaturaService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +21,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -42,6 +51,12 @@ public class AsignaturaControllerIntegrationTest {
 
     @Autowired
     private AsignaturaRepository asignaturaRepository;
+
+    @Autowired
+    private DocenteRepository docenteRepository;
+
+    @Autowired
+    private CursoRepository cursoRepository;
 
     @Autowired
     private AsignaturaService asignaturaService;
@@ -168,4 +183,75 @@ public class AsignaturaControllerIntegrationTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @Transactional
+    public void getCursosDeAsignatura() throws Exception{
+        // Crear carrera
+        Carrera carrera = new Carrera();
+        carrera.setNombre("Carrera Test");
+        carrera = carreraRepository.save(carrera);
+
+        // Crear asignatura
+        Asignatura asignatura = new Asignatura();
+        asignatura.setNombre("Asignatura Test 1");
+        asignatura.setCarrera(carrera);
+        asignatura = asignaturaRepository.save(asignatura);
+
+        //Crear Docente
+        Docente docente = new Docente();
+        docente.setNombre("John");
+        docente = docenteRepository.save(docente);
+
+        //Crear Curso
+        Curso curso = new Curso();
+        LocalDate fechaInicio = LocalDate.of(2025, 3, 15); // Año, Mes (1-12), Día
+        curso.setFechaInicio(fechaInicio);
+        LocalDate fechaFin = LocalDate.of(2025, 07, 15); // Año, Mes (1-12), Día
+        curso.setFechaFin(fechaFin);
+        curso.setAsignatura(asignatura);
+        curso.setDocente(docente);
+        curso.setEstado(Estado.ACTIVO);
+        curso.setDiasPrevInsc(30);
+        curso = cursoRepository.save(curso);
+
+        //Crear Curso
+        Curso curso2 = new Curso();
+        fechaInicio = LocalDate.of(2025, 3, 15); // Año, Mes (1-12), Día
+        curso2.setFechaInicio(fechaInicio);
+        fechaFin = LocalDate.of(2025, 07, 15); // Año, Mes (1-12), Día
+        curso2.setFechaFin(fechaFin);
+        curso2.setAsignatura(asignatura);
+        curso2.setDocente(docente);
+        curso2.setEstado(Estado.ACTIVO);
+        curso2.setDiasPrevInsc(30);
+        curso2 = cursoRepository.save(curso2);
+
+        //Crear Curso
+        Curso curso3 = new Curso();
+        fechaInicio = LocalDate.of(2025, 3, 15); // Año, Mes (1-12), Día
+        curso3.setFechaInicio(fechaInicio);
+        fechaFin = LocalDate.of(2025, 07, 15); // Año, Mes (1-12), Día
+        curso3.setFechaFin(fechaFin);
+        curso3.setAsignatura(asignatura);
+        curso3.setDocente(docente);
+        curso3.setEstado(Estado.ACTIVO);
+        curso3.setDiasPrevInsc(30);
+        curso3 = cursoRepository.save(curso3);
+
+        List<Curso> cursos = new ArrayList<>();
+        cursos.add(curso);
+        cursos.add(curso2);
+        cursos.add(curso3);
+        asignatura.setCursos(cursos);
+        asignatura = asignaturaRepository.save(asignatura);
+
+        mockMvc.perform(get("/asignaturas/" + asignatura.getId() + "/cursos")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].fechaInicio").value(curso.getFechaInicio().toString()))
+                .andExpect(jsonPath("$[0].fechaFin").value(curso.getFechaFin().toString()))
+                .andExpect(jsonPath("$[0].diasPrevInsc", is(curso.getDiasPrevInsc())))
+                .andExpect(jsonPath("$[0].estado").value(curso.getEstado().toString()));
+    }
 }

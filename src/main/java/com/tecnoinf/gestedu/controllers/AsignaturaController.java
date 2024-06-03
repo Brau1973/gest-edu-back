@@ -2,6 +2,7 @@ package com.tecnoinf.gestedu.controllers;
 
 import com.tecnoinf.gestedu.dtos.asignatura.CreateAsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
+import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.services.interfaces.AsignaturaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -75,5 +76,12 @@ public class AsignaturaController {
     public ResponseEntity<Page<ExamenDTO>> getExamenesEnFechaInscripcion(@PathVariable Long asignaturaId, Pageable pageable) {
         Page<ExamenDTO> examenes = asignaturaService.obtenerExamenesEnFechaInscripcion(asignaturaId, pageable);
         return ResponseEntity.ok().body(examenes);
+    }
+
+    @Operation(summary = "Obtener Cursos de una Asignatura")
+    @GetMapping("{asignaturaId}/cursos")
+    public ResponseEntity<List<CursoDTO>> getCursosDeAsignatura(@PathVariable Long asignaturaId){
+        List<CursoDTO> cursos = asignaturaService.obtenerCursosDeAsignatura(asignaturaId);
+        return ResponseEntity.ok().body(cursos);
     }
 }

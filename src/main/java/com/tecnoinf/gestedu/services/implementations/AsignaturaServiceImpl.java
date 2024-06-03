@@ -2,10 +2,12 @@ package com.tecnoinf.gestedu.services.implementations;
 
 import com.tecnoinf.gestedu.dtos.asignatura.CreateAsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
+import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.exceptions.*;
 import com.tecnoinf.gestedu.models.Asignatura;
 import com.tecnoinf.gestedu.models.Carrera;
+import com.tecnoinf.gestedu.models.Curso;
 import com.tecnoinf.gestedu.models.Examen;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
@@ -171,4 +173,25 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         return new PageImpl<>(examenesDto, pageable, examenesFiltrados.size());
     }
 
+    @Override
+    public List<CursoDTO> obtenerCursosDeAsignatura(Long asignaturaId){
+        Asignatura asignatura = asignaturaRepository.findById(asignaturaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Asignatura no encontrada - id " + asignaturaId));
+
+        List<Curso> cursos = asignatura.getCursos();
+        /*List<CursoDTO> cursoDTOS = new ArrayList<>();
+        for(Curso auxCurso: cursos){
+            CursoDTO auxCursoDTO = new CursoDTO();
+            auxCursoDTO.setFechaInicio(auxCurso.getFechaInicio());
+            auxCursoDTO.setFechaFin(auxCurso.getFechaFin());
+            auxCursoDTO.setEstado(auxCurso.getEstado());
+            auxCursoDTO.setDiasPrevInsc(auxCurso.getDiasPrevInsc());
+            cursoDTOS.add(auxCursoDTO);
+        }*/
+
+        //return  cursoDTOS;
+
+        Type listType = new TypeToken<List<CursoDTO>>(){}.getType();
+        return modelMapper.map(cursos, listType);
+    }
 }
