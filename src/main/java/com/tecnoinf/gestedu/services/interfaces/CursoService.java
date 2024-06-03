@@ -10,4 +10,5 @@ public interface CursoService {
     CursoDTO createCurso(CursoDTO nuevoCurso);
     HorarioDTO addHorarioToCurso(Long cursoId, HorarioDTO nuevoHorario);
     List<UsuarioDTO> getEstudiantesByCurso(Long cursoId);
+    CursoDTO getCursoPorId(Long cursoId);
 }
