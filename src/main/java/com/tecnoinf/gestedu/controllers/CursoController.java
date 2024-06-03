@@ -4,6 +4,7 @@ import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.curso.HorarioDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenCalificacionDTO;
+import com.tecnoinf.gestedu.dtos.usuario.UsuarioDTO;
 import com.tecnoinf.gestedu.services.interfaces.CursoService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,5 +39,12 @@ public class CursoController {
     public ResponseEntity<HorarioDTO> addHorarioToCurso(@PathVariable Long cursoId, @RequestBody HorarioDTO nuevoHorario) {
         HorarioDTO horario = cursoService.addHorarioToCurso(cursoId, nuevoHorario);
         return ResponseEntity.ok(horario);
+    }
+
+    @Operation(summary = "Listar Estudiantes de un Curso")
+    @GetMapping("/{cursoId}/estudiantes")
+    public ResponseEntity<List<UsuarioDTO>> getEstudiantesByCursoId(@PathVariable Long cursoId){
+        List<UsuarioDTO> estudiantes = cursoService.getEstudiantesByCurso(cursoId);
+        return ResponseEntity.ok(estudiantes);
     }
 }

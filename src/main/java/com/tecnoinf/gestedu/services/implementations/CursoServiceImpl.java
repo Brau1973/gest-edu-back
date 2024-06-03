@@ -2,15 +2,20 @@ package com.tecnoinf.gestedu.services.implementations;
 
 import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.curso.HorarioDTO;
+import com.tecnoinf.gestedu.dtos.usuario.UsuarioDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.repositories.*;
 import com.tecnoinf.gestedu.services.interfaces.CursoService;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.lang.reflect.Type;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalTime;
 
@@ -100,5 +105,19 @@ public class CursoServiceImpl implements CursoService {
         cursoRepository.save(curso);
 
         return modelMapper.map(horario, HorarioDTO.class);
+    }
+
+    @Override
+    public List<UsuarioDTO> getEstudiantesByCurso(Long cursoId){
+        Curso curso = cursoRepository.findById(cursoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Curso not found with id " + cursoId));
+        List<InscripcionCurso> inscripciones = curso.getInscripciones();
+        List<Estudiante> estudiantes = new ArrayList<>();
+        for(InscripcionCurso inscripcionCurso: inscripciones){
+            estudiantes.add(inscripcionCurso.getEstudiante());
+        }
+
+        Type listType = new TypeToken<List<UsuarioDTO>>(){}.getType();
+        return modelMapper.map(estudiantes, listType);
     }
 }
