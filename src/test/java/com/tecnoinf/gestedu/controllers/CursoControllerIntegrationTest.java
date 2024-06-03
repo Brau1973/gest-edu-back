@@ -17,8 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -135,7 +138,7 @@ public class CursoControllerIntegrationTest {
         curso = cursoRepository.save(curso);
         HorarioDTO horarioDTO = new HorarioDTO();
         horarioDTO.setDia(DiaSemana.LUNES);
-        horarioDTO.setHoraInicio(LocalTime.of(9, 0 ));
+        horarioDTO.setHoraInicio(LocalTime.of(9, 0));
         horarioDTO.setHoraFin(LocalTime.of(11, 0));
         //horarioDTO.setCursoId(curso.getId());
 
@@ -146,6 +149,48 @@ public class CursoControllerIntegrationTest {
                 .andExpect(jsonPath("$.dia").value(DiaSemana.LUNES.name()))
                 .andExpect(jsonPath("$.horaInicio").value("09:00:00"))
                 .andExpect(jsonPath("$.horaFin").value("11:00:00"));
+    }
+
+    @Test
+    @Transactional
+    public void getCursoById() throws Exception {
+        // Crear carrera
+        Carrera carrera = new Carrera();
+        carrera.setNombre("Carrera Test");
+        carrera = carreraRepository.save(carrera);
+
+        // Crear asignatura
+        Asignatura asignatura = new Asignatura();
+        asignatura.setNombre("Asignatura Test 1");
+        asignatura.setCarrera(carrera);
+        asignatura = asignaturaRepository.save(asignatura);
+
+        //Crear Docente
+        Docente docente = new Docente();
+        docente.setNombre("John");
+        docente = docenteRepository.save(docente);
+
+        //Crear Curso
+        Curso curso = new Curso();
+        LocalDate fechaInicio = LocalDate.of(2025, 3, 15); // Año, Mes (1-12), Día
+        curso.setFechaInicio(fechaInicio);
+        LocalDate fechaFin = LocalDate.of(2025, 07, 15); // Año, Mes (1-12), Día
+        curso.setFechaFin(fechaFin);
+        curso.setAsignatura(asignatura);
+        curso.setDocente(docente);
+        curso.setEstado(Estado.ACTIVO);
+        curso.setDiasPrevInsc(30);
+        curso = cursoRepository.save(curso);
+
+        mockMvc.perform(get("/cursos/" + curso.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.fechaInicio").value(curso.getFechaInicio().toString()))
+                .andExpect(jsonPath("$.fechaFin").value(curso.getFechaFin().toString()))
+                .andExpect(jsonPath("$.diasPrevInsc").value(curso.getDiasPrevInsc()))
+                .andExpect(jsonPath("$.estado").value(curso.getEstado().toString()))
+                .andExpect(jsonPath("$.asignaturaId").value(curso.getAsignatura().getId()))
+                .andExpect(jsonPath("$.docenteId").value(curso.getDocente().getId()));
     }
 
     @Test

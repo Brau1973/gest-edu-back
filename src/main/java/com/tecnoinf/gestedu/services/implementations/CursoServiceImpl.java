@@ -108,16 +108,26 @@ public class CursoServiceImpl implements CursoService {
     }
 
     @Override
-    public List<UsuarioDTO> getEstudiantesByCurso(Long cursoId){
+    public List<UsuarioDTO> getEstudiantesByCurso(Long cursoId) {
         Curso curso = cursoRepository.findById(cursoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Curso not found with id " + cursoId));
         List<InscripcionCurso> inscripciones = curso.getInscripciones();
         List<Estudiante> estudiantes = new ArrayList<>();
-        for(InscripcionCurso inscripcionCurso: inscripciones){
+        for (InscripcionCurso inscripcionCurso : inscripciones) {
             estudiantes.add(inscripcionCurso.getEstudiante());
         }
 
-        Type listType = new TypeToken<List<UsuarioDTO>>(){}.getType();
+        Type listType = new TypeToken<List<UsuarioDTO>>() {
+        }.getType();
         return modelMapper.map(estudiantes, listType);
+    }
+
+    @Override
+    public CursoDTO getCursoPorId(Long cursoId){
+        Curso curso = cursoRepository.findById(cursoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Curso not found with id " + cursoId));
+
+        Type listType = new TypeToken<CursoDTO>(){}.getType();
+        return modelMapper.map(curso, listType);
     }
 }
