@@ -19,4 +19,7 @@ public interface AsignaturaRepository extends JpaRepository<Asignatura, Long>{
     boolean existsByNombreAndCarreraId(String nombre, Long carreraId);
     boolean existsByNombre(String comunicacionOralYEscrita);
     List<Asignatura> findByCarreraId(Long id);
+    // Método para obtener las asignaturas previas de una asignatura específica
+    @Query("SELECT a.previas FROM Asignatura a WHERE a.id = :asignaturaId")
+    List<Asignatura> findPreviasByAsignaturaId(Long asignaturaId);
 }
