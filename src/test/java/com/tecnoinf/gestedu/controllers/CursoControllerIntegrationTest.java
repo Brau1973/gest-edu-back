@@ -223,7 +223,7 @@ public class CursoControllerIntegrationTest {
         InscripcionCarrera inscCarrera = new InscripcionCarrera();
         inscCarrera.setCarrera(carrera);
         inscCarrera.setEstado(EstadoInscripcionCarrera.CURSANDO);
-        inscCarrera.setFechaInscripcion(LocalDateTime.of(2025, 7, 15,0,0,0));
+        inscCarrera.setFechaInscripcion(LocalDate.of(2025, 7, 15));
         inscCarrera.setCreditosObtenidos(15);
         inscCarrera.setEstudiante(estudiante);
         inscCarrera = inscripcionCarreraRepository.save(inscCarrera);
@@ -231,7 +231,7 @@ public class CursoControllerIntegrationTest {
         InscripcionCarrera inscCarrera2 = new InscripcionCarrera();
         inscCarrera2.setCarrera(carrera);
         inscCarrera2.setEstado(EstadoInscripcionCarrera.CURSANDO);
-        inscCarrera2.setFechaInscripcion(LocalDateTime.of(2025, 7, 15,0,0,0));
+        inscCarrera2.setFechaInscripcion(LocalDate.of(2025, 7, 15));
         inscCarrera2.setCreditosObtenidos(15);
         inscCarrera2.setEstudiante(estudiante2);
         inscCarrera2 = inscripcionCarreraRepository.save(inscCarrera2);
