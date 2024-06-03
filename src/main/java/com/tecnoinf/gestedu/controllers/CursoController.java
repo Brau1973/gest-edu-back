@@ -43,8 +43,15 @@ public class CursoController {
 
     @Operation(summary = "Listar Estudiantes de un Curso")
     @GetMapping("/{cursoId}/estudiantes")
-    public ResponseEntity<List<UsuarioDTO>> getEstudiantesByCursoId(@PathVariable Long cursoId){
+    public ResponseEntity<List<UsuarioDTO>> getEstudiantesByCursoId(@PathVariable Long cursoId) {
         List<UsuarioDTO> estudiantes = cursoService.getEstudiantesByCurso(cursoId);
         return ResponseEntity.ok(estudiantes);
+    }
+
+    @Operation(summary = "Obtener Curso mediante Id")
+    @GetMapping("/{cursoId}")
+    public ResponseEntity<CursoDTO> getCursoById(@PathVariable Long cursoId){
+        CursoDTO curso = cursoService.getCursoPorId(cursoId);
+        return  ResponseEntity.ok(curso);
     }
 }
