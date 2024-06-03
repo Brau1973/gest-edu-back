@@ -87,14 +87,12 @@ public class TramiteServiceImpl implements TramiteService {
         tramite.setUsuarioResponsable(funcionarioResponsable);
         Tramite savedTramite = tramiteRepository.save(tramite);
 
-        Estudiante estudianteSolicitante = null;
-        Usuario usuarioEstudiante =  tramite.getUsuarioSolicitante();
-        if (usuarioEstudiante instanceof Estudiante) estudianteSolicitante = (Estudiante) usuarioEstudiante;
+        Estudiante estudianteSolicitante =  getEstudianteSolicitanteByEmail(tramite);
         Carrera carrera = tramite.getCarrera();
         inscripcionCarreraService.createInscripcionCarrera(carrera, estudianteSolicitante);
 
         //TODO cambiar a email del usuarioEstudiante cuando se pase a produccion
-        emailService.sendAprobacionTramiteInscripcionCarreraEmail("gestedu.info@gmail.com", usuarioEstudiante.getNombre(), carrera.getNombre(), funcionarioResponsable.getNombre());
+        emailService.sendAprobacionTramiteInscripcionCarreraEmail("gestedu.info@gmail.com", estudianteSolicitante.getNombre(), carrera.getNombre(), funcionarioResponsable.getNombre());
 
         return modelMapper.map(savedTramite, TramiteDTO.class);
     }
@@ -124,6 +122,12 @@ public class TramiteServiceImpl implements TramiteService {
         if (!tramite.getEstado().equals(EstadoTramite.PENDIENTE)) {
             throw new TramiteNotPendienteException("Tramite is not in PENDIENTE state");
         }
+    }
+
+    private Estudiante getEstudianteSolicitanteByEmail(Tramite tramite) {
+        String email =  tramite.getUsuarioSolicitante().getEmail();
+        return estudianteRepository.findEstudianteByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Estudiante not found with email " + email));
     }
 
 }
