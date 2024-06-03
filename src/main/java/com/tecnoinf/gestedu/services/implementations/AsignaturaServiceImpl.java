@@ -2,6 +2,8 @@ package com.tecnoinf.gestedu.services.implementations;
 
 import com.tecnoinf.gestedu.dtos.asignatura.CreateAsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
+import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
+import com.tecnoinf.gestedu.dtos.carrera.CreateCarreraDTO;
 import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.exceptions.*;
@@ -58,6 +60,25 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         Asignatura createdAsignatura = asignaturaRepository.save(asignatura);
 
         return modelMapper.map(createdAsignatura, AsignaturaDTO.class);
+    }
+
+    @Override
+    public AsignaturaDTO updateAsignatura(Long id, CreateAsignaturaDTO createAsignaturaDTO) {
+        return asignaturaRepository.findById(id)
+                .map(existingAsignatura -> {
+                    if (createAsignaturaDTO.getNombre() != null && !createAsignaturaDTO.getNombre().isEmpty()) {
+                        existingAsignatura.setNombre(createAsignaturaDTO.getNombre());
+                    }
+                    if (createAsignaturaDTO.getDescripcion() != null && !createAsignaturaDTO.getDescripcion().isEmpty()) {
+                        existingAsignatura.setDescripcion(createAsignaturaDTO.getDescripcion());
+                    }
+                    if (createAsignaturaDTO.getCreditos() != null && createAsignaturaDTO.getCreditos() > 0) {
+                        existingAsignatura.setCreditos(createAsignaturaDTO.getCreditos());
+                    }
+                    Asignatura updatedAsignatura = asignaturaRepository.save(existingAsignatura);
+                    return modelMapper.map(updatedAsignatura, AsignaturaDTO.class);
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("Asignatura not found with id " + id));
     }
 
     @Override
