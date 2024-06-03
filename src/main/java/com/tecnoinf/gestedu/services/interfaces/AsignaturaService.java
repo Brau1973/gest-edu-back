@@ -11,6 +11,7 @@ import java.util.List;
 
 public interface AsignaturaService {
     AsignaturaDTO createAsignatura(CreateAsignaturaDTO createAsignaturaDto);
+    AsignaturaDTO updateAsignatura(Long id, CreateAsignaturaDTO createAsignaturaDTO);
     List<AsignaturaDTO> getPrevias(Long asignaturaId);
     AsignaturaDTO addPrevia(Long asignaturaId, Long previaId);
     List<AsignaturaDTO> getNoPrevias(Long asignaturaId);

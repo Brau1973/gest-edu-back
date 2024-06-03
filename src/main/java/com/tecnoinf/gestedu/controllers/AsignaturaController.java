@@ -2,6 +2,8 @@ package com.tecnoinf.gestedu.controllers;
 
 import com.tecnoinf.gestedu.dtos.asignatura.CreateAsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
+import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
+import com.tecnoinf.gestedu.dtos.carrera.CreateCarreraDTO;
 import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.services.interfaces.AsignaturaService;
@@ -33,6 +35,14 @@ public class AsignaturaController {
     public ResponseEntity<AsignaturaDTO> createAsignatura(@RequestBody CreateAsignaturaDTO createAsignaturaDto) {
         AsignaturaDTO createdAsignatura = asignaturaService.createAsignatura(createAsignaturaDto);
         return ResponseEntity.ok().body(createdAsignatura);
+    }
+
+    @Operation(summary = "Actualizar info basica de una asignatura")
+    @PutMapping("/{id}")
+    //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
+    public ResponseEntity<AsignaturaDTO> updateAsignatura(@PathVariable Long id, @RequestBody CreateAsignaturaDTO createCarreraDTO) {
+        AsignaturaDTO updatedAsignatura = asignaturaService.updateAsignatura(id, createCarreraDTO);
+        return ResponseEntity.ok().body(updatedAsignatura);
     }
 
     @Operation(summary = "Obtener previas de una asignatura")
