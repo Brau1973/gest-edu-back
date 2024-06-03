@@ -2,6 +2,7 @@ package com.tecnoinf.gestedu.services.interfaces;
 
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.asignatura.CreateAsignaturaDTO;
+import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,5 +17,6 @@ public interface AsignaturaService {
     AsignaturaDTO getAsignaturaById(Long id);
     Page<ExamenDTO> obtenerExamenes(Long asignaturaId, Pageable pageable);
     Page<ExamenDTO> obtenerExamenesEnFechaInscripcion(Long asignaturaId, Pageable pageable);
+    List<CursoDTO> obtenerCursosDeAsignatura(Long asignaturaId);
 
 }
