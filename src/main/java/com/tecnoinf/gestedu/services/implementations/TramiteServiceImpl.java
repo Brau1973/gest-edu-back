@@ -87,12 +87,14 @@ public class TramiteServiceImpl implements TramiteService {
         tramite.setUsuarioResponsable(funcionarioResponsable);
         Tramite savedTramite = tramiteRepository.save(tramite);
 
-        Estudiante estudiante = (Estudiante) tramite.getUsuarioSolicitante();
+        Estudiante estudianteSolicitante = null;
+        Usuario usuarioEstudiante =  tramite.getUsuarioSolicitante();
+        if (usuarioEstudiante instanceof Estudiante) estudianteSolicitante = (Estudiante) usuarioEstudiante;
         Carrera carrera = tramite.getCarrera();
-        inscripcionCarreraService.createInscripcionCarrera(carrera,estudiante);
+        inscripcionCarreraService.createInscripcionCarrera(carrera, estudianteSolicitante);
 
-        //TODO cambiar a email del estudiante cuando se pase a produccion
-        emailService.sendAprobacionTramiteInscripcionCarreraEmail("gestedu.info@gmail.com", estudiante.getNombre(), carrera.getNombre(), funcionarioResponsable.getNombre());
+        //TODO cambiar a email del usuarioEstudiante cuando se pase a produccion
+        emailService.sendAprobacionTramiteInscripcionCarreraEmail("gestedu.info@gmail.com", usuarioEstudiante.getNombre(), carrera.getNombre(), funcionarioResponsable.getNombre());
 
         return modelMapper.map(savedTramite, TramiteDTO.class);
     }
