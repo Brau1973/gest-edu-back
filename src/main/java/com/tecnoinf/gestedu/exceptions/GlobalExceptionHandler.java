@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.exceptions;
 
+import jakarta.mail.MessagingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -15,6 +16,7 @@ import java.util.Map;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {
+            TramiteNotFoundException.class,
             ResourceNotFoundException.class,
             TokenInactivoException.class,
             TokenVencidoException.class,
@@ -35,6 +37,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             AsignaturaPreviaExistenteException.class,
             CicloEnAsignaturasException.class,
             FechaException.class,
+            TramitePendienteExistenteException.class,
+            TramiteNotPendienteException.class,
+            MessagingException.class,
             PeriodoInscripcionExeption.class,
             InscripcionExamenException.class,
             CalificacionExamenExeption.class,
@@ -47,16 +52,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         body.put("message", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(TramitePendienteExistenteException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseEntity<Map<String, Object>> handleConflict(TramitePendienteExistenteException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-
-        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
