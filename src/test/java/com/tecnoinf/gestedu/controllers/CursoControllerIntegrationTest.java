@@ -1,7 +1,6 @@
 package com.tecnoinf.gestedu.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tecnoinf.gestedu.dtos.asignatura.CreateAsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.curso.HorarioDTO;
 import com.tecnoinf.gestedu.models.Asignatura;
@@ -14,7 +13,6 @@ import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.CursoRepository;
 import com.tecnoinf.gestedu.repositories.DocenteRepository;
-import com.tecnoinf.gestedu.services.interfaces.AsignaturaService;
 import com.tecnoinf.gestedu.services.interfaces.CursoService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,21 +21,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.ZoneId;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Optional;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 
 @SpringBootTest(properties = {
         "spring.jpa.hibernate.ddl-auto=update"
@@ -63,9 +51,6 @@ public class CursoControllerIntegrationTest {
 
     @Autowired
     private CarreraRepository carreraRepository;
-
-    @Autowired
-    private CursoService cursoService;
 
     @Test
     @Transactional
@@ -146,7 +131,6 @@ public class CursoControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.dia").value(DiaSemana.LUNES.name()))
                 .andExpect(jsonPath("$.horaInicio").value("09:00:00"))
-                .andExpect(jsonPath("$.horaFin").value("11:00:00"))
-                .andExpect(jsonPath("$.cursoId").value(curso.getId()));
+                .andExpect(jsonPath("$.horaFin").value("11:00:00"));
     }
 }

@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class EstudianteServiceImpl implements EstudianteService {
-
     private final EstudianteRepository estudianteRepository;
     private final CarreraRepository carreraRepository;
     private final UsuarioRepository usuarioRepository;
@@ -44,7 +43,6 @@ public class EstudianteServiceImpl implements EstudianteService {
                                  UsuarioRepository usuarioRepository, ModelMapper modelMapper, AsignaturaRepository asignaturaRepository,
                                  InscripcionCursoRepository inscripcionCursoRepository, InscripcionExamenRepository inscripcionExamenRepository,
                                  InscripcionCarreraRepository inscripcionCarreraRepository, CertificadoService certificadoService) {
-
         this.estudianteRepository = estudianteRepository;
         this.carreraRepository = carreraRepository;
         this.usuarioRepository = usuarioRepository;
