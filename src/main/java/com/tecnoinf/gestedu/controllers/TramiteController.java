@@ -48,5 +48,12 @@ public class TramiteController {
         return ResponseEntity.ok().body(tramiteService.aprobarTramiteInscripcionCarrera(tramiteId, email));
     }
 
+    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    @PutMapping("/rechazar-tramite-inscripcion-carrera/{tramiteId}")
+    public ResponseEntity<TramiteDTO> rechazarTramiteInscripcionCarrera(@PathVariable Long tramiteId, @RequestBody String motivoRechazo,Principal principal) throws MessagingException {
+        String email = (principal != null) ? principal.getName() : null;
+        return ResponseEntity.ok().body(tramiteService.rechazarTramiteInscripcionCarrera(tramiteId, email, motivoRechazo));
+    }
+
 
 }

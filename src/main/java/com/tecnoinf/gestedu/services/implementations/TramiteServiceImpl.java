@@ -79,20 +79,44 @@ public class TramiteServiceImpl implements TramiteService {
 
     @Override
     public TramiteDTO aprobarTramiteInscripcionCarrera(Long tramiteId, String email) throws MessagingException {
+        return processTramite(tramiteId, email, EstadoTramite.ACEPTADO, null);
+    }
+
+    @Override
+    public TramiteDTO rechazarTramiteInscripcionCarrera(Long tramiteId, String email, String motivoRechazo) throws MessagingException {
+        return processTramite(tramiteId, email, EstadoTramite.RECHAZADO, motivoRechazo);
+    }
+
+    private TramiteDTO processTramite(Long tramiteId, String email, EstadoTramite estado, String motivoRechazo) throws MessagingException {
         Tramite tramite = getTramiteById(tramiteId);
         verificarEstadoPendienteTramite(tramite);
+        Usuario usuarioResponsable = getUsuarioResponsableByEmail(email);
 
-        Funcionario funcionarioResponsable = (Funcionario) usuarioRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("Usuario not found with email " + email));
-        tramite.setEstado(EstadoTramite.ACEPTADO);
-        tramite.setUsuarioResponsable(funcionarioResponsable);
+        tramite.setEstado(estado);
+        tramite.setUsuarioResponsable(usuarioResponsable);
         Tramite savedTramite = tramiteRepository.save(tramite);
 
+        TipoTramite tipoTramite = savedTramite.getTipo();
+        EstadoTramite estadoTramite = savedTramite.getEstado();
         Estudiante estudianteSolicitante =  getEstudianteSolicitanteByEmail(tramite);
         Carrera carrera = tramite.getCarrera();
-        inscripcionCarreraService.createInscripcionCarrera(carrera, estudianteSolicitante);
 
-        //TODO cambiar a email del usuarioEstudiante cuando se pase a produccion
-        emailService.sendAprobacionTramiteInscripcionCarreraEmail("gestedu.info@gmail.com", estudianteSolicitante.getNombre(), carrera.getNombre(), funcionarioResponsable.getNombre());
+        //TODO cambiar a email de las llamadas a emailService por el  usuarioEstudiante cuando se pase a produccion
+        if(tipoTramite == TipoTramite.INSCRIPCION_A_CARRERA){
+            if (estadoTramite == EstadoTramite.ACEPTADO){
+                inscripcionCarreraService.createInscripcionCarrera(carrera, estudianteSolicitante);
+                emailService.sendAprobacionTramiteInscripcionCarreraEmail("gestedu.info@gmail.com", estudianteSolicitante.getNombre(), carrera.getNombre(), usuarioResponsable.getNombre());
+            } else if (estadoTramite == EstadoTramite.RECHAZADO){
+                emailService.sendRechazoTramiteInscripcionCarreraEmail("gestedu.info@gmail.com", estudianteSolicitante.getNombre(), carrera.getNombre(), usuarioResponsable.getNombre(), motivoRechazo);
+            }
+        } else if (tipoTramite == TipoTramite.SOLICITUD_DE_TITULO){
+            if (estadoTramite == EstadoTramite.ACEPTADO){
+                //TODO generar entidad titulo y guardar toda la info necesaria
+                emailService.sendAprobacionTramiteTituloCarreraEmail("gestedu.info@gmail.com", estudianteSolicitante.getNombre(), carrera.getNombre(), usuarioResponsable.getNombre());
+            } else if (estadoTramite == EstadoTramite.RECHAZADO){
+                emailService.sendRechazoTramiteTituloCarreraEmail("gestedu.info@gmail.com", estudianteSolicitante.getNombre(), carrera.getNombre(), usuarioResponsable.getNombre(), motivoRechazo);
+            }
+        }
 
         return modelMapper.map(savedTramite, TramiteDTO.class);
     }
@@ -128,6 +152,11 @@ public class TramiteServiceImpl implements TramiteService {
         String email =  tramite.getUsuarioSolicitante().getEmail();
         return estudianteRepository.findEstudianteByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Estudiante not found with email " + email));
+    }
+
+    private Usuario getUsuarioResponsableByEmail(String email) {
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario not found with email " + email));
     }
 
 }
