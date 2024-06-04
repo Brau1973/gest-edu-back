@@ -243,4 +243,34 @@ public class TramiteServiceTest {
         });
     }
 
+    @Test
+    public void listarTramitesSolicitudTituloPendientes_returnsListOfTramiteDTOs_whenTramitesExist() {
+        // Given
+        Tramite tramite = new Tramite();
+        List<Tramite> tramites = Collections.singletonList(tramite);
+        TramiteDTO tramiteDTO = new TramiteDTO();
+        when(tramiteRepository.findAllByTipoAndEstado(TipoTramite.SOLICITUD_DE_TITULO, EstadoTramite.PENDIENTE)).thenReturn(tramites);
+        when(modelMapper.map(tramite, TramiteDTO.class)).thenReturn(tramiteDTO);
+
+        // When
+        List<TramiteDTO> result = tramiteService.listarTramitesSolicitudTituloPendientes();
+
+        // Then
+        assertFalse(result.isEmpty());
+        assertEquals(tramiteDTO, result.get(0));
+    }
+
+    @Test
+    public void listarTramitesSolicitudTituloPendientes_returnsEmptyList_whenNoTramitesExist() {
+        // Given
+        List<Tramite> tramites = Collections.emptyList();
+        when(tramiteRepository.findAllByTipoAndEstado(TipoTramite.SOLICITUD_DE_TITULO, EstadoTramite.PENDIENTE)).thenReturn(tramites);
+
+        // When
+        List<TramiteDTO> result = tramiteService.listarTramitesSolicitudTituloPendientes();
+
+        // Then
+        assertTrue(result.isEmpty());
+    }
+
 }
