@@ -26,7 +26,7 @@ public class CursoDTO {
     private Long docenteId;
 
     public CursoDTO(Curso curso) {
-        //this.id = curso.getId();
+        this.id = curso.getId();
         this.fechaInicio = curso.getFechaInicio();
         this.fechaFin = curso.getFechaFin();
         this.diasPrevInsc = curso.getDiasPrevInsc();
