@@ -14,12 +14,15 @@ import com.tecnoinf.gestedu.repositories.TramiteRepository;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import com.tecnoinf.gestedu.services.interfaces.EmailService;
 import com.tecnoinf.gestedu.services.interfaces.InscripcionCarreraService;
+import com.tecnoinf.gestedu.services.interfaces.TituloService;
 import com.tecnoinf.gestedu.services.interfaces.TramiteService;
 import jakarta.mail.MessagingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -32,11 +35,13 @@ public class TramiteServiceImpl implements TramiteService {
     private final EmailService emailService;
     private final UsuarioRepository usuarioRepository;
     private final InscripcionCarreraService inscripcionCarreraService;
+    private final TituloService tituloService;
 
     @Autowired
     public TramiteServiceImpl(EstudianteRepository estudianteRepository, CarreraRepository carreraRepository,
                               TramiteRepository tramiteRepository, ModelMapper modelMapper, EmailService emailService,
-                              UsuarioRepository usuarioRepository, InscripcionCarreraService inscripcionCarreraService) {
+                              UsuarioRepository usuarioRepository, InscripcionCarreraService inscripcionCarreraService,
+                              TituloService tituloService) {
         this.estudianteRepository = estudianteRepository;
         this.carreraRepository = carreraRepository;
         this.tramiteRepository = tramiteRepository;
@@ -44,6 +49,7 @@ public class TramiteServiceImpl implements TramiteService {
         this.emailService = emailService;
         this.usuarioRepository = usuarioRepository;
         this.inscripcionCarreraService = inscripcionCarreraService;
+        this.tituloService = tituloService;
     }
 
     @Override
@@ -63,8 +69,13 @@ public class TramiteServiceImpl implements TramiteService {
         tramite.setTipo(tipoTramite);
         tramite.setUsuarioResponsable(null);
 
-        //TODO cambiar a email del estudiante cuando se pase a produccion
-        emailService.sendNuevoTramiteInscripcionCarreraEmail("gestedu.info@gmail.com", estudiante.getNombre(), carrera.getNombre());
+        if(tipoTramite == TipoTramite.INSCRIPCION_A_CARRERA){
+            //TODO cambiar a email del estudiante cuando se pase a produccion
+            emailService.sendNuevoTramiteInscripcionCarreraEmail("gestedu.info@gmail.com", estudiante.getNombre(), carrera.getNombre());
+        } else if (tipoTramite == TipoTramite.SOLICITUD_DE_TITULO){
+            //TODO cambiar a email del estudiante cuando se pase a produccion
+            emailService.sendNuevoTramiteTituloCarreraEmail("gestedu.info@gmail.com", estudiante.getNombre(), carrera.getNombre());
+        }
 
         return modelMapper.map(tramiteRepository.save(tramite), TramiteDTO.class);
     }
@@ -75,6 +86,24 @@ public class TramiteServiceImpl implements TramiteService {
         return tramites.stream()
                 .map(tramite -> modelMapper.map(tramite, TramiteDTO.class))
                 .toList();
+    }
+
+    @Override
+    public List<TramiteDTO> listarTramitesSolicitudTituloPendientes() {
+        List<Tramite> tramites = tramiteRepository.findAllByTipoAndEstado(TipoTramite.SOLICITUD_DE_TITULO, EstadoTramite.PENDIENTE);
+        return tramites.stream()
+                .map(tramite -> modelMapper.map(tramite, TramiteDTO.class))
+                .toList();
+    }
+
+    @Override
+    public TramiteDTO aprobarTramiteSolicitudTitulo(Long tramiteId, String email) throws MessagingException {
+        return processTramite(tramiteId, email, EstadoTramite.ACEPTADO, null);
+    }
+
+    @Override
+    public TramiteDTO rechazarTramiteSolicitudTitulo(Long tramiteId, String email, String motivoRechazo) throws MessagingException {
+        return processTramite(tramiteId, email, EstadoTramite.RECHAZADO, motivoRechazo);
     }
 
     @Override
@@ -93,6 +122,10 @@ public class TramiteServiceImpl implements TramiteService {
         Usuario usuarioResponsable = getUsuarioResponsableByEmail(email);
 
         tramite.setEstado(estado);
+        tramite.setFechaActualizacion(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
+        if(estado == EstadoTramite.RECHAZADO){
+            tramite.setMotivoRechazo(motivoRechazo);
+        }
         tramite.setUsuarioResponsable(usuarioResponsable);
         Tramite savedTramite = tramiteRepository.save(tramite);
 
@@ -111,6 +144,7 @@ public class TramiteServiceImpl implements TramiteService {
             }
         } else if (tipoTramite == TipoTramite.SOLICITUD_DE_TITULO){
             if (estadoTramite == EstadoTramite.ACEPTADO){
+                tituloService.createTitulo(carrera.getNombre(),estudianteSolicitante);
                 //TODO generar entidad titulo y guardar toda la info necesaria
                 emailService.sendAprobacionTramiteTituloCarreraEmail("gestedu.info@gmail.com", estudianteSolicitante.getNombre(), carrera.getNombre(), usuarioResponsable.getNombre());
             } else if (estadoTramite == EstadoTramite.RECHAZADO){

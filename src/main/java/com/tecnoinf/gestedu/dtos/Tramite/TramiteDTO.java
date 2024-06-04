@@ -13,7 +13,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class TramiteDTO {
     private Long id;
+    private String motivoRechazo;
     private EstadoTramite estado;
+    private LocalDateTime fechaActualizacion;
     private LocalDateTime fechaCreacion;
     private TipoTramite tipo;
     private String nombreCarrera;

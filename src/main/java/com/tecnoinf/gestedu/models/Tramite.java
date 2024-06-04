@@ -20,11 +20,14 @@ public class Tramite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private LocalDateTime fechaCreacion = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+    private LocalDateTime fechaActualizacion = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
     @Enumerated(EnumType.STRING)
     private TipoTramite tipo;
-    private LocalDateTime fechaCreacion = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
     @Enumerated(EnumType.STRING)
     private EstadoTramite estado = EstadoTramite.PENDIENTE;
+    @Column(length = 500)
+    private String motivoRechazo = "";
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "carrera_id", nullable = false)
     private Carrera carrera;

@@ -42,6 +42,7 @@ public class TramiteController {
     }
 
     //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    @Operation(summary = "Aprobar un trámite de inscripción a carrera")
     @PutMapping("/aprobar-tramite-inscripcion-carrera/{tramiteId}")
     public ResponseEntity<TramiteDTO> aprobarTramiteInscripcionCarrera(@PathVariable Long tramiteId, Principal principal) throws MessagingException {
         String email = (principal != null) ? principal.getName() : null;
@@ -49,11 +50,32 @@ public class TramiteController {
     }
 
     //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    @Operation(summary = "Rechazar un trámite de inscripción a carrera")
     @PutMapping("/rechazar-tramite-inscripcion-carrera/{tramiteId}")
-    public ResponseEntity<TramiteDTO> rechazarTramiteInscripcionCarrera(@PathVariable Long tramiteId, @RequestBody String motivoRechazo,Principal principal) throws MessagingException {
+    public ResponseEntity<TramiteDTO> rechazarTramiteInscripcionCarrera(@PathVariable Long tramiteId, @RequestBody String motivoRechazo, Principal principal) throws MessagingException {
         String email = (principal != null) ? principal.getName() : null;
         return ResponseEntity.ok().body(tramiteService.rechazarTramiteInscripcionCarrera(tramiteId, email, motivoRechazo));
     }
 
+    //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
+    @Operation(summary = "Listar todos los trámites de solicitud de titulo PENDIENTES")
+    @GetMapping("/solicitud-titulo-pendientes")
+    public ResponseEntity<?> listarTramitesSolicitudTituloPendientes() {
+        return ResponseEntity.ok().body(tramiteService.listarTramitesSolicitudTituloPendientes());
+    }
+
+    @Operation(summary = "Aprobar un trámite de solicitud de titulo")
+    @PutMapping("/aprobar-tramite-solicitud-titulo/{tramiteId}")
+    public ResponseEntity<TramiteDTO> aprobarTramiteSolicitudTitulo(@PathVariable Long tramiteId, Principal principal) throws MessagingException {
+        String email = (principal != null) ? principal.getName() : null;
+        return ResponseEntity.ok().body(tramiteService.aprobarTramiteSolicitudTitulo(tramiteId, email));
+    }
+
+    @Operation(summary = "Rechazar un trámite de solicitud de titulo")
+    @PutMapping("/rechazar-tramite-solicitud-titulo/{tramiteId}")
+    public ResponseEntity<TramiteDTO> rechazarTramiteSolicitudTitulo(@PathVariable Long tramiteId, @RequestBody String motivoRechazo, Principal principal) throws MessagingException {
+        String email = (principal != null) ? principal.getName() : null;
+        return ResponseEntity.ok().body(tramiteService.rechazarTramiteSolicitudTitulo(tramiteId, email, motivoRechazo));
+    }
 
 }
