@@ -6,6 +6,7 @@ import com.tecnoinf.gestedu.dtos.certificado.CertificadoDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
+import com.tecnoinf.gestedu.exceptions.UniqueFieldException;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
 import com.tecnoinf.gestedu.models.enums.CalificacionExamen;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -171,4 +173,148 @@ public class EstudianteServiceImpl implements EstudianteService {
         }
         return certificadoService.generarCertificado(inscripcionCarrera.getCarrera().getNombre(), estudiante);
     }
+
+    @Override
+    public Page<AsignaturaDTO> obtenerAsignaturasParaInscripcion(Long id, String emailEstudiante, Pageable pageable){
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(emailEstudiante);
+        if(usuario.isEmpty()) {
+            throw new ResourceNotFoundException("Usuario no encontrado");
+        }
+        if(!(usuario.get() instanceof Estudiante estudiante)){
+            throw new ResourceNotFoundException("El usuario no es un estudiante");
+        }
+        List<AsignaturaDTO> asignaturaDTOS = new ArrayList<>();
+        Carrera carrera = carreraRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Carrera not found with id " + id));
+        List<Asignatura> asignaturas = carrera.getAsignaturas();
+        if (asignaturas != null){
+            for(Asignatura auxAsignatura: asignaturas){
+                if(auxAsignatura.getSemestrePlanEstudio() == 1){
+                    //No tiene previas...
+                    //Chequear que la fecha corresponda entre la fecha de Inicio con la de prevInscripcion en cursos
+                    List<Curso> cursos = auxAsignatura.getCursos();
+                    if(cursos != null)
+                    {
+                        for(Curso auxCursos: cursos){
+                            LocalDate fechaActual = LocalDate.now();
+                            LocalDate fechaInicioCurso = auxCursos.getFechaInicio();
+                            int plazoDiasPrevios = auxCursos.getDiasPrevInsc();
+                            LocalDate limiteFechaInicio = fechaInicioCurso.minusDays(plazoDiasPrevios);
+
+                            boolean periodoInscripcion = false;
+                            if (fechaActual.isBefore(fechaInicioCurso)) {
+                                if (fechaActual.isAfter(limiteFechaInicio)) {
+                                    //Dentro del horario de Inscripcion
+                                    periodoInscripcion = true;
+                                    List<InscripcionCurso> inscripcionCursos = auxCursos.getInscripciones();
+                                    if(inscripcionCursos == null){
+                                        //        Horario horario = modelMapper.map(nuevoHorario, Horario.class);
+                                        AsignaturaDTO asignaturaDTO = modelMapper.map(auxAsignatura, AsignaturaDTO.class);
+                                        asignaturaDTOS.add(asignaturaDTO);
+                                    }
+                                    boolean estaInscripto = false;
+                                    for(InscripcionCurso auxInscripcionCurso: inscripcionCursos){
+                                        if(auxInscripcionCurso.getEstudiante().getId() == estudiante.getId()){
+                                            estaInscripto = true;
+                                        }
+                                    }
+                                    if(!estaInscripto){
+                                        AsignaturaDTO asignaturaDTO = modelMapper.map(auxAsignatura, AsignaturaDTO.class);
+                                        asignaturaDTOS.add(asignaturaDTO);
+                                    }
+                                    else {
+                                        throw new UniqueFieldException("Ya está inscripto al curso.");
+                                    }
+                                }
+                            }
+                            if(!periodoInscripcion){
+                                throw new UniqueFieldException("Está fuera del plazo de inscripción de cualquier curso.");
+                            }
+                        }
+                    }
+                    else {
+                        throw new UniqueFieldException("No existen cursos asociados a la asignatura.");
+                    }
+                }
+                else{
+                    List<Asignatura> previas = asignaturaRepository.findPreviasByAsignaturaId(auxAsignatura.getId());
+                    int cantPrevias = 0;
+                    int previasExoneradas = 0;
+                    for(Asignatura previa: previas){
+                        cantPrevias++;
+                        List<Curso> cursosPrevia = previa.getCursos();
+                        for (Curso auxCursoPrevias: cursosPrevia){
+                            List<InscripcionCurso> inscripcionCursosEstudiante = inscripcionCursoRepository.findInscripcionCursoEstudianteById(estudiante.getId());
+                            for(InscripcionCurso inscripcionCurso: inscripcionCursosEstudiante){
+                                if(inscripcionCurso.getCurso().equals(auxCursoPrevias)){
+                                    if(inscripcionCurso.getCalificacion().equals(CalificacionCurso.EXONERADO)){
+                                        previasExoneradas++;
+                                    }
+                                    else if (inscripcionCurso.getCalificacion().equals(CalificacionCurso.AEXAMEN)){
+                                        List<InscripcionExamen> examenesAprovadosEstudiante = inscripcionExamenRepository.findByCalificacionAndEstudianteId(CalificacionExamen.APROBADO, estudiante.getId());
+                                        List<Examen> examenesAsignaturas = previa.getExamenes();
+                                        for(InscripcionExamen examenAprovado: examenesAprovadosEstudiante){
+                                            for(Examen examenAsig: examenesAsignaturas){
+                                                if(examenAprovado.getExamen().equals(examenAsig)){
+                                                    previasExoneradas++;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if(cantPrevias == previasExoneradas){
+                        //Pasó todas las previas
+                        List<Curso> cursos = auxAsignatura.getCursos();
+                        if(cursos != null)
+                        {
+                            //Cursos de asignatura
+                            for(Curso auxCursos: cursos){
+                                LocalDate fechaActual = LocalDate.now();
+                                LocalDate fechaInicioCurso = auxCursos.getFechaInicio();
+                                int plazoDiasPrevios = auxCursos.getDiasPrevInsc();
+                                LocalDate limiteFechaInicio = fechaInicioCurso.minusDays(plazoDiasPrevios);
+
+                                boolean periodoInscripcion = false;
+                                if (fechaActual.isBefore(fechaInicioCurso)) {
+                                    if (fechaActual.isAfter(limiteFechaInicio)) {
+                                        //Dentro del horario de Inscripcion
+                                        periodoInscripcion = true;
+                                        //Inscripciones del Curso
+                                        List<InscripcionCurso> inscripcionCursos = auxCursos.getInscripciones();
+                                        if(inscripcionCursos == null){
+                                            //Horario horario = modelMapper.map(nuevoHorario, Horario.class);
+                                            AsignaturaDTO asignaturaDTO = modelMapper.map(auxAsignatura, AsignaturaDTO.class);
+                                            asignaturaDTOS.add(asignaturaDTO);
+                                        }
+                                        boolean estaInscripto = false;
+                                        for(InscripcionCurso auxInscripcionCurso: inscripcionCursos){
+                                            if(auxInscripcionCurso.getEstudiante().getId() == estudiante.getId()){
+                                                estaInscripto = true;
+                                            }
+                                        }
+                                        if(!estaInscripto){
+                                            AsignaturaDTO asignaturaDTO = modelMapper.map(auxAsignatura, AsignaturaDTO.class);
+                                            asignaturaDTOS.add(asignaturaDTO);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            throw new UniqueFieldException("No existen cursos asociados a la asignatura.");
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            throw new UniqueFieldException("No existen asignaturas asociadas a la carrera.");
+        }
+
+        return  new PageImpl<>(asignaturaDTOS, pageable, asignaturaDTOS.size());
+    }
+
 }

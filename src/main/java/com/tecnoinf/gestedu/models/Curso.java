@@ -34,9 +34,9 @@ public class Curso {
     private List<Horario> horarios = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    /*@JoinColumn(name = "asignatura_id", nullable = false)
+    @JoinColumn(name = "asignatura_id", nullable = false)
     @ToString.Exclude
-    @EqualsAndHashCode.Exclude*/
+    @EqualsAndHashCode.Exclude
     private Asignatura asignatura;
 
     @ManyToOne(fetch = FetchType.LAZY)
