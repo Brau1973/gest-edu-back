@@ -6,6 +6,7 @@ import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoDTO;
 import com.tecnoinf.gestedu.services.interfaces.InscripcionCursoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +44,7 @@ public class InscripcionCursoController {
     @Operation(summary = "Registrar calificaciones del curso")
     @PutMapping("/{cursoId}/calificar")
     //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
-    public ResponseEntity<List<InscripcionCursoCalificacionDTO>> registrarCalificaciones(@PathVariable Long cursoId, @RequestBody List<InscripcionCursoCalificacionDTO> calificaciones) {
+    public ResponseEntity<List<InscripcionCursoCalificacionDTO>> registrarCalificaciones(@PathVariable Long cursoId, @RequestBody List<InscripcionCursoCalificacionDTO> calificaciones) throws MessagingException {
         List<InscripcionCursoCalificacionDTO> calificacionesCurso = inscripcionCursoService.registrarCalificaciones(cursoId, calificaciones);
         return ResponseEntity.ok().body(calificacionesCurso);
     }

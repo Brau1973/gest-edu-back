@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -178,10 +179,10 @@ public class InscripcionCursoRepositoryTest {
         curso = cursoRepository.save(curso);
 
         // Ejecutar el método de prueba
-        InscripcionCurso resultados = inscripcionCursoRepository.findInscripcionCursoEstudianteByEstudianteIdAndCursoId(estudiante.getId(), curso.getId());
-
+        Optional<InscripcionCurso> resultados = inscripcionCursoRepository.findInscripcionCursoEstudianteByEstudianteIdAndCursoId(estudiante.getId(), curso.getId());
+        InscripcionCurso res = resultados.get();
         // Verificar los resultados
         assertNotNull(resultados);
-        assertEquals(inscripcionCurso.getId(), resultados.getId());
+        assertEquals(inscripcionCurso.getId(), res.getId());
     }
 }

@@ -158,7 +158,7 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
     }
 
     @Override
-    public List<InscripcionCursoCalificacionDTO> registrarCalificaciones(Long id, List<InscripcionCursoCalificacionDTO> calificaciones){
+    public List<InscripcionCursoCalificacionDTO> registrarCalificaciones(Long id, List<InscripcionCursoCalificacionDTO> calificaciones) throws MessagingException{
         Curso curso = cursoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Curso no encontrado."));
         if (calificaciones.isEmpty()) {
@@ -181,22 +181,18 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                 throw new CalificacionCursoException("No pueden quedar calificaciones pendientes.");
             }
 
-            InscripcionCurso inscripcionCurso = inscripcionCursoRepository.findInscripcionCursoEstudianteByEstudianteIdAndCursoId(calificacionDTO.getEstudianteId(), id);
-            if(inscripcionCurso == null){
+            Optional<InscripcionCurso> inscripcionCurso = inscripcionCursoRepository.findInscripcionCursoEstudianteByEstudianteIdAndCursoId(calificacionDTO.getEstudianteId(), id);
+            if(!inscripcionCurso.isPresent()){
                 throw new ResourceNotFoundException("No se encontró la inscripción del estudiante id " + calificacionDTO.getEstudianteId());
             }
-
-            inscripcionCurso.setCalificacion(calificacionDTO.getCalificacionCurso());
-            inscripcionCurso.setEstado(EstadoInscripcionCurso.COMPLETADA);
-            inscripcionCursoRepository.save(inscripcionCurso);
+            InscripcionCurso inscripcionC = inscripcionCurso.get();
+            inscripcionC.setCalificacion(calificacionDTO.getCalificacionCurso());
+            inscripcionC.setEstado(EstadoInscripcionCurso.COMPLETADA);
+            inscripcionCursoRepository.save(inscripcionC);
 
             //TODO Chequear el mandado de mails
-            /*try {
-                emailService.sendCalificacionCursoEmail("gestedu.info@gmail.com", estudiante.getNombre(), inscripcionCurso.getCurso().getAsignatura().getNombre(), inscripcionCurso.getCalificacion());
-            } catch (MessagingException e) {
-                throw new RuntimeException(e);
-            }*/
-        }
+                //emailService.sendCalificacionCursoEmail(inscripcionC.getEstudiante().getEmail(), inscripcionC.getEstudiante().getNombre(), inscripcionC.getCurso().getAsignatura().getNombre(), inscripcionC.getCalificacion().toString());
+            }
 
         curso.setEstado(Estado.FINALIZADO);
         cursoRepository.save(curso);
