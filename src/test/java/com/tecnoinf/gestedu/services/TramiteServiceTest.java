@@ -273,4 +273,56 @@ public class TramiteServiceTest {
         assertTrue(result.isEmpty());
     }
 
+    @Test
+    public void listarTramitesEstudiante_returnsListOfTramiteDTOs_whenTramitesExist() {
+        // Given
+        Estudiante estudiante = new Estudiante();
+        estudiante.setEmail("test@test.com");
+
+        Tramite tramite = new Tramite();
+        List<Tramite> tramites = Collections.singletonList(tramite);
+        TramiteDTO tramiteDTO = new TramiteDTO();
+
+        when(estudianteRepository.findByEmail("test@test.com")).thenReturn(Optional.of(estudiante));
+        when(tramiteRepository.findAllByUsuarioSolicitante(estudiante)).thenReturn(tramites);
+        when(modelMapper.map(tramite, TramiteDTO.class)).thenReturn(tramiteDTO);
+
+        // When
+        List<TramiteDTO> result = tramiteService.listarTramitesEstudiante("test@test.com");
+
+        // Then
+        assertFalse(result.isEmpty());
+        assertEquals(tramiteDTO, result.get(0));
+    }
+
+    @Test
+    public void listarTramitesEstudiante_returnsEmptyList_whenNoTramitesExist() {
+        // Given
+        Estudiante estudiante = new Estudiante();
+        estudiante.setEmail("test@test.com");
+
+        List<Tramite> tramites = Collections.emptyList();
+
+        when(estudianteRepository.findByEmail("test@test.com")).thenReturn(Optional.of(estudiante));
+        when(tramiteRepository.findAllByUsuarioSolicitante(estudiante)).thenReturn(tramites);
+
+        // When
+        List<TramiteDTO> result = tramiteService.listarTramitesEstudiante("test@test.com");
+
+        // Then
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void listarTramitesEstudiante_throwsException_whenEstudianteNotFound() {
+        // Given
+        when(estudianteRepository.findByEmail("test@test.com")).thenReturn(Optional.empty());
+
+        // Then
+        assertThrows(ResourceNotFoundException.class, () -> {
+            tramiteService.listarTramitesEstudiante("test@test.com");
+        });
+    }
+
+
 }
