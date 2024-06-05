@@ -64,6 +64,7 @@ public class TramiteController {
         return ResponseEntity.ok().body(tramiteService.listarTramitesSolicitudTituloPendientes());
     }
 
+    //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
     @Operation(summary = "Aprobar un trámite de solicitud de titulo")
     @PutMapping("/aprobar-tramite-solicitud-titulo/{tramiteId}")
     public ResponseEntity<TramiteDTO> aprobarTramiteSolicitudTitulo(@PathVariable Long tramiteId, Principal principal) throws MessagingException {
@@ -71,11 +72,20 @@ public class TramiteController {
         return ResponseEntity.ok().body(tramiteService.aprobarTramiteSolicitudTitulo(tramiteId, email));
     }
 
+    //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
     @Operation(summary = "Rechazar un trámite de solicitud de titulo")
     @PutMapping("/rechazar-tramite-solicitud-titulo/{tramiteId}")
     public ResponseEntity<TramiteDTO> rechazarTramiteSolicitudTitulo(@PathVariable Long tramiteId, @RequestBody String motivoRechazo, Principal principal) throws MessagingException {
         String email = (principal != null) ? principal.getName() : null;
         return ResponseEntity.ok().body(tramiteService.rechazarTramiteSolicitudTitulo(tramiteId, email, motivoRechazo));
+    }
+
+    //@PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
+    @Operation(summary = "Listar todos los trámites del estudiante logueado")
+    @GetMapping("/tramites-estudiante")
+    public ResponseEntity<?> listarTramitesEstudiante(Principal principal) {
+        String email = (principal != null) ? principal.getName() : null;
+        return ResponseEntity.ok().body(tramiteService.listarTramitesEstudiante(email));
     }
 
 }

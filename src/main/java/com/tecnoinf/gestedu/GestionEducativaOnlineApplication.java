@@ -175,46 +175,33 @@ public class GestionEducativaOnlineApplication {
 					createAsignaturaInitData(asignaturaRepository, "Photoshop", "Photoshop con adobe ilustrator", 1, 3 ,savedCarrera3);
 				}
 
+				// -----TRAMITES-----
+				createTramiteInitData(tramiteRepository, estudiante1, savedCarrera3, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE);
+				createTramiteInitData(tramiteRepository, estudiante1, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE);
+				createTramiteInitData(tramiteRepository, estudiante2, savedCarrera3, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE);
+				createTramiteInitData(tramiteRepository, estudiante2, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE);
+
+				createTramiteInitData(tramiteRepository, estudiante3, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.ACEPTADO);
+				createTramiteInitData(tramiteRepository, estudiante3, savedCarrera3, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.ACEPTADO);
+				createTramiteInitData(tramiteRepository, estudiante3, savedCarrera1, TipoTramite.SOLICITUD_DE_TITULO, EstadoTramite.PENDIENTE);
+				createTramiteInitData(tramiteRepository, estudiante3, savedCarrera3, TipoTramite.SOLICITUD_DE_TITULO, EstadoTramite.PENDIENTE);
+
 				// -----INSCRIPCIONCARRERA-----
 				InscripcionCarrera inscripcionCarrera1 = new InscripcionCarrera();
-				inscripcionCarrera1.setEstudiante(estudiante1);
+				inscripcionCarrera1.setEstudiante(estudiante3);
 				inscripcionCarrera1.setCarrera(savedCarrera1);
 				inscripcionCarrera1.setEstado(EstadoInscripcionCarrera.CURSANDO);
 				inscripcionCarrera1.setFechaInscripcion(LocalDate.now());
 				inscripcionCarreraRepository.save(inscripcionCarrera1);
 
 				InscripcionCarrera inscripcionCarrera2= new InscripcionCarrera();
-				inscripcionCarrera2.setEstudiante(estudiante2);
-				inscripcionCarrera2.setCarrera(savedCarrera1);
+				inscripcionCarrera2.setEstudiante(estudiante3);
+				inscripcionCarrera2.setCarrera(savedCarrera3);
 				inscripcionCarrera2.setEstado(EstadoInscripcionCarrera.COMPLETADA);
 				inscripcionCarrera2.setFechaInscripcion(LocalDate.now());
 				inscripcionCarreraRepository.save(inscripcionCarrera2);
 
-				InscripcionCarrera inscripcionCarrera3 = new InscripcionCarrera();
-				inscripcionCarrera3.setEstudiante(estudiante3);
-				inscripcionCarrera3.setCarrera(savedCarrera1);
-				inscripcionCarrera3.setEstado(EstadoInscripcionCarrera.CURSANDO);
-				inscripcionCarrera3.setFechaInscripcion(LocalDate.now());
-				inscripcionCarreraRepository.save(inscripcionCarrera3);
-
-				// -----TRAMITES-----
-				Tramite tramite1 = new Tramite();
-				tramite1.setUsuarioSolicitante(estudiante1);
-				tramite1.setTipo(TipoTramite.INSCRIPCION_A_CARRERA);
-				tramite1.setEstado(EstadoTramite.PENDIENTE);
-				tramite1.setFechaCreacion(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
-				tramite1.setCarrera(savedCarrera3);
-				tramiteRepository.save(tramite1);
-
-				Tramite tramite2 = new Tramite();
-				tramite2.setUsuarioSolicitante(estudiante2);
-				tramite2.setTipo(TipoTramite.INSCRIPCION_A_CARRERA);
-				tramite2.setEstado(EstadoTramite.PENDIENTE);
-				tramite2.setFechaCreacion(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
-				tramite2.setCarrera(savedCarrera3);
-				tramiteRepository.save(tramite2);
-
-                //---- DOCENTES ----
+				//---- DOCENTES ----
 				Docente docente1 = new Docente();
 				docente1.setNombre("Docente1");
 				docente1.setApellido("ApellidoDocente1");
@@ -310,6 +297,16 @@ public class GestionEducativaOnlineApplication {
 
 			}
 		};
+	}
+
+	private void createTramiteInitData(TramiteRepository tramiteRepository, Estudiante estudiante, Carrera savedCarrera, TipoTramite tipoTramite, EstadoTramite estadoTramite) {
+		Tramite tramite = new Tramite();
+		tramite.setUsuarioSolicitante(estudiante);
+		tramite.setTipo(tipoTramite);
+		tramite.setEstado(estadoTramite);
+		tramite.setFechaCreacion(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
+		tramite.setCarrera(savedCarrera);
+		tramiteRepository.save(tramite);
 	}
 
 	private void createAsignaturaInitData(AsignaturaRepository asignaturaRepository, String nombre, String descripcion, Integer creditos, Integer semestrePlanEstudio ,Carrera carrera) {

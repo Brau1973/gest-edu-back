@@ -16,5 +16,7 @@ public interface TramiteRepository extends JpaRepository<Tramite, Long>, JpaSpec
     boolean existsByUsuarioSolicitanteAndCarreraAndTipoAndEstado(Usuario usuarioSolicitante, Carrera carrera, TipoTramite tipo, EstadoTramite estado);
 
     List<Tramite> findAllByTipoAndEstado(TipoTramite tipoTramite, EstadoTramite estadoTramite);
+
+    List<Tramite> findAllByUsuarioSolicitante(Estudiante estudiante);
 }
 

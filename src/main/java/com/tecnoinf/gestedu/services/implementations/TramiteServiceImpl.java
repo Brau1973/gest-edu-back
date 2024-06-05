@@ -107,6 +107,15 @@ public class TramiteServiceImpl implements TramiteService {
     }
 
     @Override
+    public List<TramiteDTO> listarTramitesEstudiante(String email) {
+        Estudiante estudiante = getEstudianteByEmail(email);
+        List<Tramite> tramites = tramiteRepository.findAllByUsuarioSolicitante(estudiante);
+        return tramites.stream()
+                .map(tramite -> modelMapper.map(tramite, TramiteDTO.class))
+                .toList();
+    }
+
+    @Override
     public TramiteDTO aprobarTramiteInscripcionCarrera(Long tramiteId, String email) throws MessagingException {
         return processTramite(tramiteId, email, EstadoTramite.ACEPTADO, null);
     }
