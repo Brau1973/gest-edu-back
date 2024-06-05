@@ -19,4 +19,6 @@ public interface EstudianteService {
     Page<AsignaturaDTO> obtenerAsignaturasPendientes(Long carreraId, String name, Pageable pageable);
     CertificadoDTO solicitarCertificado(Long carreraId, String name);
     Page<ExamenDTO> listarExamenesInscriptoVigentes(String name, Pageable pageable);
+    Page<AsignaturaDTO> obtenerAsignaturasParaInscripcion(Long id, String emailEstudiante, Pageable pageable);
+
 }

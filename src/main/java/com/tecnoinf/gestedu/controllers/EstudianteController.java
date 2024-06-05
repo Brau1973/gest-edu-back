@@ -100,4 +100,15 @@ public class EstudianteController {
         Page<AsignaturaDTO> page = estudianteService.obtenerAsignaturasPendientes(carreraId, principal.getName(), pageable);
         return ResponseEntity.ok(page);
     }
+
+    @Operation(summary = "Obtener las asignaturas disponibles para inscripcion")
+    @GetMapping("/{carreraid}/asignaturas-inscripcion")
+    //@PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
+    public ResponseEntity<Page<AsignaturaDTO>> obtenerAsignaturasParaInscripcion(@PathVariable Long carreraid, Principal principal, Pageable pageable){
+        if(principal == null) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        Page<AsignaturaDTO> asignaturas = estudianteService.obtenerAsignaturasParaInscripcion(carreraid, principal.getName(), pageable);
+        return  ResponseEntity.ok().body(asignaturas);
+    }
 }

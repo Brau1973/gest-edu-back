@@ -9,6 +9,7 @@ import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.exceptions.UniqueFieldException;
 import com.tecnoinf.gestedu.models.Asignatura;
 import com.tecnoinf.gestedu.models.Carrera;
+import com.tecnoinf.gestedu.models.Curso;
 import com.tecnoinf.gestedu.models.PeriodoExamen;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
