@@ -28,8 +28,7 @@ public class DocenteServiceImpl implements DocenteService {
     private final ExamenRepository examenRepository;
 
     @Autowired
-    public DocenteServiceImpl(DocenteRepository docenteRepository, ModelMapper modelMapper, ActividadService actividadService) {
-    public DocenteServiceImpl(DocenteRepository docenteRepository, ModelMapper modelMapper, CursoRepository cursoRepository, ExamenRepository examenRepository) {
+    public DocenteServiceImpl(DocenteRepository docenteRepository, ModelMapper modelMapper, ActividadService actividadService, CursoRepository cursoRepository, ExamenRepository examenRepository) {
         this.docenteRepository = docenteRepository;
         this.modelMapper = modelMapper;
         this.actividadService = actividadService;
@@ -76,13 +75,13 @@ public class DocenteServiceImpl implements DocenteService {
     }
 
     @Override
-    public void deleteDocente(Long id) { //TODO: CONTROLAR QUE NO ESTE ASIGNADO EN NINGUNA ASIGNATURA NI NINGUNA MESA DE EXAMEN
-        //CONTROLAR QUE EL DOCENTE NO ESTE ASIGNADO A NINGUN CURSO NI A NINGUN EXAMEN
+    public void deleteDocente(Long id) {
         if (cursoRepository.existsByDocenteId(id) || examenRepository.existsByDocentesId(id)) {
             throw new BajaDocenteException("El docente no puede ser eliminado porque está asignado a un curso o examen");
         }
         Docente docente = findDocenteById(id);
         docenteRepository.delete(docente);
+        actividadService.registrarActividad(TipoActividad.BAJA_DOCENTE, "Se ha eliminado el docente con id" + id);
     }
 
     private Docente findDocenteById(Long id) {
