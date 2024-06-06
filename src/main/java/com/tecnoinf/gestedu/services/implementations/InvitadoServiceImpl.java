@@ -5,6 +5,7 @@ import com.tecnoinf.gestedu.dtos.usuario.AuthLoginRequest;
 import com.tecnoinf.gestedu.dtos.usuario.AuthResponse;
 import com.tecnoinf.gestedu.models.Usuario;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
+import com.tecnoinf.gestedu.services.interfaces.EmailService;
 import com.tecnoinf.gestedu.services.interfaces.InvitadoService;
 import com.tecnoinf.gestedu.util.JwtUtils;
 import jakarta.mail.MessagingException;
@@ -48,7 +49,7 @@ public class InvitadoServiceImpl implements InvitadoService {
     TemplateEngine templateEngine;
 
     @Autowired
-    EmailServiceImpl emailService;
+    EmailService emailService;
 
     @Value("${mail.urlFront}")
     private String urlFront;
