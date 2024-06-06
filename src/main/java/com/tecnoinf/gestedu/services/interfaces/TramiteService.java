@@ -14,4 +14,6 @@ public interface TramiteService {
     TramiteDTO aprobarTramiteSolicitudTitulo(Long tramiteId, String email) throws MessagingException;
     TramiteDTO rechazarTramiteSolicitudTitulo(Long tramiteId, String email, String motivoRechazo) throws MessagingException;
     List<TramiteDTO> listarTramitesEstudiante(String email);
+    List<TramiteDTO> listarTramitesInscripcionCarreraResueltos();
+    List<TramiteDTO> listarTramitesSolicitudTituloResueltos();
 }

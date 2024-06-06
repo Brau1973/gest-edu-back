@@ -44,6 +44,7 @@ public class GestionEducativaOnlineApplication {
 				Estudiante estudiante1 = new Estudiante();
 				Estudiante estudiante2 = new Estudiante();
 				Estudiante estudiante3 = new Estudiante();
+				Usuario funcionario = new Funcionario();
 
 				//-----USUARIOS-----
 				PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -105,7 +106,6 @@ public class GestionEducativaOnlineApplication {
 					usuarioRepository.save(estudiante3);
 				}
 				if (usuarioRepository.findByCi("42687516").isEmpty()) {
-					Usuario funcionario = new Funcionario();
 					funcionario.setNombre("Carla");
 					funcionario.setApellido("Miranda");
 					funcionario.setEmail("CarlaMiranda@mail.com");
@@ -178,15 +178,15 @@ public class GestionEducativaOnlineApplication {
 				}
 
 				// -----TRAMITES-----
-				createTramiteInitData(tramiteRepository, estudiante1, savedCarrera3, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE);
-				createTramiteInitData(tramiteRepository, estudiante1, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE);
-				createTramiteInitData(tramiteRepository, estudiante2, savedCarrera3, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE);
-				createTramiteInitData(tramiteRepository, estudiante2, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE);
+				createTramiteInitData(tramiteRepository, estudiante1, savedCarrera3, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE,null);
+				createTramiteInitData(tramiteRepository, estudiante1, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE,null);
+				createTramiteInitData(tramiteRepository, estudiante2, savedCarrera3, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE,null);
+				createTramiteInitData(tramiteRepository, estudiante2, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE,null);
 
-				createTramiteInitData(tramiteRepository, estudiante3, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.ACEPTADO);
-				createTramiteInitData(tramiteRepository, estudiante3, savedCarrera3, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.ACEPTADO);
-				createTramiteInitData(tramiteRepository, estudiante3, savedCarrera1, TipoTramite.SOLICITUD_DE_TITULO, EstadoTramite.PENDIENTE);
-				createTramiteInitData(tramiteRepository, estudiante3, savedCarrera3, TipoTramite.SOLICITUD_DE_TITULO, EstadoTramite.PENDIENTE);
+				createTramiteInitData(tramiteRepository, estudiante3, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.ACEPTADO, funcionario);
+				createTramiteInitData(tramiteRepository, estudiante3, savedCarrera3, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.ACEPTADO,funcionario);
+				createTramiteInitData(tramiteRepository, estudiante3, savedCarrera1, TipoTramite.SOLICITUD_DE_TITULO, EstadoTramite.PENDIENTE,null);
+				createTramiteInitData(tramiteRepository, estudiante3, savedCarrera3, TipoTramite.SOLICITUD_DE_TITULO, EstadoTramite.PENDIENTE,null);
 
 				// -----INSCRIPCIONCARRERA-----
 				InscripcionCarrera inscripcionCarrera1 = new InscripcionCarrera();
@@ -301,13 +301,16 @@ public class GestionEducativaOnlineApplication {
 		};
 	}
 
-	private void createTramiteInitData(TramiteRepository tramiteRepository, Estudiante estudiante, Carrera savedCarrera, TipoTramite tipoTramite, EstadoTramite estadoTramite) {
+	private void createTramiteInitData(TramiteRepository tramiteRepository, Estudiante estudiante, Carrera savedCarrera, TipoTramite tipoTramite, EstadoTramite estadoTramite, Usuario usuarioResponsable) {
 		Tramite tramite = new Tramite();
 		tramite.setUsuarioSolicitante(estudiante);
 		tramite.setTipo(tipoTramite);
 		tramite.setEstado(estadoTramite);
 		tramite.setFechaCreacion(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
 		tramite.setCarrera(savedCarrera);
+		if(estadoTramite.equals(EstadoTramite.ACEPTADO) || estadoTramite.equals(EstadoTramite.RECHAZADO)){
+			tramite.setUsuarioResponsable(usuarioResponsable);
+		}
 		tramiteRepository.save(tramite);
 	}
 
