@@ -7,11 +7,9 @@ import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoDTO;
 import com.tecnoinf.gestedu.exceptions.CalificacionCursoException;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.models.*;
-import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
-import com.tecnoinf.gestedu.models.enums.Estado;
-import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCarrera;
-import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCurso;
+import com.tecnoinf.gestedu.models.enums.*;
 import com.tecnoinf.gestedu.repositories.*;
+import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.EmailService;
 import com.tecnoinf.gestedu.services.interfaces.InscripcionCursoService;
 import jakarta.mail.MessagingException;
@@ -34,10 +32,14 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
     private final AsignaturaRepository asignaturaRepository;
     private final EmailService emailService;
     private final ModelMapper modelMapper;
+    private final ActividadService actividadService;
 
 
     @Autowired
-    public InscripcionCursoServiceImpl(CursoRepository cursoRepository, EstudianteRepository estudianteRepository, InscripcionCursoRepository inscripcionCursoRepository, InscripcionCarreraRepository inscripcionCarreraRepository, AsignaturaRepository asignaturaRepository, EmailService emailService, ModelMapper modelMapper) {
+    public InscripcionCursoServiceImpl(CursoRepository cursoRepository, EstudianteRepository estudianteRepository,
+                                       InscripcionCursoRepository inscripcionCursoRepository, InscripcionCarreraRepository inscripcionCarreraRepository,
+                                       AsignaturaRepository asignaturaRepository, EmailService emailService, ModelMapper modelMapper,
+                                       ActividadService actividadService) {
         this.cursoRepository = cursoRepository;
         this.estudianteRepository = estudianteRepository;
         this.inscripcionCursoRepository = inscripcionCursoRepository;
@@ -45,6 +47,7 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
         this.asignaturaRepository = asignaturaRepository;
         this.emailService = emailService;
         this.modelMapper = modelMapper;
+        this.actividadService = actividadService;
     }
 
     InscripcionCarrera estaInscriptoEnCarrera(List<InscripcionCarrera> inscripcionCarrera, Curso curso) {
@@ -136,6 +139,9 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                                 inscripcionCurso.setCurso(curso);
                                 inscripcionCurso.setFechaInscripcion(LocalDateTime.now());
                                 InscripcionCurso createdInscripcion = inscripcionCursoRepository.save(inscripcionCurso);
+
+                                actividadService.registrarActividad(TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso exitoso");
+
                                 return modelMapper.map(createdInscripcion, InscripcionCursoDTO.class);
                             } else {
                                 throw new IllegalArgumentException("Faltan exonerar asignaturas previamente.");
@@ -190,6 +196,8 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
             inscripcionCurso.setCalificacion(calificacionDTO.getCalificacionCurso());
             inscripcionCurso.setEstado(EstadoInscripcionCurso.COMPLETADA);
             inscripcionCursoRepository.save(inscripcionCurso);
+
+            actividadService.registrarActividad(TipoActividad.REGISTRO_CALIFICACION, "Registro de calificaciónes de curso");
 
             //TODO Chequear el mandado de mails
             /*try {

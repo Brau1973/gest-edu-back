@@ -9,6 +9,7 @@ import com.tecnoinf.gestedu.models.PeriodoExamen;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.PeriodoExamenRepository;
 import com.tecnoinf.gestedu.services.implementations.PeriodoExamenServiceImpl;
+import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -24,6 +25,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 public class PeriodoExamenServiceImplTest {
@@ -37,9 +40,13 @@ public class PeriodoExamenServiceImplTest {
     @Mock
     private CarreraRepository carreraRepository;
 
+    @Mock
+    private ActividadService actividadService;
+
     @BeforeEach
     public void init() {
         MockitoAnnotations.initMocks(this);
+        doNothing().when(actividadService).registrarActividad(any(), any());
     }
 
     private PeriodoExamenDTO crearPeriodoExamenDTO(LocalDateTime fechaInicio, LocalDateTime fechaFin, Long carreraId) {

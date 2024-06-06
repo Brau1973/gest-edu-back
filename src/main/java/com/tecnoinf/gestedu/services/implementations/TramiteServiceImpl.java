@@ -7,15 +7,13 @@ import com.tecnoinf.gestedu.exceptions.TramiteNotPendienteException;
 import com.tecnoinf.gestedu.exceptions.TramitePendienteExistenteException;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.models.enums.EstadoTramite;
+import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.models.enums.TipoTramite;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.EstudianteRepository;
 import com.tecnoinf.gestedu.repositories.TramiteRepository;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
-import com.tecnoinf.gestedu.services.interfaces.EmailService;
-import com.tecnoinf.gestedu.services.interfaces.InscripcionCarreraService;
-import com.tecnoinf.gestedu.services.interfaces.TituloService;
-import com.tecnoinf.gestedu.services.interfaces.TramiteService;
+import com.tecnoinf.gestedu.services.interfaces.*;
 import jakarta.mail.MessagingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +34,13 @@ public class TramiteServiceImpl implements TramiteService {
     private final UsuarioRepository usuarioRepository;
     private final InscripcionCarreraService inscripcionCarreraService;
     private final TituloService tituloService;
+    private final ActividadService actividadService;
 
     @Autowired
     public TramiteServiceImpl(EstudianteRepository estudianteRepository, CarreraRepository carreraRepository,
                               TramiteRepository tramiteRepository, ModelMapper modelMapper, EmailService emailService,
                               UsuarioRepository usuarioRepository, InscripcionCarreraService inscripcionCarreraService,
-                              TituloService tituloService) {
+                              TituloService tituloService, ActividadService actividadService) {
         this.estudianteRepository = estudianteRepository;
         this.carreraRepository = carreraRepository;
         this.tramiteRepository = tramiteRepository;
@@ -50,6 +49,7 @@ public class TramiteServiceImpl implements TramiteService {
         this.usuarioRepository = usuarioRepository;
         this.inscripcionCarreraService = inscripcionCarreraService;
         this.tituloService = tituloService;
+        this.actividadService = actividadService;
     }
 
     @Override
@@ -72,11 +72,12 @@ public class TramiteServiceImpl implements TramiteService {
         if(tipoTramite == TipoTramite.INSCRIPCION_A_CARRERA){
             //TODO cambiar a email del estudiante cuando se pase a produccion
             emailService.sendNuevoTramiteInscripcionCarreraEmail("gestedu.info@gmail.com", estudiante.getNombre(), carrera.getNombre());
+            actividadService.registrarActividad(TipoActividad.SOLICITUD_INSCRIPCION_CARRERA, "Se solicito la inscripcion a la carrera " + carrera.getNombre());
         } else if (tipoTramite == TipoTramite.SOLICITUD_DE_TITULO){
             //TODO cambiar a email del estudiante cuando se pase a produccion
+            actividadService.registrarActividad(TipoActividad.SOLICITUD_TITULO, "Se solicito el titulo de la carrera " + carrera.getNombre());
             emailService.sendNuevoTramiteTituloCarreraEmail("gestedu.info@gmail.com", estudiante.getNombre(), carrera.getNombre());
         }
-
         return modelMapper.map(tramiteRepository.save(tramite), TramiteDTO.class);
     }
 
@@ -147,16 +148,19 @@ public class TramiteServiceImpl implements TramiteService {
         if(tipoTramite == TipoTramite.INSCRIPCION_A_CARRERA){
             if (estadoTramite == EstadoTramite.ACEPTADO){
                 inscripcionCarreraService.createInscripcionCarrera(carrera, estudianteSolicitante);
+                actividadService.registrarActividad(TipoActividad.APROBACION_SOLICITUD_INSCRIPCION_CARRERA, "Se aprobo la solicitud de inscripcion del estudiante " + estudianteSolicitante.getNombre() + " a la carrera " + carrera.getNombre());
                 emailService.sendAprobacionTramiteInscripcionCarreraEmail("gestedu.info@gmail.com", estudianteSolicitante.getNombre(), carrera.getNombre(), usuarioResponsable.getNombre());
             } else if (estadoTramite == EstadoTramite.RECHAZADO){
+                actividadService.registrarActividad(TipoActividad.RECHAZO_SOLICITUD_INSCRIPCION_CARRERA, "Se rechazo la solicitud de inscripcion del estudiante " + estudianteSolicitante.getNombre() + " a la carrera " + carrera.getNombre());
                 emailService.sendRechazoTramiteInscripcionCarreraEmail("gestedu.info@gmail.com", estudianteSolicitante.getNombre(), carrera.getNombre(), usuarioResponsable.getNombre(), motivoRechazo);
             }
         } else if (tipoTramite == TipoTramite.SOLICITUD_DE_TITULO){
             if (estadoTramite == EstadoTramite.ACEPTADO){
                 tituloService.createTitulo(carrera.getNombre(),estudianteSolicitante);
-                //TODO generar entidad titulo y guardar toda la info necesaria
+                actividadService.registrarActividad(TipoActividad.APROBACION_SOLICITUD_TITULO, "Se aprobo la solicitud de titulo del estudiante " + estudianteSolicitante.getNombre() + " de la carrera " + carrera.getNombre());
                 emailService.sendAprobacionTramiteTituloCarreraEmail("gestedu.info@gmail.com", estudianteSolicitante.getNombre(), carrera.getNombre(), usuarioResponsable.getNombre());
             } else if (estadoTramite == EstadoTramite.RECHAZADO){
+                actividadService.registrarActividad(TipoActividad.RECHAZO_SOLICITUD_TITULO, "Se rechazo la solicitud de titulo del estudiante " + estudianteSolicitante.getNombre() + " de la carrera " + carrera.getNombre());
                 emailService.sendRechazoTramiteTituloCarreraEmail("gestedu.info@gmail.com", estudianteSolicitante.getNombre(), carrera.getNombre(), usuarioResponsable.getNombre(), motivoRechazo);
             }
         }

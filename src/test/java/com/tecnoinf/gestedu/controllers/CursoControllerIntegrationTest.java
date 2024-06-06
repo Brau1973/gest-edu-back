@@ -10,12 +10,16 @@ import com.tecnoinf.gestedu.models.enums.DiaSemana;
 import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCarrera;
 import com.tecnoinf.gestedu.repositories.*;
+import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.CursoService;
 import jakarta.validation.constraints.Email;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,6 +34,8 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -68,6 +74,18 @@ public class CursoControllerIntegrationTest {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @MockBean
+    private ActividadService actividadService;
+
+    @InjectMocks
+    private InscripcionCursoController inscripcionCursoController;
+
+    @BeforeEach
+    public void setup() {
+        // Configurar el mock para que el método registrarActividad no haga nada
+        doNothing().when(actividadService).registrarActividad(any(), any());
+    }
 
     @Test
     @Transactional

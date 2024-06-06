@@ -17,6 +17,7 @@ import com.tecnoinf.gestedu.repositories.EstudianteRepository;
 import com.tecnoinf.gestedu.repositories.TramiteRepository;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import com.tecnoinf.gestedu.services.implementations.TramiteServiceImpl;
+import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.EmailService;
 import com.tecnoinf.gestedu.services.interfaces.InscripcionCarreraService;
 import jakarta.mail.MessagingException;
@@ -61,9 +62,13 @@ public class TramiteServiceTest {
     @Mock
     private ModelMapper modelMapper;
 
+    @Mock
+    private ActividadService actividadService;
+
     @BeforeEach
     public void init() {
         MockitoAnnotations.initMocks(this);
+        doNothing().when(actividadService).registrarActividad(any(), any());
     }
 
     @Test

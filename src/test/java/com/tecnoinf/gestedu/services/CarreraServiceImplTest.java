@@ -13,6 +13,7 @@ import com.tecnoinf.gestedu.models.InscripcionCarrera;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.specifications.CarreraSpecification;
 import com.tecnoinf.gestedu.services.implementations.CarreraServiceImpl;
+import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -36,12 +37,16 @@ class CarreraServiceImplTest {
     @Mock
     ModelMapper modelMapper;
 
+    @Mock
+    private ActividadService actividadService;
+
     @InjectMocks
     CarreraServiceImpl carreraService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        doNothing().when(actividadService).registrarActividad(any(), any());
     }
 
     @Test

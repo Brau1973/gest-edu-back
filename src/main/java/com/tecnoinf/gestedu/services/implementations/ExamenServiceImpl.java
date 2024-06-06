@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.services.implementations;
 
+import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.examen.ActaExamenDTO;
 import com.tecnoinf.gestedu.dtos.examen.CreateExamenDTO;
@@ -15,10 +16,7 @@ import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
 import com.tecnoinf.gestedu.models.enums.CalificacionExamen;
 import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.repositories.*;
-import com.tecnoinf.gestedu.services.interfaces.CarreraService;
-import com.tecnoinf.gestedu.services.interfaces.EmailService;
-import com.tecnoinf.gestedu.services.interfaces.ExamenService;
-import com.tecnoinf.gestedu.services.interfaces.PeriodoExamenService;
+import com.tecnoinf.gestedu.services.interfaces.*;
 import jakarta.mail.MessagingException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,11 +40,13 @@ public class ExamenServiceImpl implements ExamenService {
     private final InscripcionExamenRepository inscripcionExamenRepository;
     private final InscripcionCursoRepository inscripcionCursoRepository;
     private final EmailService emailService;
+    private final ActividadService actividadService;
 
-    public ExamenServiceImpl(PeriodoExamenService periodoExamenService, CarreraService carreraService,
+
+    public ExamenServiceImpl(PeriodoExamenService periodoExamenService,CarreraService carreraService,
                              AsignaturaRepository asignaturaRepository, DocenteRepository docenteRepository,
                              ExamenRepository examenRepository, UsuarioRepository usuarioRepository, InscripcionExamenRepository inscripcionExamenRepository,
-                             InscripcionCursoRepository inscripcionCursoRepository, EstudianteRepository estudianteRepository, EmailService emailService) {
+                             InscripcionCursoRepository inscripcionCursoRepository, EstudianteRepository estudianteRepository, EmailService emailService, ActividadService actividadService) {
         this.carreraService = carreraService;
         this.asignaturaRepository = asignaturaRepository;
         this.docenteRepository = docenteRepository;
@@ -55,7 +55,7 @@ public class ExamenServiceImpl implements ExamenService {
         this.inscripcionExamenRepository = inscripcionExamenRepository;
         this.inscripcionCursoRepository = inscripcionCursoRepository;
         this.emailService = emailService;
-
+        this.actividadService = actividadService;
     }
 
     @Override
@@ -78,6 +78,9 @@ public class ExamenServiceImpl implements ExamenService {
 
         Examen examen = crearExamen(createExamenDto, asignatura, docentes);
         examenRepository.save(examen);
+
+        actividadService.registrarActividad(TipoActividad.ALTA_EXAMEN, "Se ha creado un examen para la asignatura " + asignatura.getNombre() + " en la fecha " + examen.getFecha());
+
         return new ExamenDTO(examen);
     }
 
@@ -151,6 +154,9 @@ public class ExamenServiceImpl implements ExamenService {
         inscripcion.setEstudiante((Estudiante) usuario.get());
         inscripcion.setExamen(examen);
         inscripcionExamenRepository.save(inscripcion);
+
+        actividadService.registrarActividad(TipoActividad.INSCRIPCION_A_EXAMEN, "Inscripcion a examen");
+
         return new InscripcionExamenDTO(inscripcion);
     }
 
@@ -257,6 +263,8 @@ public class ExamenServiceImpl implements ExamenService {
         examen.setEstado(Estado.FINALIZADO);
         examenRepository.save(examen);
 
+        actividadService.registrarActividad(TipoActividad.REGISTRO_CALIFICACION, "Se han registrado las calificaciones del examen con id " + examen.getId());
+
         return examen.getInscripciones()
                 .stream()
                 .map(InscripcionExamenCalificacionDTO::new)
@@ -283,6 +291,9 @@ public class ExamenServiceImpl implements ExamenService {
         InscripcionExamen inscripcion = inscripcionExamenRepository.findByEstudianteIdAndExamenId(estudiante.getId(), id)
                 .orElseThrow(() -> new ResourceNotFoundException("Inscripción no encontrada."));
         inscripcionExamenRepository.delete(inscripcion);
+
+        actividadService.registrarActividad(TipoActividad.BAJA_DE_EXAMEN, "Baja de examen con id " + id);
+
         return new InscripcionExamenDTO(inscripcion);
     }
 
@@ -296,6 +307,9 @@ public class ExamenServiceImpl implements ExamenService {
         actaExamen.setAsignatura(new AsignaturaDTO(examen.getAsignatura()));
         actaExamen.setDocentes(examen.getDocentes().stream().map(DocenteDTO::new).toList());
         actaExamen.setInscripciones(examen.getInscripciones().stream().map(InscripcionExamenDTO::new).toList());
+
+        actividadService.registrarActividad(TipoActividad.GENERACION_ACTA_EXAMEN, "Generación de acta de examen con id " + id);
+
         return actaExamen;
     }
 }

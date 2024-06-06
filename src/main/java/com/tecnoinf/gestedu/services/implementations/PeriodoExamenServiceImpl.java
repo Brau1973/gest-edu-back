@@ -6,8 +6,10 @@ import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.exceptions.UniqueFieldException;
 import com.tecnoinf.gestedu.models.Carrera;
 import com.tecnoinf.gestedu.models.PeriodoExamen;
+import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.PeriodoExamenRepository;
+import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.PeriodoExamenService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,9 @@ public class PeriodoExamenServiceImpl implements PeriodoExamenService {
     @Autowired
     ModelMapper modeloMapper;
 
+    @Autowired
+    ActividadService actividadService;
+
     @Override
     public PeriodoExamenDTO registrarPeriodoExamen(PeriodoExamenDTO periodoExamenDTO) {
 
@@ -48,6 +53,8 @@ public class PeriodoExamenServiceImpl implements PeriodoExamenService {
         periodoExamen.setFechaFin(fechaFin);
         periodoExamen.setCarrera(obtenerCarrera(periodoExamenDTO.getCarreraid()));
         periodoExamenRepository.save(periodoExamen);
+
+        actividadService.registrarActividad(TipoActividad.REGISTRO_PERIODO_EXAMEN, "Se ha registrado un nuevo periodo de examen para la carrera con id " + periodoExamenDTO.getCarreraid() + " con fecha de inicio " + fechaInicio + " y fecha de fin " + fechaFin);
 
         return new PeriodoExamenDTO(periodoExamen);
     }
