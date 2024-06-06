@@ -1,10 +1,13 @@
 package com.tecnoinf.gestedu.services.implementations;
 
 import com.tecnoinf.gestedu.dtos.DocenteDTO;
+import com.tecnoinf.gestedu.exceptions.BajaDocenteException;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.exceptions.UniqueFieldException;
 import com.tecnoinf.gestedu.models.Docente;
+import com.tecnoinf.gestedu.repositories.CursoRepository;
 import com.tecnoinf.gestedu.repositories.DocenteRepository;
+import com.tecnoinf.gestedu.repositories.ExamenRepository;
 import com.tecnoinf.gestedu.repositories.specifications.DocenteSpecification;
 import com.tecnoinf.gestedu.services.interfaces.DocenteService;
 import org.modelmapper.ModelMapper;
@@ -18,11 +21,15 @@ public class DocenteServiceImpl implements DocenteService {
 
     private final DocenteRepository docenteRepository;
     private final ModelMapper modelMapper;
+    private final CursoRepository cursoRepository;
+    private final ExamenRepository examenRepository;
 
     @Autowired
-    public DocenteServiceImpl(DocenteRepository docenteRepository, ModelMapper modelMapper) {
+    public DocenteServiceImpl(DocenteRepository docenteRepository, ModelMapper modelMapper, CursoRepository cursoRepository, ExamenRepository examenRepository) {
         this.docenteRepository = docenteRepository;
         this.modelMapper = modelMapper;
+        this.cursoRepository = cursoRepository;
+        this.examenRepository = examenRepository;
     }
 
     @Override
@@ -59,6 +66,10 @@ public class DocenteServiceImpl implements DocenteService {
 
     @Override
     public void deleteDocente(Long id) { //TODO: CONTROLAR QUE NO ESTE ASIGNADO EN NINGUNA ASIGNATURA NI NINGUNA MESA DE EXAMEN
+        //CONTROLAR QUE EL DOCENTE NO ESTE ASIGNADO A NINGUN CURSO NI A NINGUN EXAMEN
+        if (cursoRepository.existsByDocenteId(id) || examenRepository.existsByDocentesId(id)) {
+            throw new BajaDocenteException("El docente no puede ser eliminado porque está asignado a un curso o examen");
+        }
         Docente docente = findDocenteById(id);
         docenteRepository.delete(docente);
     }
