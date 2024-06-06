@@ -138,25 +138,25 @@ public class GestionEducativaOnlineApplication {
 				//-----CARRERAS-----
 				// Comprueba si la carrera ya existe antes de intentar insertarla
 				Carrera savedCarrera1 = new Carrera();
-				if (!carreraRepository.existsByNombre("Tecnologo informatico InitData")) {
+				if (!carreraRepository.existsByNombre("Tecnologo informatico")) {
 					Carrera carrera1 = new Carrera();
-					carrera1.setNombre("Tecnologo informatico InitData");
+					carrera1.setNombre("Tecnologo informatico");
 					carrera1.setDescripcion("Carrera de tecnologo informatico donde se enseña a programar en java, c++, c# y python");
 					carrera1.setExistePlanEstudio(true);
 					savedCarrera1 = carreraRepository.save(carrera1);
 				}
 
 				Carrera savedCarrera2 = new Carrera();
-				if (!carreraRepository.existsByNombre("Diseño UX/UI InitData")) {
+				if (!carreraRepository.existsByNombre("Diseño UX/UI")) {
 					Carrera carrera2 = new Carrera();
-					carrera2.setNombre("Diseño UX/UI InitData");
+					carrera2.setNombre("Diseño UX/UI");
 					carrera2.setDescripcion("Carrera de diseño UX/UI donde se enseña a diseñar interfaces de usuario y experiencia de usuario");
 					carrera2.setExistePlanEstudio(false);
 					savedCarrera2 = carreraRepository.save(carrera2);
 				}
 
 				Carrera carrera3 = new Carrera();
-				carrera3.setNombre("Tecnologo Audiovisual InitData");
+				carrera3.setNombre("Tecnologo Audiovisual");
 				carrera3.setDescripcion("Carrera de tecnologo audiovisual donde se enseña a editar videos y sonido");
 				carrera3.setExistePlanEstudio(true);
 				Carrera savedCarrera3 = carreraRepository.save(carrera3);

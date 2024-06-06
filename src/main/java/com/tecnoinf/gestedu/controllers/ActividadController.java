@@ -24,8 +24,8 @@ public class ActividadController {
 
     //@PreAuthorize("hasAuthority('ROL_ADMINISTRADOR')")
     @Operation(summary = "Obtener la actividad de un usuario por su id")
-    @GetMapping()
-    public ResponseEntity<List<ActividadDTO>> getActividadByUsuarioId(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<List<ActividadDTO>> getActividadByUsuarioId(@PathVariable("id") Long id) {
         List<ActividadDTO> actividades = actividadService.getActividadByUsuarioId(id);
         return ResponseEntity.ok().body(actividades);
     }
