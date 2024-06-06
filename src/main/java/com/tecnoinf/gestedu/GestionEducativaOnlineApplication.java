@@ -12,6 +12,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -21,6 +22,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 @SpringBootApplication
+@EnableAsync
 public class GestionEducativaOnlineApplication {
 
 	@Value("${spring.jpa.hibernate.ddl-auto}")
@@ -46,15 +48,15 @@ public class GestionEducativaOnlineApplication {
 				//-----USUARIOS-----
 				PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-				if (usuarioRepository.findByCi("67141245").isEmpty()) {
+				if (usuarioRepository.findByCi("61647956").isEmpty()) {
 					Usuario user = new Administrador();
-					user.setNombre("NombreAdminInitData");
-					user.setApellido("admin");
-					user.setEmail("adminInitData@yahoo.com");
+					user.setNombre("Pedro");
+					user.setApellido("Perez");
+					user.setEmail("PedroPeAdmin@mail.com");
 					user.setPassword(passwordEncoder.encode("1234"));
-					user.setCi("67141245");
-					user.setTelefono("1234567");
-					user.setDomicilio("calle 123");
+					user.setCi("61647956");
+					user.setTelefono("091367159");
+					user.setDomicilio("Lindoro Forteza 5548");
 					user.setIsEnable(true);
 					user.setAccountNonExpired(true);
 					user.setAccountNonLocked(true);
@@ -62,70 +64,70 @@ public class GestionEducativaOnlineApplication {
 					usuarioRepository.save(user);
 				}
 
-				if (usuarioRepository.findByCi("77141245").isEmpty()) {
-					estudiante1.setNombre("Nombreestudiante1InitData");
-					estudiante1.setApellido("estudiante1");
-					estudiante1.setEmail("estudiante1InitData@yahoo.com");
+				if (usuarioRepository.findByCi("42569843").isEmpty()) {
+					estudiante1.setNombre("Luis");
+					estudiante1.setApellido("Diaz");
+					estudiante1.setEmail("LuisDiaz@mail.com");
 					estudiante1.setPassword(passwordEncoder.encode("1234"));
-					estudiante1.setCi("77141245");
-					estudiante1.setTelefono("1234567");
-					estudiante1.setDomicilio("calle 123");
+					estudiante1.setCi("42569843");
+					estudiante1.setTelefono("093874635");
+					estudiante1.setDomicilio("Elias Regules 7898");
 					estudiante1.setIsEnable(true);
 					estudiante1.setAccountNonExpired(true);
 					estudiante1.setAccountNonLocked(true);
 					estudiante1.setCredentialsNonExpired(true);
 					usuarioRepository.save(estudiante1);
 
-					estudiante2.setNombre("Nombreestudiante2InitData");
-					estudiante2.setApellido("estudiante2");
-					estudiante2.setEmail("estudiante2InitData@yahoo.com");
+					estudiante2.setNombre("Horacio");
+					estudiante2.setApellido("Hernandez");
+					estudiante2.setEmail("HoriHernandez@mail.com");
 					estudiante2.setPassword(passwordEncoder.encode("1234"));
-					estudiante2.setCi("77142245");
-					estudiante2.setTelefono("1234567");
-					estudiante2.setDomicilio("calle 123");
+					estudiante2.setCi("61253594");
+					estudiante2.setTelefono("096558132");
+					estudiante2.setDomicilio("Pitagoras 1122");
 					estudiante2.setIsEnable(true);
 					estudiante2.setAccountNonExpired(true);
 					estudiante2.setAccountNonLocked(true);
 					estudiante2.setCredentialsNonExpired(true);
 					usuarioRepository.save(estudiante2);
 
-					estudiante3.setNombre("Nombreestudiante3InitData");
-					estudiante3.setApellido("estudiante3");
-					estudiante3.setEmail("estudiante3InitData@yahoo.com");
+					estudiante3.setNombre("Ana Maria");
+					estudiante3.setApellido("Diaz");
+					estudiante3.setEmail("AnaMariaDiaz@mail.com");
 					estudiante3.setPassword(passwordEncoder.encode("1234"));
-					estudiante3.setCi("77143245");
-					estudiante3.setTelefono("1234567");
-					estudiante3.setDomicilio("calle 123");
+					estudiante3.setCi("36984582");
+					estudiante3.setTelefono("095664889");
+					estudiante3.setDomicilio("Cmno Carrasco 2551");
 					estudiante3.setIsEnable(true);
 					estudiante3.setAccountNonExpired(true);
 					estudiante3.setAccountNonLocked(true);
 					estudiante3.setCredentialsNonExpired(true);
 					usuarioRepository.save(estudiante3);
 				}
-				if (usuarioRepository.findByCi("87141245").isEmpty()) {
+				if (usuarioRepository.findByCi("42687516").isEmpty()) {
 					Usuario funcionario = new Funcionario();
-					funcionario.setNombre("NombreFuncionarioInitData");
-					funcionario.setApellido("funcionario");
-					funcionario.setEmail("funcionarioInitData@yahoo.com");
+					funcionario.setNombre("Carla");
+					funcionario.setApellido("Miranda");
+					funcionario.setEmail("CarlaMiranda@mail.com");
 					funcionario.setPassword(passwordEncoder.encode("1234"));
-					funcionario.setCi("87147245");
-					funcionario.setTelefono("1234567");
-					funcionario.setDomicilio("calle 123");
+					funcionario.setCi("42687516");
+					funcionario.setTelefono("097895632");
+					funcionario.setDomicilio("Bv Artigas 3556");
 					funcionario.setIsEnable(true);
 					funcionario.setAccountNonExpired(true);
 					funcionario.setAccountNonLocked(true);
 					funcionario.setCredentialsNonExpired(true);
 					usuarioRepository.save(funcionario);
 				}
-				if (usuarioRepository.findByCi("97141245").isEmpty()) {
+				if (usuarioRepository.findByCi("31247689").isEmpty()) {
 					Usuario coordinador = new Coordinador();
-					coordinador.setNombre("NombreCoordinadorInitData");
-					coordinador.setApellido("coordinador");
-					coordinador.setEmail("coordinadorInitData@yahoo.com");
+					coordinador.setNombre("Juan Pablo");
+					coordinador.setApellido("Salinas");
+					coordinador.setEmail("JuanPSalinas@mail.com");
 					coordinador.setPassword(passwordEncoder.encode("1234"));
-					coordinador.setCi("97141245");
-					coordinador.setTelefono("1234567");
-					coordinador.setDomicilio("calle 123");
+					coordinador.setCi("31247689");
+					coordinador.setTelefono("094658759");
+					coordinador.setDomicilio("Av Italia 6554");
 					coordinador.setIsEnable(true);
 					coordinador.setAccountNonExpired(true);
 					coordinador.setAccountNonLocked(true);
@@ -203,21 +205,21 @@ public class GestionEducativaOnlineApplication {
 
 				//---- DOCENTES ----
 				Docente docente1 = new Docente();
-				docente1.setNombre("Docente1");
-				docente1.setApellido("ApellidoDocente1");
-				docente1.setDocumento("1234567");
+				docente1.setNombre("Fernando");
+				docente1.setApellido("Garcia");
+				docente1.setDocumento("42569897");
 				docenteRepository.save(docente1);
 
 				Docente docente2 = new Docente();
-				docente2.setNombre("Docente2");
-				docente2.setApellido("ApellidoDocente2");
-				docente2.setDocumento("1234568");
+				docente2.setNombre("Manuel");
+				docente2.setApellido("Gayoso");
+				docente2.setDocumento("42585843");
 				docenteRepository.save(docente2);
 
 				Docente docente3 = new Docente();
-				docente3.setNombre("Docente3");
-				docente3.setApellido("ApellidoDocente3");
-				docente3.setDocumento("1234569");
+				docente3.setNombre("Veronica");
+				docente3.setApellido("Gonzalez");
+				docente3.setDocumento("42569734");
 				docenteRepository.save(docente3);
 
 				//----- CURSOS -----

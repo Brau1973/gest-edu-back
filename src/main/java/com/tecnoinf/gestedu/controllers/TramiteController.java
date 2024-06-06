@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.controllers;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.tecnoinf.gestedu.dtos.Tramite.TramiteDTO;
 import com.tecnoinf.gestedu.models.enums.TipoTramite;
 import com.tecnoinf.gestedu.services.interfaces.TramiteService;
@@ -52,9 +53,9 @@ public class TramiteController {
     //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     @Operation(summary = "Rechazar un trámite de inscripción a carrera")
     @PutMapping("/rechazar-tramite-inscripcion-carrera/{tramiteId}")
-    public ResponseEntity<TramiteDTO> rechazarTramiteInscripcionCarrera(@PathVariable Long tramiteId, @RequestBody String motivoRechazo, Principal principal) throws MessagingException {
+    public ResponseEntity<TramiteDTO> rechazarTramiteInscripcionCarrera(@PathVariable Long tramiteId, @RequestBody TextNode motivoRechazo, Principal principal) throws MessagingException {
         String email = (principal != null) ? principal.getName() : null;
-        return ResponseEntity.ok().body(tramiteService.rechazarTramiteInscripcionCarrera(tramiteId, email, motivoRechazo));
+        return ResponseEntity.ok().body(tramiteService.rechazarTramiteInscripcionCarrera(tramiteId, email, motivoRechazo.asText()));
     }
 
     //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
@@ -75,9 +76,9 @@ public class TramiteController {
     //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
     @Operation(summary = "Rechazar un trámite de solicitud de titulo")
     @PutMapping("/rechazar-tramite-solicitud-titulo/{tramiteId}")
-    public ResponseEntity<TramiteDTO> rechazarTramiteSolicitudTitulo(@PathVariable Long tramiteId, @RequestBody String motivoRechazo, Principal principal) throws MessagingException {
+    public ResponseEntity<TramiteDTO> rechazarTramiteSolicitudTitulo(@PathVariable Long tramiteId, @RequestBody TextNode motivoRechazo, Principal principal) throws MessagingException {
         String email = (principal != null) ? principal.getName() : null;
-        return ResponseEntity.ok().body(tramiteService.rechazarTramiteSolicitudTitulo(tramiteId, email, motivoRechazo));
+        return ResponseEntity.ok().body(tramiteService.rechazarTramiteSolicitudTitulo(tramiteId, email, motivoRechazo.asText()));
     }
 
     //@PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
