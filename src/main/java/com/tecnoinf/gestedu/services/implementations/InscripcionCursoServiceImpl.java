@@ -12,6 +12,7 @@ import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCarrera;
 import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCurso;
 import com.tecnoinf.gestedu.repositories.*;
+import com.tecnoinf.gestedu.services.interfaces.EmailService;
 import com.tecnoinf.gestedu.services.interfaces.InscripcionCursoService;
 import jakarta.mail.MessagingException;
 import org.modelmapper.ModelMapper;
@@ -31,12 +32,12 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
     private final InscripcionCursoRepository inscripcionCursoRepository;
     private final InscripcionCarreraRepository inscripcionCarreraRepository;
     private final AsignaturaRepository asignaturaRepository;
-    private final EmailServiceImpl emailService;
+    private final EmailService emailService;
     private final ModelMapper modelMapper;
 
 
     @Autowired
-    public InscripcionCursoServiceImpl(CursoRepository cursoRepository, EstudianteRepository estudianteRepository, InscripcionCursoRepository inscripcionCursoRepository, InscripcionCarreraRepository inscripcionCarreraRepository, AsignaturaRepository asignaturaRepository, EmailServiceImpl emailService, ModelMapper modelMapper) {
+    public InscripcionCursoServiceImpl(CursoRepository cursoRepository, EstudianteRepository estudianteRepository, InscripcionCursoRepository inscripcionCursoRepository, InscripcionCarreraRepository inscripcionCarreraRepository, AsignaturaRepository asignaturaRepository, EmailService emailService, ModelMapper modelMapper) {
         this.cursoRepository = cursoRepository;
         this.estudianteRepository = estudianteRepository;
         this.inscripcionCursoRepository = inscripcionCursoRepository;
