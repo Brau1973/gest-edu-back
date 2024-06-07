@@ -6,7 +6,9 @@ import com.tecnoinf.gestedu.dtos.usuario.UsuarioDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.models.enums.Estado;
+import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.repositories.*;
+import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.CursoService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -28,10 +30,10 @@ public class CursoServiceImpl implements CursoService {
     private final HorarioRepository horarioRepository;
     private final InscripcionCursoRepository inscripcionCursoRepository;
     private final ModelMapper modelMapper;
-
+    private final ActividadService actividadService;
 
     @Autowired
-    public CursoServiceImpl(CursoRepository cursoRepository, AsignaturaRepository asignaturaRepository, DocenteRepository docenteRepository, EstudianteRepository estudianteRepository, HorarioRepository horarioRepository, InscripcionCursoRepository inscripcionCursoRepository, ModelMapper modelMapper) {
+    public CursoServiceImpl(CursoRepository cursoRepository, ActividadService actividadService , AsignaturaRepository asignaturaRepository, DocenteRepository docenteRepository, EstudianteRepository estudianteRepository, HorarioRepository horarioRepository, InscripcionCursoRepository inscripcionCursoRepository, ModelMapper modelMapper) {
         this.cursoRepository = cursoRepository;
         this.asignaturaRepository = asignaturaRepository;
         this.docenteRepository = docenteRepository;
@@ -39,6 +41,7 @@ public class CursoServiceImpl implements CursoService {
         this.horarioRepository = horarioRepository;
         this.inscripcionCursoRepository = inscripcionCursoRepository;
         this.modelMapper = modelMapper;
+        this.actividadService = actividadService;
     }
 
     @Override
@@ -68,6 +71,9 @@ public class CursoServiceImpl implements CursoService {
                     .orElseThrow(() -> new ResourceNotFoundException("Docente not found with id " + cursoDTO.getDocenteId()));
             curso.setDocente(docente);
             Curso createdCurso = cursoRepository.save(curso);
+
+            actividadService.registrarActividad(TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + asignatura.getNombre() + " con fecha de inicio " + curso.getFechaInicio() + " y fecha de fin " + curso.getFechaFin());
+
             return modelMapper.map(createdCurso, CursoDTO.class);
 
         } else {
@@ -103,6 +109,8 @@ public class CursoServiceImpl implements CursoService {
         curso.getHorarios().add(horario);
         horarioRepository.save(horario);
         cursoRepository.save(curso);
+
+        actividadService.registrarActividad(TipoActividad.REGISTRO_HORARIOS_CURSO, "Se ha registrado un horario para el curso con id " + cursoId);
 
         return modelMapper.map(horario, HorarioDTO.class);
     }

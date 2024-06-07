@@ -4,7 +4,9 @@ import com.tecnoinf.gestedu.dtos.EmailValuesDTO;
 import com.tecnoinf.gestedu.dtos.usuario.AuthLoginRequest;
 import com.tecnoinf.gestedu.dtos.usuario.AuthResponse;
 import com.tecnoinf.gestedu.models.Usuario;
+import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
+import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.EmailService;
 import com.tecnoinf.gestedu.services.interfaces.InvitadoService;
 import com.tecnoinf.gestedu.util.JwtUtils;
@@ -51,6 +53,9 @@ public class InvitadoServiceImpl implements InvitadoService {
     @Autowired
     EmailService emailService;
 
+    @Autowired
+    ActividadService actividadService;
+
     @Value("${mail.urlFront}")
     private String urlFront;
 
@@ -74,6 +79,9 @@ public class InvitadoServiceImpl implements InvitadoService {
         System.out.println("Autoridades del usuario: " + authorityNames);
 
         AuthResponse authResponse = new AuthResponse(email, "Usuario logueado", token, true);
+
+        actividadService.registrarActividad(TipoActividad.INICIAR_SESION, "Se ha iniciado sesión");
+
         return authResponse;
     }
 
@@ -100,6 +108,7 @@ public class InvitadoServiceImpl implements InvitadoService {
     @Override
     public void sendEmailResetPass(EmailValuesDTO dto, Usuario usuario) throws MessagingException {
         String link = urlFront + dto.getTokenPassword();
+        actividadService.registrarActividad(TipoActividad.RECUPERAR_CONTRASENA_POR_MAIL, "Se ha solicitado resetear la contraseña");
         emailService.sendResetPasswordEmail(dto.getMailTo(), usuario.getNombre(), link);
     }
 }

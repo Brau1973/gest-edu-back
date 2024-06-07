@@ -11,11 +11,15 @@ import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.CursoRepository;
 import com.tecnoinf.gestedu.repositories.DocenteRepository;
+import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.AsignaturaService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -59,6 +65,18 @@ public class AsignaturaControllerIntegrationTest {
 
     @Autowired
     private AsignaturaService asignaturaService;
+
+    @MockBean
+    private ActividadService actividadService;
+
+    @InjectMocks
+    private InscripcionCursoController inscripcionCursoController;
+
+    @BeforeEach
+    public void setup() {
+        // Configurar el mock para que el método registrarActividad no haga nada
+        doNothing().when(actividadService).registrarActividad(any(), any());
+    }
 
     @Test
     @Transactional
