@@ -238,7 +238,7 @@ public class GestionEducativaOnlineApplication {
 				curso2.setEstado(Estado.FINALIZADO);
 				curso2.setAsignatura(asignaturaRepository.findById(1L).get());
 				fechaInicio = LocalDate.of(2023, 3, 15); // Año, Mes (1-12), Día
-				curso1.setFechaInicio(fechaInicio);
+				curso2.setFechaInicio(fechaInicio);
 				fechaFin = LocalDate.of(2023, 07, 15); // Año, Mes (1-12), Día
 				curso2.setFechaFin(fechaFin);
 				curso2.setDocente(docente1);
