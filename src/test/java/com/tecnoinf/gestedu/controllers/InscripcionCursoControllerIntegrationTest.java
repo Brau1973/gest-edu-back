@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoDTO;
 import com.tecnoinf.gestedu.models.*;
-import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
-import com.tecnoinf.gestedu.models.enums.DiaSemana;
-import com.tecnoinf.gestedu.models.enums.Estado;
-import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCarrera;
+import com.tecnoinf.gestedu.models.enums.*;
 import com.tecnoinf.gestedu.repositories.*;
 import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +20,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -365,7 +364,11 @@ public class InscripcionCursoControllerIntegrationTest {
         curso.setEstado(Estado.ACTIVO);
         curso.setDiasPrevInsc(90);
         curso.setDocente(docente);
-        //curso = cursoRepository.save(curso);
+        curso = cursoRepository.save(curso);
+        List<Curso> cursoLista = new ArrayList<>();
+        cursoLista.add(curso);
+        asignatura.setCursos(cursoLista);
+        asignatura = asignaturaRepository.save(asignatura);
 
         //Crear Inscripcion Curso
         InscripcionCurso inscripcionCurso = new InscripcionCurso();
@@ -375,7 +378,9 @@ public class InscripcionCursoControllerIntegrationTest {
         inscripcionCurso.setCalificacion(CalificacionCurso.PENDIENTE);
         inscripcionCurso = inscripcionCursoRepository.save(inscripcionCurso);
 
-        curso.getInscripciones().add(inscripcionCurso);
+        List<InscripcionCurso> inscripcionCursoLista = new ArrayList<>();
+        inscripcionCursoLista.add(inscripcionCurso);
+        curso.setInscripciones(inscripcionCursoLista);
         curso = cursoRepository.save(curso);
 
         //Crear Horario
@@ -416,3 +421,5 @@ public class InscripcionCursoControllerIntegrationTest {
 
      */
 }
+
+
