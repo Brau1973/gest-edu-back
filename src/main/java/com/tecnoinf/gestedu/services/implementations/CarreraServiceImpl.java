@@ -4,49 +4,58 @@ import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.carrera.CreateCarreraDTO;
 import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
+import com.tecnoinf.gestedu.dtos.curso.CursoHorarioDTO;
+import com.tecnoinf.gestedu.dtos.curso.HorarioDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCarrera.InscripcionCarreraDTO;
+import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoDTO;
 import com.tecnoinf.gestedu.dtos.periodoExamen.PeriodoExamenDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.exceptions.UniqueFieldException;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.models.enums.TipoActividad;
+
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.ExamenRepository;
+import com.tecnoinf.gestedu.repositories.HorarioRepository;
 import com.tecnoinf.gestedu.repositories.PeriodoExamenRepository;
 import com.tecnoinf.gestedu.repositories.specifications.CarreraSpecification;
 import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.CarreraService;
 import com.tecnoinf.gestedu.services.interfaces.ExamenService;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CarreraServiceImpl implements CarreraService {
-
     private final CarreraRepository carreraRepository;
     private final ModelMapper modelMapper;
     private final AsignaturaRepository asignaturaRepository;
+    private final HorarioRepository horarioRepository;
     private final PeriodoExamenRepository periodoExamenRepository;
     private final ActividadService actividadService;
     private final ExamenRepository examenRepository;
 
     @Autowired
-    public CarreraServiceImpl(CarreraRepository carreraRepository, ModelMapper modelMapper, AsignaturaRepository asignaturaRepository,
+    public CarreraServiceImpl(CarreraRepository carreraRepository, ModelMapper modelMapper, AsignaturaRepository asignaturaRepository, HorarioRepository horarioRepository,
                               PeriodoExamenRepository periodoExamenRepository, ActividadService actividadService, ExamenRepository examenRepository) {
         this.carreraRepository = carreraRepository;
         this.modelMapper = modelMapper;
         this.asignaturaRepository = asignaturaRepository;
+        this.horarioRepository = horarioRepository;
         this.periodoExamenRepository = periodoExamenRepository;
         this.actividadService = actividadService;
         this.examenRepository = examenRepository;
@@ -157,26 +166,26 @@ public class CarreraServiceImpl implements CarreraService {
     }
 
     @Override
-    public List<AsignaturaDTO> obtenerAsignaturasConExamenesActivos(Long id){
+    public List<AsignaturaDTO> obtenerAsignaturasConExamenesActivos(Long id) {
         List<AsignaturaDTO> asignaturasDTO = new ArrayList<>();
         Carrera carrera = carreraRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Carrera not found with id " + id));
         List<Asignatura> asignaturas = carrera.getAsignaturas();
         for (Asignatura asignatura : asignaturas) {
             Page<Examen> examenes = examenRepository.findAllByFechaBeforeAndEstadoAndAsignaturaId(LocalDateTime.now(), Estado.ACTIVO, asignatura.getId(), Pageable.unpaged());
-            if(examenes.getTotalElements() > 0){
+            if (examenes.getTotalElements() > 0) {
                 AsignaturaDTO asignaturaDTO = modelMapper.map(asignatura, AsignaturaDTO.class);
                 asignaturasDTO.add(asignaturaDTO);
             }
         }
-        if(asignaturasDTO.isEmpty()){
+        if (asignaturasDTO.isEmpty()) {
             throw new ResourceNotFoundException("No hay asignaturas con examenes activos en la carrera con id " + id);
         }
         return asignaturasDTO;
     }
 
     @Override
-    public List<CursoDTO>obtenerCursosActivos(Long idCarrera){
+    public List<CursoDTO>obtenerCursosActivos(Long idCarrera) {
         Carrera carrera = carreraRepository.findById(idCarrera)
                 .orElseThrow(() -> new ResourceNotFoundException("Carrera no encontrada"));
 
@@ -188,12 +197,47 @@ public class CarreraServiceImpl implements CarreraService {
             // Recorrer todos los cursos de cada asignatura
             for (Curso curso : asignatura.getCursos()) {
                 // Verificar que el curso esté finalizado
-                    if(curso.getEstado().equals(Estado.ACTIVO)){
-                        CursoDTO cursoDTO = modelMapper.map(curso, CursoDTO.class);
-                        cursosDeCarrera.add(cursoDTO);
+                if (curso.getEstado().equals(Estado.ACTIVO)) {
+                    CursoDTO cursoDTO = modelMapper.map(curso, CursoDTO.class);
+                    cursosDeCarrera.add(cursoDTO);
+                }
+            }
+        }
+        return cursosDeCarrera;
+    }
+    @Override
+    public Page<CursoHorarioDTO> obtenerHorariosCursosCarrera(Long idCarrera, Pageable pageable){
+        List<CursoHorarioDTO> horariosCursos = new ArrayList<>();
+        Carrera carrera = carreraRepository.findById(idCarrera)
+                .orElseThrow(() -> new ResourceNotFoundException("Carrera not found with id " + idCarrera));
+        List<Asignatura> asignaturas = carrera.getAsignaturas();
+        if (asignaturas != null) {
+            for (Asignatura asignatura : asignaturas) {
+                if (asignatura.getCursos() != null) {
+                    List<Curso> cursos = asignatura.getCursos();
+                    for (Curso curso : cursos) {
+                        CursoHorarioDTO cursoHorarioDTO = new CursoHorarioDTO();
+                        cursoHorarioDTO.setAsignaturaNombre(asignatura.getNombre());
+                        cursoHorarioDTO.setFechaInicio(curso.getFechaInicio());
+                        cursoHorarioDTO.setFechaFin(curso.getFechaFin());
+                        cursoHorarioDTO.setEstado(curso.getEstado());
+                        cursoHorarioDTO.setDocenteNombre(curso.getDocente().getNombre());
+                        cursoHorarioDTO.setDocenteApellido(curso.getDocente().getApellido());
+                        cursoHorarioDTO.setDiasPrevInsc(curso.getDiasPrevInsc());
+
+                        List<Horario> horarios = horarioRepository.findHorariosByCursoId(curso.getId());
+                        List<HorarioDTO> horarioDTOList = new ArrayList<>();
+                        for (Horario horario : horarios) {
+                            HorarioDTO horarioDTO = modelMapper.map(horario, HorarioDTO.class);
+                            horarioDTOList.add(horarioDTO);
+                        }
+                        cursoHorarioDTO.setHorarios(horarioDTOList);
+
+                        horariosCursos.add(cursoHorarioDTO);
                     }
                 }
             }
-        return cursosDeCarrera;
+        }
+        return new PageImpl<>(horariosCursos, pageable, horariosCursos.size());
     }
 }
