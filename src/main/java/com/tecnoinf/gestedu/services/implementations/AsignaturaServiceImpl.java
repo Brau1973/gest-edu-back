@@ -11,9 +11,11 @@ import com.tecnoinf.gestedu.models.Asignatura;
 import com.tecnoinf.gestedu.models.Carrera;
 import com.tecnoinf.gestedu.models.Curso;
 import com.tecnoinf.gestedu.models.Examen;
+import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.ExamenRepository;
+import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.AsignaturaService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -36,13 +38,16 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     private final ModelMapper modelMapper;
     private final CarreraRepository carreraRepository;
     private final ExamenRepository examenRepository;
+    private final ActividadService actividadService;
+
 
     @Autowired
-    public AsignaturaServiceImpl(AsignaturaRepository asignaturaRepository, CarreraRepository carreraRepository , ModelMapper modelMapper, ExamenRepository examenRepository) {
+    public AsignaturaServiceImpl(ActividadService actividadService, AsignaturaRepository asignaturaRepository, CarreraRepository carreraRepository , ModelMapper modelMapper, ExamenRepository examenRepository) {
         this.asignaturaRepository = asignaturaRepository;
         this.carreraRepository = carreraRepository;
         this.modelMapper = modelMapper;
         this.examenRepository = examenRepository;
+        this.actividadService = actividadService;
     }
 
     @Override
@@ -58,6 +63,8 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         asignatura.setCarrera(carrera);
         asignatura.setId(null);
         Asignatura createdAsignatura = asignaturaRepository.save(asignatura);
+
+        actividadService.registrarActividad(TipoActividad.ALTA_ASIGNATURA, "Se ha creado la asignatura " + createdAsignatura.getNombre() + " en la carrera " + carrera.getNombre() + " (id Carrera: " + carrera.getId() + ")");
 
         return modelMapper.map(createdAsignatura, AsignaturaDTO.class);
     }
@@ -76,6 +83,9 @@ public class AsignaturaServiceImpl implements AsignaturaService {
                         existingAsignatura.setCreditos(createAsignaturaDTO.getCreditos());
                     }
                     Asignatura updatedAsignatura = asignaturaRepository.save(existingAsignatura);
+
+                    actividadService.registrarActividad(TipoActividad.EDITAR_ASIGNATURA, "Se ha editado la asignatura con id " + id);
+
                     return modelMapper.map(updatedAsignatura, AsignaturaDTO.class);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Asignatura not found with id " + id));
@@ -115,6 +125,9 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         }
         asignatura.getPrevias().add(previa);
         Asignatura updatedAsignatura = asignaturaRepository.save(asignatura);
+
+        actividadService.registrarActividad(TipoActividad.REGISTRO_PREVIATURAS, "Se ha agregado la asignatura  " + previa.getNombre() + " como previa de la asignatura " + asignatura.getNombre());
+
         return modelMapper.map(updatedAsignatura, AsignaturaDTO.class);
     }
 

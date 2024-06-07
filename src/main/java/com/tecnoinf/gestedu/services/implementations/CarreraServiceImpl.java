@@ -11,10 +11,12 @@ import com.tecnoinf.gestedu.models.Asignatura;
 import com.tecnoinf.gestedu.models.Carrera;
 import com.tecnoinf.gestedu.models.Curso;
 import com.tecnoinf.gestedu.models.PeriodoExamen;
+import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.PeriodoExamenRepository;
 import com.tecnoinf.gestedu.repositories.specifications.CarreraSpecification;
+import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.CarreraService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +37,16 @@ public class CarreraServiceImpl implements CarreraService {
     private final ModelMapper modelMapper;
     private final AsignaturaRepository asignaturaRepository;
     private final PeriodoExamenRepository periodoExamenRepository;
+    private final ActividadService actividadService;
 
     @Autowired
-    public CarreraServiceImpl(CarreraRepository carreraRepository, ModelMapper modelMapper, AsignaturaRepository asignaturaRepository, PeriodoExamenRepository periodoExamenRepository) {
+    public CarreraServiceImpl(CarreraRepository carreraRepository, ModelMapper modelMapper, AsignaturaRepository asignaturaRepository,
+                              PeriodoExamenRepository periodoExamenRepository, ActividadService actividadService) {
         this.carreraRepository = carreraRepository;
         this.modelMapper = modelMapper;
         this.asignaturaRepository = asignaturaRepository;
         this.periodoExamenRepository = periodoExamenRepository;
+        this.actividadService = actividadService;
     }
 
     @Override
@@ -65,6 +70,9 @@ public class CarreraServiceImpl implements CarreraService {
         }
         Carrera carrera = modelMapper.map(createCarreraDto, Carrera.class);
         Carrera savedCarrera = carreraRepository.save(carrera);
+
+        actividadService.registrarActividad(TipoActividad.ALTA_CARRERA, "Se ha creado la carrera " + savedCarrera.getNombre());
+
         return modelMapper.map(savedCarrera, CreateCarreraDTO.class);
     }
 
@@ -79,6 +87,9 @@ public class CarreraServiceImpl implements CarreraService {
                         existingCarrera.setDescripcion(createCarreraDto.getDescripcion());
                     }
                     Carrera updatedCarrera = carreraRepository.save(existingCarrera);
+
+                    actividadService.registrarActividad(TipoActividad.EDITAR_CARRERA, "Se ha editado la carrera con id " + updatedCarrera.getId());
+
                     return modelMapper.map(updatedCarrera, BasicInfoCarreraDTO.class);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Carrera not found with id " + id));
@@ -89,6 +100,7 @@ public class CarreraServiceImpl implements CarreraService {
         Carrera carrera = carreraRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Carrera not found with id " + id));
         carreraRepository.delete(carrera);
+        actividadService.registrarActividad(TipoActividad.BORRAR_CARRERA, "Se ha borrado  la carrera "+ carrera.getNombre());
     }
 
     @Override
@@ -111,11 +123,13 @@ public class CarreraServiceImpl implements CarreraService {
             asignatura.setSemestrePlanEstudio(asignaturaDto.getSemestrePlanEstudio());
             asignaturaRepository.save(asignatura);
         }
-        carreraRepository.findById(id)
-                .ifPresent(carrera -> {
-                    carrera.setExistePlanEstudio(true);
-                    carreraRepository.save(carrera);
-                });
+
+        Carrera carrera = carreraRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Carrera not found with id " + id));
+        carrera.setExistePlanEstudio(true);
+        carreraRepository.save(carrera);
+
+        actividadService.registrarActividad(TipoActividad.REGISTRO_PLAN_DE_ESTUDIO, "Se ha registrado un plan de estudio para la carrera " + carrera.getNombre() + " (Id " + carrera.getId()+")");
     }
 
     @Override

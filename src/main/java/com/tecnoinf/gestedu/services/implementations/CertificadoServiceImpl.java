@@ -5,7 +5,9 @@ import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.models.Certificado;
 import com.tecnoinf.gestedu.models.Estudiante;
 import com.tecnoinf.gestedu.models.Usuario;
+import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.repositories.CertificadoRepository;
+import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.CertificadoService;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +19,11 @@ import java.util.UUID;
 public class CertificadoServiceImpl implements CertificadoService {
 
     private final CertificadoRepository certificadoRepository;
+    private final ActividadService actividadService;
 
-    public CertificadoServiceImpl(CertificadoRepository certificadoRepository){
+    public CertificadoServiceImpl(CertificadoRepository certificadoRepository, ActividadService actividadService){
         this.certificadoRepository = certificadoRepository;
+        this.actividadService = actividadService;
     }
 
     @Override
@@ -30,6 +34,9 @@ public class CertificadoServiceImpl implements CertificadoService {
         certificado.setEstudiante(estudiante);
         certificado.setFecha(LocalDate.now());
         certificadoRepository.save(certificado);
+
+        actividadService.registrarActividad(TipoActividad.GENERACION_CERTIFICADO,"Generacion de certificado");
+
         return new CertificadoDTO(certificado);
     }
 

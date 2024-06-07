@@ -13,6 +13,7 @@ import com.tecnoinf.gestedu.models.enums.CalificacionExamen;
 import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.repositories.*;
 import com.tecnoinf.gestedu.services.implementations.ExamenServiceImpl;
+import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.CarreraService;
 import com.tecnoinf.gestedu.services.interfaces.EmailService;
 import com.tecnoinf.gestedu.services.interfaces.PeriodoExamenService;
@@ -70,10 +71,13 @@ public class ExamenServiceImplTest {
     @Mock
     private InscripcionCursoRepository inscripcionCursoRepository;
 
+    @Mock
+    private ActividadService actividadService;
 
     @BeforeEach
     public void init() {
         MockitoAnnotations.initMocks(this);
+        doNothing().when(actividadService).registrarActividad(any(), any());
     }
 
     @Test
