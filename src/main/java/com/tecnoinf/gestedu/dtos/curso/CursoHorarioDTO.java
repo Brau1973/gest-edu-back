@@ -24,5 +24,6 @@ public class CursoHorarioDTO {
     private String asignaturaNombre;
     private String docenteNombre;
     private String docenteApellido;
+    //private List<CursoDTO> cursos;
     private List<HorarioDTO> horarios;
 }
