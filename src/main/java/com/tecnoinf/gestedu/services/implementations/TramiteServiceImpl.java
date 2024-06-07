@@ -117,6 +117,22 @@ public class TramiteServiceImpl implements TramiteService {
     }
 
     @Override
+    public List<TramiteDTO> listarTramitesInscripcionCarreraResueltos() {
+        List<Tramite> tramites = tramiteRepository.findAllByTipoAndEstadoIn(TipoTramite.INSCRIPCION_A_CARRERA, List.of(EstadoTramite.ACEPTADO, EstadoTramite.RECHAZADO));
+        return tramites.stream()
+                .map(tramite -> modelMapper.map(tramite, TramiteDTO.class))
+                .toList();
+    }
+
+    @Override
+    public List<TramiteDTO> listarTramitesSolicitudTituloResueltos() {
+        List<Tramite> tramites = tramiteRepository.findAllByTipoAndEstadoIn(TipoTramite.SOLICITUD_DE_TITULO, List.of(EstadoTramite.ACEPTADO, EstadoTramite.RECHAZADO));
+        return tramites.stream()
+                .map(tramite -> modelMapper.map(tramite, TramiteDTO.class))
+                .toList();
+    }
+
+    @Override
     public TramiteDTO aprobarTramiteInscripcionCarrera(Long tramiteId, String email) throws MessagingException {
         return processTramite(tramiteId, email, EstadoTramite.ACEPTADO, null);
     }

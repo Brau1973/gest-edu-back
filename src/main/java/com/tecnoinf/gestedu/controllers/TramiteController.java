@@ -89,4 +89,18 @@ public class TramiteController {
         return ResponseEntity.ok().body(tramiteService.listarTramitesEstudiante(email));
     }
 
+    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    @Operation(summary = "Listar todos los trámites de inscripción a carrera RESUELTOS")
+    @GetMapping("/inscripcion-carrera-resueltos")
+    public ResponseEntity<?> listarTramitesInscripcionCarreraResueltos() {
+        return ResponseEntity.ok().body(tramiteService.listarTramitesInscripcionCarreraResueltos());
+    }
+
+    //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
+    @Operation(summary = "Listar todos los trámites de solicitud de titulo RESUELTOS")
+    @GetMapping("/solicitud-titulo-resueltos")
+    public ResponseEntity<?> listarTramitesSolicitudTituloResueltos() {
+        return ResponseEntity.ok().body(tramiteService.listarTramitesSolicitudTituloResueltos());
+    }
+
 }
