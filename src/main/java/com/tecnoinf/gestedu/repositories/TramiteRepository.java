@@ -18,5 +18,7 @@ public interface TramiteRepository extends JpaRepository<Tramite, Long>, JpaSpec
     List<Tramite> findAllByTipoAndEstado(TipoTramite tipoTramite, EstadoTramite estadoTramite);
 
     List<Tramite> findAllByUsuarioSolicitante(Estudiante estudiante);
+
+    List<Tramite> findAllByTipoAndEstadoIn(TipoTramite tipo, List<EstadoTramite> estados);
 }
 
