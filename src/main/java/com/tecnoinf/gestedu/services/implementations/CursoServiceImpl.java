@@ -50,11 +50,11 @@ public class CursoServiceImpl implements CursoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Asignatura not found with id " + cursoDTO.getAsignaturaId()));
 
         // Validar que la fecha de inicio sea menor a la fecha de un mes en el futuro
-        LocalDate unMesEnElFuturo = LocalDate.now().plusMonths(1);
+        //LocalDate unMesEnElFuturo = LocalDate.now().plusMonths(1);
 
-        if (cursoDTO.getFechaInicio().isBefore(unMesEnElFuturo)) {
-            throw new IllegalArgumentException("La fecha de inicio no puede ser mayor a la fecha de un mes en el futuro.");
-        }
+        //if (cursoDTO.getFechaInicio().isBefore(unMesEnElFuturo)) {
+            //throw new IllegalArgumentException("La fecha de inicio no puede ser mayor a la fecha de un mes en el futuro.");
+        //}
 
         if (cursoDTO.getFechaInicio().isBefore(cursoDTO.getFechaFin())) {
             Curso curso = new Curso();
