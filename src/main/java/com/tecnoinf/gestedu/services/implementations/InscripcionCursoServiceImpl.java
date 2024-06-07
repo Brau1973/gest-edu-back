@@ -258,13 +258,13 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                 Optional<Curso> cursoOptional = cursoRepository.findById(inscripciones.getCurso().getId());
                 Curso curso = cursoOptional.orElseThrow(() -> new RuntimeException("Curso no encontrado"));
                 //Ponemos los datos
-                auxCursoHorario.setFechaInicio(curso.getFechaInicio());
-                auxCursoHorario.setFechaFin(curso.getFechaFin());
-                auxCursoHorario.setEstado(curso.getEstado());
+                //auxCursoHorario.setFechaInicio(curso.getFechaInicio());
+                //auxCursoHorario.setFechaFin(curso.getFechaFin());
+                //auxCursoHorario.setEstado(curso.getEstado());
                 auxCursoHorario.setDocenteNombre(curso.getDocente().getNombre());
                 auxCursoHorario.setDocenteApellido(curso.getDocente().getApellido());
                 auxCursoHorario.setAsignaturaNombre(curso.getAsignatura().getNombre());
-                auxCursoHorario.setDiasPrevInsc(curso.getDiasPrevInsc());
+                //auxCursoHorario.setDiasPrevInsc(curso.getDiasPrevInsc());
 
                 List<HorarioDTO> dtoHorarios = new ArrayList<>();
                 List<Horario> horarios = curso.getHorarios();
