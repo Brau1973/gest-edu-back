@@ -98,11 +98,19 @@ public class CarreraController {
         return ResponseEntity.ok().body(inscripciones);
     }
 
-    @Operation(summary = "Listar periodos de examen de carrera activos")
+    @Operation(summary = "Listar periodos de examen de carrera")
     @GetMapping("/{id}/periodos-examen")
     //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<Page<PeriodoExamenDTO>> obtenerPeriodosExamenCarrera(@PathVariable Long id, Pageable pageable) {
         Page<PeriodoExamenDTO> periodosExamen = carreraService.obtenerPeriodosExamenCarrera(id, pageable);
         return ResponseEntity.ok().body(periodosExamen);
     }
+
+    @Operation(summary = "Obtener asignaturas de la carrera con exámenes activos")
+    @GetMapping("/{id}/asignaturas-con-examenes-activos")
+    public ResponseEntity<List<AsignaturaDTO>> obtenerAsignaturasConExamenesActivos(@PathVariable Long id) {
+        List<AsignaturaDTO> asignaturas = carreraService.obtenerAsignaturasConExamenesActivos(id);
+        return ResponseEntity.ok().body(asignaturas);
+    }
+
 }
