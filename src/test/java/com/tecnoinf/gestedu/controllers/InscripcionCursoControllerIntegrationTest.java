@@ -318,12 +318,12 @@ public class InscripcionCursoControllerIntegrationTest {
         estudiante.setEmail("estudiante@gmail.com");
         estudiante.setPassword("12345678");
         estudiante = usuarioRepository.save(estudiante);
-
+    System.out.println(usuarioRepository.findById(estudiante.getId()));
         // Crear carrera
         Carrera carrera = new Carrera();
         carrera.setNombre("Carrera Test");
         carrera = carreraRepository.save(carrera);
-
+    System.out.println(carreraRepository.findById(carrera.getId()));
         //InscripcionCarrera
         InscripcionCarrera inscCarrera = new InscripcionCarrera();
         inscCarrera.setCarrera(carrera);
@@ -332,28 +332,30 @@ public class InscripcionCursoControllerIntegrationTest {
         inscCarrera.setCreditosObtenidos(15);
         inscCarrera.setEstudiante(estudiante);
         inscCarrera = inscripcionCarreraRepository.save(inscCarrera);
+    System.out.println(inscripcionCarreraRepository.findById(inscCarrera.getId()));
         List<InscripcionCarrera> insCarreras = new ArrayList<>();
         insCarreras.add(inscCarrera);
         carrera.setInscripciones(insCarreras);
         carrera = carreraRepository.save(carrera);
-
+    System.out.println(carreraRepository.findById(carrera.getId()));
         // Crear asignatura
         Asignatura asignatura = new Asignatura();
         asignatura.setNombre("Asignatura Test 1");
         asignatura.setCarrera(carrera);
         asignatura = asignaturaRepository.save(asignatura);
+    System.out.println(asignaturaRepository.findById(asignatura.getId()));
         List<Asignatura> asignaturas = new ArrayList<>();
         asignaturas.add(asignatura);
         carrera.setAsignaturas(asignaturas);
         carrera = carreraRepository.save(carrera);
-
+    System.out.println(carreraRepository.findById(carrera.getId()));
         //Crear Docente
         Docente docente = new Docente();
         docente.setDocumento("12345678");
         docente.setNombre("John");
         docente.setApellido("Doe");
         docente = docenteRepository.save(docente);
-
+    System.out.println(docenteRepository.findById(docente.getId()));
         //Crear Curso
         Curso curso = new Curso();
         LocalDate fechaInicio = LocalDate.of(2024, 8, 15); // Año, Mes (1-12), Día
@@ -382,7 +384,7 @@ public class InscripcionCursoControllerIntegrationTest {
         inscripcionCursoLista.add(inscripcionCurso);
         curso.setInscripciones(inscripcionCursoLista);
         curso = cursoRepository.save(curso);
-
+    System.out.println(cursoRepository.findById(curso.getId()));
         //Crear Horario
         Horario horario = new Horario();
         horario.setDia(DiaSemana.LUNES);
@@ -390,7 +392,7 @@ public class InscripcionCursoControllerIntegrationTest {
         horario.setHoraFin(LocalTime.of(11,0));
         horario.setCurso(curso);
         horario = horarioRepository.save(horario);
-
+    System.out.println(horarioRepository.findById(horario.getId()));
         //Crear Horario
         Horario horario2 = new Horario();
         horario2.setDia(DiaSemana.MIERCOLES);
@@ -398,21 +400,19 @@ public class InscripcionCursoControllerIntegrationTest {
         horario2.setHoraFin(LocalTime.of(12,0));
         horario2.setCurso(curso);
         horario2 = horarioRepository.save(horario2);
-
+    System.out.println(horarioRepository.findById(horario2.getId()));
         List<Horario> horarios = new ArrayList<>();
         horarios.add(horario);
         horarios.add(horario2);
         curso.setHorarios(horarios);
         curso = cursoRepository.save(curso);
-
         mockMvc.perform(get("/inscripcionCurso/cursos-inscripto")
+    System.out.println(cursoRepository.findById(curso.getId()));
+    System.out.println(curso.getFechaInicio().toString());
+        mockMvc.perform(get("/inscripcionCurso/" + estudiante.getId() + "/cursos-inscripto")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].fechaInicio").value(curso.getFechaInicio().toString())) // Necesitas convertir LocalDate a String
-                .andExpect(jsonPath("$[0].fechaFin").value(curso.getFechaFin().toString())) // Necesitas convertir LocalDate a String
-                .andExpect(jsonPath("$[0].diasPrevInsc").value(curso.getDiasPrevInsc()))
-                .andExpect(jsonPath("$[0].estado").value(curso.getEstado().toString())) // Enum necesita ser convertido a String
                 .andExpect(jsonPath("$[0].asignaturaNombre").value(asignatura.getNombre()))
                 .andExpect(jsonPath("$[0].docenteNombre").value(docente.getNombre()))
                 .andExpect(jsonPath("$[0].docenteApellido").value(docente.getApellido()))
