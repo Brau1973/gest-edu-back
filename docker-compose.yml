@@ -1,0 +1,26 @@
+services:
+  gest-edu-back-api:
+    container_name: gest-edu-back-api
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/gest_edu
+      DB_USER_NAME: postgres
+      DB_PASSWORD: postgres
+    restart: always
+    depends_on:
+      - db
+  db:
+    container_name: gest-edu-db
+    image: postgres:16.3
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: gest_edu
+    volumes:
+      - db_data:/var/lib/postgresql/data
+volumes:
+  db_data:
