@@ -1,9 +1,11 @@
 package com.tecnoinf.gestedu.controllers;
 
+import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.curso.CursoHorarioDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenDTO;
+import com.tecnoinf.gestedu.models.Curso;
 import com.tecnoinf.gestedu.services.interfaces.InscripcionCursoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -69,5 +71,12 @@ public class InscripcionCursoController {
         }
         InscripcionCursoDTO bajaCurso = inscripcionCursoService.darseDeBajaCurso(inscripcionCursoId, principal.getName());
         return ResponseEntity.ok().body(bajaCurso);
+    }
+
+    @Operation(summary = "Listar cursos disponibles de asignatura")
+    @GetMapping("/{idAsignatura}/cursos-disponibles")
+    public ResponseEntity<List<CursoDTO>> getCursosDisponiblesInscripcion(@PathVariable Long idAsignatura, Principal principal){
+        List<CursoDTO> cursosDisponibles = inscripcionCursoService.getCursosDisponibles(idAsignatura, principal.getName());
+        return  ResponseEntity.ok().body(cursosDisponibles);
     }
 }

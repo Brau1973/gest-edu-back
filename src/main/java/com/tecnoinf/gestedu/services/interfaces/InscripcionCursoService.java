@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.services.interfaces;
 
+import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.curso.CursoHorarioDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoDTO;
@@ -13,4 +14,5 @@ public interface InscripcionCursoService {
     void deleteInscripcionCurso(Long inscripcionCursoId);
     List<CursoHorarioDTO> listarCursosHorariosInscriptos(Long idEstudiante);
     InscripcionCursoDTO darseDeBajaCurso(Long inscripcionCursoId, String name);
+    List<CursoDTO> getCursosDisponibles(Long idAsignatura, String name);
 }
