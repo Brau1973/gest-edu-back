@@ -231,7 +231,7 @@ public class GestionEducativaOnlineApplication {
 				LocalDate fechaFin = LocalDate.of(2025, 07, 15); // Año, Mes (1-12), Día
 				curso1.setFechaFin(fechaFin);
 				curso1.setDocente(docente1);
-				curso1.setDiasPrevInsc(30);
+				curso1.setDiasPrevInsc(3000);
 				cursoRepository.save(curso1);
 
 				Curso curso2 = new Curso();
