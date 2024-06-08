@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface InscripcionCursoRepository extends JpaRepository<InscripcionCurso, Long> {
@@ -19,5 +20,5 @@ public interface InscripcionCursoRepository extends JpaRepository<InscripcionCur
     @Query("SELECT ic FROM InscripcionCurso ic JOIN ic.estudiante e WHERE ic.estudiante.id = :estudianteId")
     List<InscripcionCurso> findInscripcionCursoEstudianteById(Long estudianteId);
     @Query("SELECT ic FROM InscripcionCurso ic JOIN ic.estudiante e JOIN ic.curso c WHERE ic.estudiante.id = :estudianteId AND c.id = :cursoId")
-    InscripcionCurso findInscripcionCursoEstudianteByEstudianteIdAndCursoId(Long estudianteId, Long cursoId);
+    Optional<InscripcionCurso> findInscripcionCursoEstudianteByEstudianteIdAndCursoId(Long estudianteId, Long cursoId);
 }

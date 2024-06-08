@@ -3,13 +3,16 @@ package com.tecnoinf.gestedu.controllers;
 import com.tecnoinf.gestedu.dtos.curso.CursoHorarioDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoDTO;
+import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenDTO;
 import com.tecnoinf.gestedu.services.interfaces.InscripcionCursoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.text.ParseException;
 import java.util.List;
 
@@ -55,5 +58,16 @@ public class InscripcionCursoController {
     public ResponseEntity<List<CursoHorarioDTO>> getCursosHorariosInscriptos(@PathVariable Long idEstudiante){
         List<CursoHorarioDTO> cursos = inscripcionCursoService.listarCursosHorariosInscriptos(idEstudiante);
         return ResponseEntity.ok().body(cursos);
+    }
+
+    @Operation(summary = "Darse de baja de un curso.")
+    @DeleteMapping("/{inscripcionCursoId}/eliminar")
+    //@PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
+    public ResponseEntity<InscripcionCursoDTO> deleteCurso(@PathVariable Long inscripcionCursoId, Principal principal){
+        if(principal == null) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        InscripcionCursoDTO bajaCurso = inscripcionCursoService.darseDeBajaCurso(inscripcionCursoId, principal.getName());
+        return ResponseEntity.ok().body(bajaCurso);
     }
 }

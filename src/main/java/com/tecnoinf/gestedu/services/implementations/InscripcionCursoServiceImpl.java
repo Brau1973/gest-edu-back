@@ -4,6 +4,7 @@ import com.tecnoinf.gestedu.dtos.curso.CursoHorarioDTO;
 import com.tecnoinf.gestedu.dtos.curso.HorarioDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoDTO;
+import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenDTO;
 import com.tecnoinf.gestedu.exceptions.CalificacionCursoException;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.models.*;
@@ -30,6 +31,7 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
     private final InscripcionCursoRepository inscripcionCursoRepository;
     private final InscripcionCarreraRepository inscripcionCarreraRepository;
     private final AsignaturaRepository asignaturaRepository;
+    private final UsuarioRepository usuarioRepository;
     private final EmailService emailService;
     private final ModelMapper modelMapper;
     private final ActividadService actividadService;
@@ -38,13 +40,14 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
     @Autowired
     public InscripcionCursoServiceImpl(CursoRepository cursoRepository, EstudianteRepository estudianteRepository,
                                        InscripcionCursoRepository inscripcionCursoRepository, InscripcionCarreraRepository inscripcionCarreraRepository,
-                                       AsignaturaRepository asignaturaRepository, EmailService emailService, ModelMapper modelMapper,
+                                       AsignaturaRepository asignaturaRepository, UsuarioRepository usuarioRepository, EmailService emailService, ModelMapper modelMapper,
                                        ActividadService actividadService) {
         this.cursoRepository = cursoRepository;
         this.estudianteRepository = estudianteRepository;
         this.inscripcionCursoRepository = inscripcionCursoRepository;
         this.inscripcionCarreraRepository = inscripcionCarreraRepository;
         this.asignaturaRepository = asignaturaRepository;
+        this.usuarioRepository = usuarioRepository;
         this.emailService = emailService;
         this.modelMapper = modelMapper;
         this.actividadService = actividadService;
@@ -188,10 +191,8 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                 throw new CalificacionCursoException("No pueden quedar calificaciones pendientes.");
             }
 
-            InscripcionCurso inscripcionCurso = inscripcionCursoRepository.findInscripcionCursoEstudianteByEstudianteIdAndCursoId(calificacionDTO.getEstudianteId(), id);
-            if(inscripcionCurso == null){
-                throw new ResourceNotFoundException("No se encontró la inscripción del estudiante id " + calificacionDTO.getEstudianteId());
-            }
+            InscripcionCurso inscripcionCurso = inscripcionCursoRepository.findInscripcionCursoEstudianteByEstudianteIdAndCursoId(calificacionDTO.getEstudianteId(), id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Inscripción a curso no encontrada."));
 
             inscripcionCurso.setCalificacion(calificacionDTO.getCalificacionCurso());
             inscripcionCurso.setEstado(EstadoInscripcionCurso.COMPLETADA);
@@ -284,5 +285,36 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
             throw new IllegalStateException("Inscripciones no encontradas.");
         }
         return cursoHorarioDTOS;
+    }
+
+    @Override
+    public InscripcionCursoDTO darseDeBajaCurso(Long cursoId, String name){
+        Curso curso = cursoRepository.findById(cursoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Curso no encontrado."));
+        LocalDate hoy = LocalDate.now();
+        LocalDate finalFechaInscripcion = curso.getFechaInicio();
+        LocalDate inicioFechaInscripcion = curso.getFechaInicio().minusDays(curso.getDiasPrevInsc());
+        if(hoy.isBefore(finalFechaInscripcion)){
+            if(hoy.isAfter(inicioFechaInscripcion)){
+                Optional<Usuario> usuario = usuarioRepository.findByEmail(name);
+                if (usuario.isEmpty()) {
+                    throw new ResourceNotFoundException("Usuario no encontrado.");
+                }
+                Estudiante estudiante = (Estudiante) usuario.get();
+                InscripcionCurso inscripcion = inscripcionCursoRepository.findInscripcionCursoEstudianteByEstudianteIdAndCursoId(estudiante.getId(), cursoId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Inscripción no encontrada."));
+                inscripcionCursoRepository.delete(inscripcion);
+
+                actividadService.registrarActividad(TipoActividad.BAJA_DE_CURSO, "Baja de curso con id " + cursoId);
+
+                return new InscripcionCursoDTO(inscripcion);
+            }
+            else {
+                throw new IllegalStateException("Aún no está disponible la inscripción.");
+            }
+        }
+        else{
+            throw new IllegalStateException("No puedes eliminar la inscripción cuando el curso ya comenzó.");
+        }
     }
 }

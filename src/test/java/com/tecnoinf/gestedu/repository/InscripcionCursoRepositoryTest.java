@@ -1,6 +1,7 @@
 package com.tecnoinf.gestedu.repository;
 
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoDTO;
+import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
 import com.tecnoinf.gestedu.models.enums.Estado;
@@ -178,7 +179,8 @@ public class InscripcionCursoRepositoryTest {
         curso = cursoRepository.save(curso);
 
         // Ejecutar el método de prueba
-        InscripcionCurso resultados = inscripcionCursoRepository.findInscripcionCursoEstudianteByEstudianteIdAndCursoId(estudiante.getId(), curso.getId());
+        InscripcionCurso resultados = inscripcionCursoRepository.findInscripcionCursoEstudianteByEstudianteIdAndCursoId(estudiante.getId(), curso.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Inscripción no encontrada."));
 
         // Verificar los resultados
         assertNotNull(resultados);
