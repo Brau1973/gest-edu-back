@@ -244,11 +244,16 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
     }
 
     @Override
-    public List<CursoHorarioDTO> listarCursosHorariosInscriptos(Long idEstudiante){
+    public List<CursoHorarioDTO> listarCursosHorariosInscriptos(String name){
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(name);
+        if (usuario.isEmpty()) {
+            throw new ResourceNotFoundException("Usuario no encontrado.");
+        }
+        Estudiante estudiante = (Estudiante) usuario.get();
         //La lista que voy a devolver al final
         List<CursoHorarioDTO> cursoHorarioDTOS = new ArrayList<>();
         //Busco todas las inscripciones de un alumno
-        List<InscripcionCurso> inscripcionCursos = inscripcionCursoRepository.findInscripcionCursoEstudianteById(idEstudiante);
+        List<InscripcionCurso> inscripcionCursos = inscripcionCursoRepository.findInscripcionCursoEstudianteById(estudiante.getId());
         //Si no es null...
         if(inscripcionCursos != null){
             //Recorro cada una de las inscripciones
