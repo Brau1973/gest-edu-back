@@ -19,14 +19,12 @@ import com.tecnoinf.gestedu.services.interfaces.EmailService;
 import com.tecnoinf.gestedu.services.interfaces.PeriodoExamenService;
 import com.tecnoinf.gestedu.exceptions.*;
 import jakarta.mail.MessagingException;
-import net.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -426,7 +424,7 @@ public class ExamenServiceImplTest {
     }
 
     @Test
-    public void testListarExamenesPendientes() {
+    public void testListarExamenesPendientesCalificar() {
         Pageable pageable = PageRequest.of(0, 10);
         LocalDateTime now = LocalDateTime.now();
 
@@ -450,7 +448,7 @@ public class ExamenServiceImplTest {
 
         Page<ExamenDTO> result = null;
         try {
-            result = examenService.listarExamenesPendientes(pageable);
+            result = examenService.listarExamenesPendientesCalificar(pageable);
         } catch (Exception e) {
             e.printStackTrace();
             fail("El método lanzó una excepción: " + e.getMessage());

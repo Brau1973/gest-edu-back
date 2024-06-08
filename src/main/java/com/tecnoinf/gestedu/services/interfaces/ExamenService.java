@@ -16,7 +16,7 @@ public interface ExamenService {
     ExamenDTO altaExamen(CreateExamenDTO createExamenDto);
     InscripcionExamenDTO inscribirseExamen(CreateInscripcionExamenDTO inscripcionExamenDto);
     List<InscripcionExamenDTO> listarInscriptosExamen(Long id);
-    Page<ExamenDTO> listarExamenesPendientes(Pageable pageable);
+    Page<ExamenDTO> listarExamenesPendientesCalificar(Pageable pageable);
     List<InscripcionExamenCalificacionDTO> obtenerCalificaciones(Long id);
     List<InscripcionExamenCalificacionDTO> registrarCalificaciones(Long id, List<InscripcionExamenCalificacionDTO> calificaciones) throws MessagingException;
     InscripcionExamenDTO darseDeBajaExamen(Long id, String name);

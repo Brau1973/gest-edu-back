@@ -18,6 +18,6 @@ public interface AsignaturaService {
     AsignaturaDTO getAsignaturaById(Long id);
     Page<ExamenDTO> obtenerExamenes(Long asignaturaId, Pageable pageable);
     Page<ExamenDTO> obtenerExamenesEnFechaInscripcion(Long asignaturaId, Pageable pageable);
+    Page<ExamenDTO> obtenerExamenesFueraInscripcionSinCalificar(Long asignaturaId, Pageable pageable);
     List<CursoDTO> obtenerCursosDeAsignatura(Long asignaturaId);
-
 }

@@ -11,6 +11,7 @@ import com.tecnoinf.gestedu.models.Asignatura;
 import com.tecnoinf.gestedu.models.Carrera;
 import com.tecnoinf.gestedu.models.Curso;
 import com.tecnoinf.gestedu.models.Examen;
+import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
@@ -207,6 +208,22 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         return new PageImpl<>(examenesDto, pageable, examenesFiltrados.size());
     }
 
+    @Override
+    public Page<ExamenDTO> obtenerExamenesFueraInscripcionSinCalificar(Long asignaturaId, Pageable pageable){
+        Asignatura asignatura = asignaturaRepository.findById(asignaturaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Asignatura no encontrada - id " + asignaturaId));
+        Page<Examen> examenes = examenRepository.findAllByFechaAndEstadoAndAsignaturaId(LocalDateTime.now(), Estado.ACTIVO, asignaturaId, pageable);
+        Page<Examen> examenesViejosSinCalificar = examenRepository.findAllByFechaBeforeAndEstadoAndAsignaturaId(LocalDateTime.now(), Estado.ACTIVO, asignaturaId, pageable);
+        if(examenes.isEmpty() && examenesViejosSinCalificar.isEmpty()){
+            throw new ResourceNotFoundException("No se encontraron examenes");
+        }
+        List<Examen> examenesSinCalificar = new ArrayList<>();
+        examenesSinCalificar.addAll(examenes.getContent());
+        examenesSinCalificar.addAll(examenesViejosSinCalificar.getContent());
+        List<ExamenDTO> examenesDto = examenesSinCalificar.stream().map(examen -> modelMapper.map(examen, ExamenDTO.class)).collect(Collectors.toList());
+        return new PageImpl<>(examenesDto, pageable, examenesSinCalificar.size());
+    }
+    
     @Override
     public List<CursoDTO> obtenerCursosDeAsignatura(Long asignaturaId){
         Asignatura asignatura = asignaturaRepository.findById(asignaturaId)
