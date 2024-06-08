@@ -68,7 +68,7 @@ public class ExamenController {
     @GetMapping("/examenes-pendientes")
     //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<Page<ExamenDTO>> listarExamenesPendientes(Pageable pageable) {
-        return new ResponseEntity<>(examenService.listarExamenesPendientes(pageable), HttpStatus.OK);
+        return new ResponseEntity<>(examenService.listarExamenesPendientesCalificar(pageable), HttpStatus.OK);
     }
 
     @Operation(summary = "Listar estudiantes inscriptos a un examen")
