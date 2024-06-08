@@ -22,4 +22,5 @@ public interface AsignaturaRepository extends JpaRepository<Asignatura, Long>{
     // Método para obtener las asignaturas previas de una asignatura específica
     @Query("SELECT a.previas FROM Asignatura a WHERE a.id = :asignaturaId")
     List<Asignatura> findPreviasByAsignaturaId(Long asignaturaId);
+    List<Asignatura> findByCarreraIdAndSemestrePlanEstudio(Long id, Integer semestre);
 }

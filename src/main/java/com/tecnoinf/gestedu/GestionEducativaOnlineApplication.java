@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 
 @SpringBootApplication
 @EnableAsync
@@ -58,6 +59,7 @@ public class GestionEducativaOnlineApplication {
 					user.setCi("61647956");
 					user.setTelefono("091367159");
 					user.setDomicilio("Lindoro Forteza 5548");
+					//user.setFechaNac(LocalDate.of(1995, 6, 15));
 					user.setIsEnable(true);
 					user.setAccountNonExpired(true);
 					user.setAccountNonLocked(true);
@@ -73,6 +75,7 @@ public class GestionEducativaOnlineApplication {
 					estudiante1.setCi("42569843");
 					estudiante1.setTelefono("093874635");
 					estudiante1.setDomicilio("Elias Regules 7898");
+					//estudiante1.setFechaNac(LocalDate.of(1998, 5, 25));
 					estudiante1.setIsEnable(true);
 					estudiante1.setAccountNonExpired(true);
 					estudiante1.setAccountNonLocked(true);
@@ -86,6 +89,7 @@ public class GestionEducativaOnlineApplication {
 					estudiante2.setCi("61253594");
 					estudiante2.setTelefono("096558132");
 					estudiante2.setDomicilio("Pitagoras 1122");
+					//estudiante2.setFechaNac(LocalDate.of(1997, 8, 12));
 					estudiante2.setIsEnable(true);
 					estudiante2.setAccountNonExpired(true);
 					estudiante2.setAccountNonLocked(true);
@@ -99,6 +103,7 @@ public class GestionEducativaOnlineApplication {
 					estudiante3.setCi("36984582");
 					estudiante3.setTelefono("095664889");
 					estudiante3.setDomicilio("Cmno Carrasco 2551");
+					//estudiante3.setFechaNac(LocalDate.of(1996, 10, 30));
 					estudiante3.setIsEnable(true);
 					estudiante3.setAccountNonExpired(true);
 					estudiante3.setAccountNonLocked(true);
@@ -113,6 +118,7 @@ public class GestionEducativaOnlineApplication {
 					funcionario.setCi("42687516");
 					funcionario.setTelefono("097895632");
 					funcionario.setDomicilio("Bv Artigas 3556");
+					//funcionario.setFechaNac(LocalDate.of(1990, 3, 10));
 					funcionario.setIsEnable(true);
 					funcionario.setAccountNonExpired(true);
 					funcionario.setAccountNonLocked(true);
@@ -128,6 +134,7 @@ public class GestionEducativaOnlineApplication {
 					coordinador.setCi("31247689");
 					coordinador.setTelefono("094658759");
 					coordinador.setDomicilio("Av Italia 6554");
+					//coordinador.setFechaNac(LocalDate.of(1985, 12, 20));
 					coordinador.setIsEnable(true);
 					coordinador.setAccountNonExpired(true);
 					coordinador.setAccountNonLocked(true);
@@ -255,12 +262,14 @@ public class GestionEducativaOnlineApplication {
 
 				//----- INSCRIPCIONCURSO -----
 				InscripcionCurso inscripcionCurso1 = new InscripcionCurso();
+				inscripcionCurso1.setFechaInscripcion(LocalDateTime.now());
 				inscripcionCurso1.setEstudiante(estudiante2);
 				inscripcionCurso1.setCurso(curso1);
 				inscripcionCurso1.setCalificacion(CalificacionCurso.AEXAMEN);
 				inscripcionCursoRepository.save(inscripcionCurso1);
 
 				InscripcionCurso inscripcionCurso2 = new InscripcionCurso();
+				inscripcionCurso2.setFechaInscripcion(LocalDateTime.now());
 				inscripcionCurso2.setEstudiante(estudiante3);
 				inscripcionCurso2.setCurso(curso1);
 				inscripcionCurso2.setCalificacion(CalificacionCurso.AEXAMEN);
