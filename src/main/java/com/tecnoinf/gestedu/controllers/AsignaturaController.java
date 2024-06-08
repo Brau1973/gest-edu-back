@@ -81,6 +81,13 @@ public class AsignaturaController {
         return ResponseEntity.ok().body(examenes);
     }
 
+    @Operation(summary = "Obtener examenes de una asignatura fuera de fecha de inscripcion, sin calificar")
+    @GetMapping("/{asignaturaId}/examenesSinCalificar")
+    public ResponseEntity<Page<ExamenDTO>> getExamenesFueraInscripcionSinCalificar(@PathVariable Long asignaturaId, Pageable pageable) {
+        Page<ExamenDTO> examenes = asignaturaService.obtenerExamenesFueraInscripcionSinCalificar(asignaturaId, pageable);
+        return ResponseEntity.ok().body(examenes);
+    }
+
     @Operation(summary = "Obtener examenes de una asignatura en fecha de inscripcion")
     @GetMapping("/{asignaturaId}/examenesVigentes")
     public ResponseEntity<Page<ExamenDTO>> getExamenesEnFechaInscripcion(@PathVariable Long asignaturaId, Pageable pageable) {

@@ -19,4 +19,6 @@ public interface ExamenRepository extends JpaRepository<Examen, Long> {
     List<Examen> findByAsignaturaId(Long asignaturaId);
     Page<Examen> findAllByFechaBeforeAndEstado(LocalDateTime now, Estado estado, Pageable pageable);
     boolean existsByDocentesId(Long id);
+    Page<Examen> findAllByFechaAndEstadoAndAsignaturaId(LocalDateTime fecha, Estado estado, Long asignaturaId, Pageable pageable);
+    Page<Examen> findAllByFechaBeforeAndEstadoAndAsignaturaId(LocalDateTime now, Estado estado, Long asignaturaId, Pageable pageable);
 }

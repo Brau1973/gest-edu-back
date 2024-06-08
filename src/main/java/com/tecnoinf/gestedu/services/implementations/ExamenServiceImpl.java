@@ -207,7 +207,7 @@ public class ExamenServiceImpl implements ExamenService {
     }
 
     @Override
-    public Page<ExamenDTO> listarExamenesPendientes(Pageable pageable){
+    public Page<ExamenDTO> listarExamenesPendientesCalificar(Pageable pageable){
         Page<Examen> examenes = examenRepository.findAllByFechaBeforeAndEstado(LocalDateTime.now(), Estado.ACTIVO, pageable);
         if(examenes.isEmpty()){
             throw new ResourceNotFoundException("No hay examenes pendientes.");
