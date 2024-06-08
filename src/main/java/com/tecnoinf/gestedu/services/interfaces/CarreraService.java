@@ -21,4 +21,5 @@ public interface CarreraService {
     void updateSemestrePlanEstudio(Long id, List<AsignaturaDTO> asignaturasDto);
     List<InscripcionCarreraDTO> getEstudiantesInscriptos(Long id);
     Page<PeriodoExamenDTO> obtenerPeriodosExamenCarrera(Long id, Pageable pageable);
+    List<AsignaturaDTO> obtenerAsignaturasConExamenesActivos(Long id);
 }

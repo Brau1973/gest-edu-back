@@ -7,17 +7,17 @@ import com.tecnoinf.gestedu.dtos.inscripcionCarrera.InscripcionCarreraDTO;
 import com.tecnoinf.gestedu.dtos.periodoExamen.PeriodoExamenDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.exceptions.UniqueFieldException;
-import com.tecnoinf.gestedu.models.Asignatura;
-import com.tecnoinf.gestedu.models.Carrera;
-import com.tecnoinf.gestedu.models.Curso;
-import com.tecnoinf.gestedu.models.PeriodoExamen;
+import com.tecnoinf.gestedu.models.*;
+import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
+import com.tecnoinf.gestedu.repositories.ExamenRepository;
 import com.tecnoinf.gestedu.repositories.PeriodoExamenRepository;
 import com.tecnoinf.gestedu.repositories.specifications.CarreraSpecification;
 import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.CarreraService;
+import com.tecnoinf.gestedu.services.interfaces.ExamenService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,15 +38,17 @@ public class CarreraServiceImpl implements CarreraService {
     private final AsignaturaRepository asignaturaRepository;
     private final PeriodoExamenRepository periodoExamenRepository;
     private final ActividadService actividadService;
+    private final ExamenRepository examenRepository;
 
     @Autowired
     public CarreraServiceImpl(CarreraRepository carreraRepository, ModelMapper modelMapper, AsignaturaRepository asignaturaRepository,
-                              PeriodoExamenRepository periodoExamenRepository, ActividadService actividadService) {
+                              PeriodoExamenRepository periodoExamenRepository, ActividadService actividadService, ExamenRepository examenRepository) {
         this.carreraRepository = carreraRepository;
         this.modelMapper = modelMapper;
         this.asignaturaRepository = asignaturaRepository;
         this.periodoExamenRepository = periodoExamenRepository;
         this.actividadService = actividadService;
+        this.examenRepository = examenRepository;
     }
 
     @Override
@@ -151,5 +153,24 @@ public class CarreraServiceImpl implements CarreraService {
             periodosExamenDTO.add(periodoExamenDTO);
         }
         return new PageImpl<>(periodosExamenDTO, pageable, periodosExamenDTO.size());
+    }
+
+    @Override
+    public List<AsignaturaDTO> obtenerAsignaturasConExamenesActivos(Long id){
+        List<AsignaturaDTO> asignaturasDTO = new ArrayList<>();
+        Carrera carrera = carreraRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Carrera not found with id " + id));
+        List<Asignatura> asignaturas = carrera.getAsignaturas();
+        for (Asignatura asignatura : asignaturas) {
+            Page<Examen> examenes = examenRepository.findAllByFechaBeforeAndEstadoAndAsignaturaId(LocalDateTime.now(), Estado.ACTIVO, asignatura.getId(), Pageable.unpaged());
+            if(examenes.getTotalElements() > 0){
+                AsignaturaDTO asignaturaDTO = modelMapper.map(asignatura, AsignaturaDTO.class);
+                asignaturasDTO.add(asignaturaDTO);
+            }
+        }
+        if(asignaturasDTO.isEmpty()){
+            throw new ResourceNotFoundException("No hay asignaturas con examenes activos en la carrera con id " + id);
+        }
+        return asignaturasDTO;
     }
 }
