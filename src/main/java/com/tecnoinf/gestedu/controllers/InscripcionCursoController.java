@@ -53,10 +53,10 @@ public class InscripcionCursoController {
     }
 
     @Operation(summary = "Listar Cursos y Horarios de Estudiante Inscripto al Curso")
-    @GetMapping("/{idEstudiante}/cursos-inscripto")
+    @GetMapping("/cursos-inscripto")
     //@PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
-    public ResponseEntity<List<CursoHorarioDTO>> getCursosHorariosInscriptos(@PathVariable Long idEstudiante){
-        List<CursoHorarioDTO> cursos = inscripcionCursoService.listarCursosHorariosInscriptos(idEstudiante);
+    public ResponseEntity<List<CursoHorarioDTO>> getCursosHorariosInscriptos(Principal principal){
+        List<CursoHorarioDTO> cursos = inscripcionCursoService.listarCursosHorariosInscriptos(principal.getName());
         return ResponseEntity.ok().body(cursos);
     }
 
