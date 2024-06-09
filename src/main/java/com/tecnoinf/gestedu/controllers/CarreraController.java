@@ -3,6 +3,7 @@ package com.tecnoinf.gestedu.controllers;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.carrera.CreateCarreraDTO;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
+import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCarrera.InscripcionCarreraDTO;
 import com.tecnoinf.gestedu.services.interfaces.CarreraService;
 import com.tecnoinf.gestedu.dtos.periodoExamen.PeriodoExamenDTO;
@@ -113,4 +114,10 @@ public class CarreraController {
         return ResponseEntity.ok().body(asignaturas);
     }
 
+    @Operation(summary = "Obtener cursos activos de Carrera")
+    @GetMapping("/{idCarrera}/cursos-activos")
+    public ResponseEntity<List<CursoDTO>> obtenerCursosActivosCarrera(@PathVariable Long idCarrera){
+        List<CursoDTO> cursos = carreraService.obtenerCursosActivos(idCarrera);
+        return ResponseEntity.ok().body(cursos);
+    }
 }
