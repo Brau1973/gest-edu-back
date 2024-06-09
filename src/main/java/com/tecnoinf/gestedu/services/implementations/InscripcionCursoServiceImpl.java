@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.services.implementations;
 
+import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.curso.CursoHorarioDTO;
 import com.tecnoinf.gestedu.dtos.curso.HorarioDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
@@ -322,4 +323,55 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
             throw new IllegalStateException("No puedes eliminar la inscripción cuando el curso ya comenzó.");
         }
     }
+
+    @Override
+    public List<CursoDTO> getCursosDisponibles(Long idAsignatura, String name) {
+        // Buscar al Estudiante
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(name);
+        if (usuario.isEmpty()) {
+            throw new ResourceNotFoundException("Usuario no encontrado.");
+        }
+        Estudiante estudiante = (Estudiante) usuario.get();
+
+        // Buscar la asignatura
+        Asignatura asignatura = asignaturaRepository.findById(idAsignatura)
+                .orElseThrow(() -> new ResourceNotFoundException("Asignatura no encontrada"));
+
+        // Listar los cursos de la asignatura
+        List<Curso> cursos = asignatura.getCursos();
+
+        // Crear la lista de cursos disponibles
+        List<CursoDTO> cursosDisponibles = new ArrayList<>();
+
+        // Fecha actual
+        LocalDate hoy = LocalDate.now();
+
+        // Verificar si el estudiante está inscrito en algún curso de la asignatura en el período actual
+        List<InscripcionCurso> inscripcionesActuales = inscripcionCursoRepository.findByEstudianteIdAndCursoAsignaturaId(estudiante.getId(), idAsignatura);
+
+        // Verificar si alguna de las inscripciones actuales no está completada
+        for (InscripcionCurso inscripcion : inscripcionesActuales) {
+            if (inscripcion.getEstado() != EstadoInscripcionCurso.COMPLETADA) {
+                return cursosDisponibles;  // Devuelve una lista vacía porque ya está inscrito en un curso no completado de la asignatura
+            }
+            if(inscripcion.getCalificacion().equals(CalificacionCurso.EXONERADO)){
+                return cursosDisponibles;  // Devuelve una lista vacía porque ya exoneró el curso
+            }
+        }
+
+        // Verificar los cursos disponibles para inscripción
+        for (Curso curso : cursos) {
+            LocalDate fechaInicioCurso = curso.getFechaInicio();
+            LocalDate fechaFinInscripcion = curso.getFechaInicio().minusDays(curso.getDiasPrevInsc());
+
+            // Verificar que la fecha actual esté dentro del rango de inscripción
+            if (!hoy.isAfter(fechaInicioCurso) && !hoy.isBefore(fechaFinInscripcion)) {
+                CursoDTO cursoDTO = modelMapper.map(curso, CursoDTO.class);
+                cursosDisponibles.add(cursoDTO);
+            }
+        }
+
+        return cursosDisponibles;
+    }
+
 }
