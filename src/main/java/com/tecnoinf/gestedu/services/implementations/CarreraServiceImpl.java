@@ -3,6 +3,7 @@ package com.tecnoinf.gestedu.services.implementations;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.carrera.CreateCarreraDTO;
+import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCarrera.InscripcionCarreraDTO;
 import com.tecnoinf.gestedu.dtos.periodoExamen.PeriodoExamenDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
@@ -172,5 +173,27 @@ public class CarreraServiceImpl implements CarreraService {
             throw new ResourceNotFoundException("No hay asignaturas con examenes activos en la carrera con id " + id);
         }
         return asignaturasDTO;
+    }
+
+    @Override
+    public List<CursoDTO>obtenerCursosActivos(Long idCarrera){
+        Carrera carrera = carreraRepository.findById(idCarrera)
+                .orElseThrow(() -> new ResourceNotFoundException("Carrera no encontrada"));
+
+        // Crear la lista de cursos
+        List<CursoDTO> cursosDeCarrera = new ArrayList<>();
+
+        // Recorrer todas las asignaturas de la carrera
+        for (Asignatura asignatura : carrera.getAsignaturas()) {
+            // Recorrer todos los cursos de cada asignatura
+            for (Curso curso : asignatura.getCursos()) {
+                // Verificar que el curso esté finalizado
+                    if(curso.getEstado().equals(Estado.ACTIVO)){
+                        CursoDTO cursoDTO = modelMapper.map(curso, CursoDTO.class);
+                        cursosDeCarrera.add(cursoDTO);
+                    }
+                }
+            }
+        return cursosDeCarrera;
     }
 }
