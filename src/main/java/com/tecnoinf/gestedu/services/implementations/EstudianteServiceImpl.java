@@ -3,6 +3,7 @@ package com.tecnoinf.gestedu.services.implementations;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.certificado.CertificadoDTO;
+import com.tecnoinf.gestedu.dtos.escolaridad.*;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
@@ -23,9 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -315,6 +314,114 @@ public class EstudianteServiceImpl implements EstudianteService {
         }
 
         return  new PageImpl<>(asignaturaDTOS, pageable, asignaturaDTOS.size());
+    }
+
+    @Override
+    public EscolaridadDTO generarEscolaridad(Long carreraId, String name){
+        EscolaridadDTO escolaridadDTO = new EscolaridadDTO();
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(name);
+        if(!usuario.isPresent()) {
+            throw new ResourceNotFoundException("Usuario no encontrado");
+        }
+        if(!(usuario.get() instanceof Estudiante estudiante)){
+            throw new ResourceNotFoundException("El usuario no es un estudiante");
+        }
+        InscripcionCarrera inscripcionCarrera = inscripcionCarreraRepository.findByEstudianteIdAndCarreraId(estudiante.getId(), carreraId);
+        if(inscripcionCarrera == null){
+            throw new ResourceNotFoundException("El estudiante no esta inscripto en la carrera");
+        }
+        escolaridadDTO.setEstudiante(new BasicInfoUsuarioDTO(usuario.get()));
+        escolaridadDTO.setCarrera(modelMapper.map(inscripcionCarrera.getCarrera(), BasicInfoCarreraDTO.class));
+        Integer creditosAprobados = obtenerCreditosAprobados(estudiante, inscripcionCarrera.getCarrera());
+        escolaridadDTO.setCreditosAprobados(creditosAprobados);
+        List<EscolaridadSemestreDTO> semestres = obtenerInfoSemestres(estudiante, inscripcionCarrera.getCarrera());
+        escolaridadDTO.setSemestres(semestres);
+        return escolaridadDTO;
+    }
+
+    private Integer obtenerCreditosAprobados(Estudiante estudiante, Carrera carrera){
+        Integer creditosAprobados = 0;
+        Set<Asignatura> asignaturasAprobadas = new HashSet<>();
+
+        List<InscripcionCurso> cursosAprobados = inscripcionCursoRepository.findByCalificacionAndEstudianteId(CalificacionCurso.EXONERADO, estudiante.getId());
+        for(InscripcionCurso inscripcionCurso: cursosAprobados){
+            if(inscripcionCurso.getCurso().getAsignatura().getCarrera().getId().equals(carrera.getId())){
+                asignaturasAprobadas.add(inscripcionCurso.getCurso().getAsignatura());
+            }
+        }
+
+        List<InscripcionExamen> examenesAprobados = inscripcionExamenRepository.findByCalificacionAndEstudianteId(CalificacionExamen.APROBADO, estudiante.getId());
+        for(InscripcionExamen inscripcion : examenesAprobados){
+            if(inscripcion.getExamen().getAsignatura().getCarrera().getId().equals(carrera.getId())){
+                asignaturasAprobadas.add(inscripcion.getExamen().getAsignatura());
+            }
+        }
+
+        for(Asignatura asignatura: asignaturasAprobadas){
+            creditosAprobados += asignatura.getCreditos();
+        }
+
+        return creditosAprobados;
+    }
+
+    private List<EscolaridadSemestreDTO> obtenerInfoSemestres(Estudiante estudiante, Carrera carrera) {
+        List<EscolaridadSemestreDTO> semestresDTO = new ArrayList<>();
+
+        List<Asignatura> asignaturasCarrera = asignaturaRepository.findByCarreraId(carrera.getId());
+        if (asignaturasCarrera == null) {
+            asignaturasCarrera = new ArrayList<>();
+        }
+
+        Set<Integer> semestres = asignaturasCarrera.stream()
+                .map(Asignatura::getSemestrePlanEstudio)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        for (Integer semestre : semestres) {
+            EscolaridadSemestreDTO semestreDTO = new EscolaridadSemestreDTO();
+            int anio = (int) Math.ceil(semestre / 2.0);
+            semestreDTO.setAnio(anio);
+            semestreDTO.setSemestre(semestre);
+
+            List<Asignatura> asignaturasSemestre = asignaturaRepository.findByCarreraIdAndSemestrePlanEstudio(carrera.getId(), semestre);
+            if (asignaturasSemestre == null) {
+                asignaturasSemestre = new ArrayList<>();
+            }
+
+            List<EscolaridadAsignaturaDTO> asignaturasDTO = new ArrayList<>();
+            for (Asignatura asignatura : asignaturasSemestre) {
+                EscolaridadAsignaturaDTO asignaturaDTO = new EscolaridadAsignaturaDTO();
+                asignaturaDTO.setId(asignatura.getId());
+                asignaturaDTO.setNombre(asignatura.getNombre());
+                asignaturaDTO.setCreditos(asignatura.getCreditos());
+
+                List<EscolaridadCursoDTO> cursos = new ArrayList<>();
+                List<EscolaridadExamenDTO> examenes = new ArrayList<>();
+
+                List<InscripcionCurso> inscripcionCursos = inscripcionCursoRepository.findByEstudianteIdAndCursoAsignaturaId(estudiante.getId(), asignatura.getId());
+                if (inscripcionCursos != null) {
+                    for (InscripcionCurso inscripcionCurso : inscripcionCursos) {
+                        EscolaridadCursoDTO cursoDTO = new EscolaridadCursoDTO(inscripcionCurso);
+                        cursos.add(cursoDTO);
+                    }
+                }
+
+                List<InscripcionExamen> inscripcionExamenes = inscripcionExamenRepository.findAllByEstudianteIdAndExamenAsignaturaId(estudiante.getId(), asignatura.getId());
+                if (inscripcionExamenes != null) {
+                    for (InscripcionExamen inscripcionExamen : inscripcionExamenes) {
+                        EscolaridadExamenDTO examenDTO = new EscolaridadExamenDTO(inscripcionExamen);
+                        examenes.add(examenDTO);
+                    }
+                }
+
+                asignaturaDTO.setCursos(cursos);
+                asignaturaDTO.setExamenes(examenes);
+                asignaturasDTO.add(asignaturaDTO);
+            }
+            semestreDTO.setAsignaturas(asignaturasDTO);
+            semestresDTO.add(semestreDTO);
+        }
+        return semestresDTO;
     }
 
 }

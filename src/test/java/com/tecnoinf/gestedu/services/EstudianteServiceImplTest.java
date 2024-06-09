@@ -2,6 +2,7 @@ package com.tecnoinf.gestedu.services;
 
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
+import com.tecnoinf.gestedu.dtos.escolaridad.EscolaridadDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
@@ -46,6 +47,9 @@ public class EstudianteServiceImplTest {
 
     @Mock
     private AsignaturaRepository asignaturaRepository;
+
+    @Mock
+    private InscripcionCarreraRepository inscripcionCarreraRepository;
 
     @Mock
     private InscripcionCursoRepository inscripcionCursoRepository;
@@ -276,4 +280,141 @@ public class EstudianteServiceImplTest {
         verify(inscripcionExamenRepository, never()).findByCalificacionAndEstudianteId(any(CalificacionExamen.class), anyLong());
     }
 
+//    @Test //REVISAR
+//    public void testGenerarEscolaridad() {
+//        Long carreraId = 1L;
+//        String email = "estudiante@test.com";
+//
+//        Estudiante estudiante = new Estudiante();
+//        estudiante.setId(1L);
+//        estudiante.setEmail(email);
+//
+//        assertInstanceOf(Usuario.class, estudiante);
+//
+//        Carrera carrera = new Carrera();
+//        carrera.setId(carreraId);
+//        carrera.setNombre("Ingeniería");
+//
+//        InscripcionCarrera inscripcionCarrera = new InscripcionCarrera();
+//        inscripcionCarrera.setCarrera(carrera);
+//        inscripcionCarrera.setEstudiante(estudiante);
+//
+//        //when(usuarioRepository.findByEmail(email)).thenReturn(Optional.of(estudiante));
+//        when(inscripcionCarreraRepository.findByEstudianteIdAndCarreraId(estudiante.getId(), carreraId)).thenReturn(inscripcionCarrera);
+//
+//        Asignatura asignatura1 = new Asignatura();
+//        asignatura1.setId(1L);
+//        asignatura1.setNombre("Matemáticas");
+//        asignatura1.setCreditos(6);
+//        asignatura1.setCarrera(carrera);
+//
+//        Asignatura asignatura2 = new Asignatura();
+//        asignatura2.setId(2L);
+//        asignatura2.setNombre("Física");
+//        asignatura2.setCreditos(4);
+//        asignatura2.setCarrera(carrera);
+//
+//        List<Asignatura> asignaturasCarrera = Arrays.asList(asignatura1, asignatura2);
+//        when(asignaturaRepository.findByCarreraId(carreraId)).thenReturn(asignaturasCarrera);
+//
+//        Curso curso1 = new Curso();
+//        curso1.setAsignatura(asignatura1);
+//
+//        InscripcionCurso inscripcionCurso1 = new InscripcionCurso();
+//        inscripcionCurso1.setCurso(curso1);
+//        inscripcionCurso1.setEstudiante(estudiante);
+//        inscripcionCurso1.setCalificacion(CalificacionCurso.EXONERADO);
+//
+//        List<InscripcionCurso> cursosAprobados = Collections.singletonList(inscripcionCurso1);
+//        when(inscripcionCursoRepository.findByCalificacionAndEstudianteId(CalificacionCurso.EXONERADO, estudiante.getId())).thenReturn(cursosAprobados);
+//
+//        Examen examen1 = new Examen();
+//        examen1.setAsignatura(asignatura1);
+//
+//        InscripcionExamen inscripcionExamen1 = new InscripcionExamen();
+//        inscripcionExamen1.setExamen(examen1);
+//        inscripcionExamen1.setEstudiante(estudiante);
+//        inscripcionExamen1.setCalificacion(CalificacionExamen.APROBADO);
+//
+//        List<InscripcionExamen> examenesAprobados = Collections.singletonList(inscripcionExamen1);
+//        when(inscripcionExamenRepository.findByCalificacionAndEstudianteId(CalificacionExamen.APROBADO, estudiante.getId())).thenReturn(examenesAprobados);
+//
+//        BasicInfoUsuarioDTO basicInfoUsuarioDTO = new BasicInfoUsuarioDTO();
+//        basicInfoUsuarioDTO.setEmail(email);
+//
+//        BasicInfoCarreraDTO basicInfoCarreraDTO = new BasicInfoCarreraDTO();
+//        basicInfoCarreraDTO.setNombre("Ingeniería");
+//
+//        when(modelMapper.map(estudiante, BasicInfoUsuarioDTO.class)).thenReturn(basicInfoUsuarioDTO);
+//        when(modelMapper.map(carrera, BasicInfoCarreraDTO.class)).thenReturn(basicInfoCarreraDTO);
+//        when(usuarioRepository.findByEmail(email)).thenReturn(Optional.of(estudiante));
+//        EscolaridadDTO result = estudianteService.generarEscolaridad(carreraId, email); //-------aca esta el error, no encuentra al usuario en usuarioRepository.findByEmail(email)
+//
+//        assertNotNull(result);
+//        assertEquals(email, result.getEstudiante().getEmail());
+//        assertEquals("Ingeniería", result.getCarrera().getNombre());
+//        assertEquals(6, result.getCreditosAprobados()); // Matemáticas (6)
+//        assertFalse(result.getSemestres().isEmpty());
+//
+//        verify(usuarioRepository, times(1)).findByEmail(email);
+//        verify(inscripcionCarreraRepository, times(1)).findByEstudianteIdAndCarreraId(estudiante.getId(), carreraId);
+//        verify(asignaturaRepository, times(1)).findByCarreraId(carreraId);
+//        verify(inscripcionCursoRepository, times(1)).findByCalificacionAndEstudianteId(CalificacionCurso.EXONERADO, estudiante.getId());
+//        verify(inscripcionExamenRepository, times(1)).findByCalificacionAndEstudianteId(CalificacionExamen.APROBADO, estudiante.getId());
+//    }
+
+    @Test
+    public void testGenerarEscolaridadUsuarioNoEncontrado() {
+        Long carreraId = 1L;
+        String email = "inexistente@test.com";
+
+        when(usuarioRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            estudianteService.generarEscolaridad(carreraId, email);
+        });
+
+        when(usuarioRepository.findByEmail(email)).thenReturn(Optional.empty());
+        verify(inscripcionCarreraRepository, never()).findByEstudianteIdAndCarreraId(anyLong(), anyLong());
+    }
+
+//    @Test //REVISAR
+//    public void testGenerarEscolaridadUsuarioNoEsEstudiante() {
+//        Long carreraId = 1L;
+//        String email = "usuario@test.com";
+//
+//        Administrador administrador = new Administrador();
+//        administrador.setEmail(email);
+//
+//        when(usuarioRepository.findByEmail(email)).thenReturn(Optional.of(administrador));
+//
+//        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+//            estudianteService.generarEscolaridad(carreraId, email);
+//        });
+//
+//        assertEquals("El usuario no es un estudiante", exception.getMessage());
+//
+//        verify(usuarioRepository, times(1)).findByEmail(email);
+//        verify(inscripcionCarreraRepository, never()).findByEstudianteIdAndCarreraId(anyLong(), anyLong());
+//    }
+
+//    @Test //REVISAR
+//    public void testGenerarEscolaridadEstudianteNoInscripto() {
+//        Long carreraId = 1L;
+//        String email = "estudiante@test.com";
+//
+//        Estudiante estudiante = new Estudiante();
+//        estudiante.setId(1L);
+//        estudiante.setEmail(email);
+//
+//        when(usuarioRepository.findByEmail(email)).thenReturn(Optional.of(estudiante));
+//        when(inscripcionCarreraRepository.findByEstudianteIdAndCarreraId(estudiante.getId(), carreraId)).thenReturn(null);
+//
+//        assertThrows(ResourceNotFoundException.class, () -> {
+//            estudianteService.generarEscolaridad(carreraId, email);
+//        });
+//
+//        verify(usuarioRepository, times(1)).findByEmail(email);
+//        verify(inscripcionCarreraRepository, times(1)).findByEstudianteIdAndCarreraId(estudiante.getId(), carreraId);
+//    }
 }

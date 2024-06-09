@@ -3,6 +3,7 @@ package com.tecnoinf.gestedu.controllers;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.certificado.CertificadoDTO;
+import com.tecnoinf.gestedu.dtos.escolaridad.EscolaridadDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
 import com.tecnoinf.gestedu.services.interfaces.EstudianteService;
@@ -111,4 +112,16 @@ public class EstudianteController {
         Page<AsignaturaDTO> asignaturas = estudianteService.obtenerAsignaturasParaInscripcion(carreraid, principal.getName(), pageable);
         return  ResponseEntity.ok().body(asignaturas);
     }
+
+    @Operation(summary = "Generar escolaridad")
+    @GetMapping("/{carreraId}/escolaridad")
+    //@PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
+    public ResponseEntity<EscolaridadDTO> generarEscolaridad(@PathVariable Long carreraId, Principal principal) {
+        if(principal == null) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        EscolaridadDTO escolaridad = estudianteService.generarEscolaridad(carreraId, principal.getName());
+        return ResponseEntity.ok(escolaridad);
+    }
+
 }
