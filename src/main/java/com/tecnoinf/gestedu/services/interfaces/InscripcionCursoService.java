@@ -11,6 +11,6 @@ public interface InscripcionCursoService {
     InscripcionCursoDTO createInscripcionCurso(InscripcionCursoDTO inscripcionCursoDTO);
     List<InscripcionCursoCalificacionDTO> registrarCalificaciones(Long id, List<InscripcionCursoCalificacionDTO> calificaciones);
     void deleteInscripcionCurso(Long inscripcionCursoId);
-    List<CursoHorarioDTO> listarCursosHorariosInscriptos(Long idEstudiante);
+    List<CursoHorarioDTO> listarCursosHorariosInscriptos(String name);
     InscripcionCursoDTO darseDeBajaCurso(Long inscripcionCursoId, String name);
 }
