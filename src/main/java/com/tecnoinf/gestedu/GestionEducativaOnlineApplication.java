@@ -203,6 +203,14 @@ public class GestionEducativaOnlineApplication {
 				inscripcionCarrera2.setFechaInscripcion(LocalDate.now());
 				inscripcionCarreraRepository.save(inscripcionCarrera2);
 
+				// -----INSCRIPCIONCARRERA-----
+				InscripcionCarrera inscripcionCarrera3 = new InscripcionCarrera();
+				inscripcionCarrera3.setEstudiante(estudiante2);
+				inscripcionCarrera3.setCarrera(savedCarrera3);
+				inscripcionCarrera3.setEstado(EstadoInscripcionCarrera.CURSANDO);
+				inscripcionCarrera3.setFechaInscripcion(LocalDate.now());
+				inscripcionCarreraRepository.save(inscripcionCarrera3);
+
 				//---- DOCENTES ----
 				Docente docente1 = new Docente();
 				docente1.setNombre("Fernando");
