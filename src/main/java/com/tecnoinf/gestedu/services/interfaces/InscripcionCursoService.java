@@ -9,7 +9,7 @@ import java.security.Principal;
 import java.util.List;
 
 public interface InscripcionCursoService {
-    InscripcionCursoDTO createInscripcionCurso(InscripcionCursoDTO inscripcionCursoDTO);
+    InscripcionCursoDTO createInscripcionCurso(InscripcionCursoDTO inscripcionCursoDTO, String name);
     List<InscripcionCursoCalificacionDTO> registrarCalificaciones(Long id, List<InscripcionCursoCalificacionDTO> calificaciones);
     void deleteInscripcionCurso(Long inscripcionCursoId);
     List<CursoHorarioDTO> listarCursosHorariosInscriptos(String name);

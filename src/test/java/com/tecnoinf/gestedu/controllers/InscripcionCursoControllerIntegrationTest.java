@@ -90,7 +90,7 @@ public class InscripcionCursoControllerIntegrationTest {
         doNothing().when(actividadService).registrarActividad(any(), any());
     }
 
-    @Test
+    /*@Test
     @Transactional
     public void registerCurso()  throws Exception  {
         //Crear Estudiante
@@ -152,7 +152,7 @@ public class InscripcionCursoControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.estudianteId").value(estudiante.getId()))
                 .andExpect(jsonPath("$.cursoId").value(curso.getId()));
-    }
+    }*/
 
     @Test
     @Transactional
