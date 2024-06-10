@@ -18,324 +18,311 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 
 @SpringBootApplication
 @EnableAsync
 public class GestionEducativaOnlineApplication {
-
+	;
 	@Value("${spring.jpa.hibernate.ddl-auto}")
-	private String ddlAuto;
+    private String ddlAuto;
 
 	public static void main(String[] args) {
-		SpringApplication.run(GestionEducativaOnlineApplication.class, args);
-	}
+        SpringApplication.run(GestionEducativaOnlineApplication.class, args);
+    }
 
-	@Bean
-	public CommandLineRunner initData(UsuarioRepository usuarioRepository, CarreraRepository carreraRepository, AsignaturaRepository asignaturaRepository,
-									  InscripcionCarreraRepository inscripcionCarreraRepository, TramiteRepository tramiteRepository,
-									  DocenteRepository docenteRepository,  CursoRepository cursoRepository, PeriodoExamenRepository periodoExamenRepository ,
-									  ExamenRepository examenRepository, InscripcionCursoRepository inscripcionCursoRepository,
-									  InscripcionExamenRepository inscripcionExamenRepository) {
+    @Bean
+    public CommandLineRunner initData(UsuarioRepository usuarioRepository, CarreraRepository carreraRepository, AsignaturaRepository asignaturaRepository,
+                                      InscripcionCarreraRepository inscripcionCarreraRepository, TramiteRepository tramiteRepository,
+                                      DocenteRepository docenteRepository, CursoRepository cursoRepository, PeriodoExamenRepository periodoExamenRepository,
+                                      ExamenRepository examenRepository, InscripcionCursoRepository inscripcionCursoRepository,
+                                      InscripcionExamenRepository inscripcionExamenRepository, HorarioRepository horarioRepository) {
 
-		return (args) -> {
-			if(ddlAuto.equals("create") || ddlAuto.equals("create-drop")) {
-				Estudiante estudiante1 = new Estudiante();
-				Estudiante estudiante2 = new Estudiante();
-				Estudiante estudiante3 = new Estudiante();
-				Usuario funcionario = new Funcionario();
+        return (args) -> {
+            if (ddlAuto.equals("create") || ddlAuto.equals("create-drop")) {
 
-				//-----USUARIOS-----
 				PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-				if (usuarioRepository.findByCi("61647956").isEmpty()) {
-					Usuario user = new Administrador();
-					user.setNombre("Pedro");
-					user.setApellido("Perez");
-					user.setEmail("PedroPeAdmin@mail.com");
-					user.setPassword(passwordEncoder.encode("1234"));
-					user.setCi("61647956");
-					user.setTelefono("091367159");
-					user.setDomicilio("Lindoro Forteza 5548");
-					//user.setFechaNac(LocalDate.of(1995, 6, 15));
-					user.setIsEnable(true);
-					user.setAccountNonExpired(true);
-					user.setAccountNonLocked(true);
-					user.setCredentialsNonExpired(true);
-					usuarioRepository.save(user);
-				}
+				Usuario admin = new Administrador();
 
-				if (usuarioRepository.findByCi("42569843").isEmpty()) {
-					estudiante1.setNombre("Luis");
-					estudiante1.setApellido("Diaz");
-					estudiante1.setEmail("LuisDiaz@mail.com");
-					estudiante1.setPassword(passwordEncoder.encode("1234"));
-					estudiante1.setCi("42569843");
-					estudiante1.setTelefono("093874635");
-					estudiante1.setDomicilio("Elias Regules 7898");
-					//estudiante1.setFechaNac(LocalDate.of(1998, 5, 25));
-					estudiante1.setIsEnable(true);
-					estudiante1.setAccountNonExpired(true);
-					estudiante1.setAccountNonLocked(true);
-					estudiante1.setCredentialsNonExpired(true);
-					usuarioRepository.save(estudiante1);
+				Coordinador coordinador1 = new Coordinador();
+				Coordinador coordinador2 = new Coordinador();
 
-					estudiante2.setNombre("Horacio");
-					estudiante2.setApellido("Hernandez");
-					estudiante2.setEmail("HoriHernandez@mail.com");
-					estudiante2.setPassword(passwordEncoder.encode("1234"));
-					estudiante2.setCi("61253594");
-					estudiante2.setTelefono("096558132");
-					estudiante2.setDomicilio("Pitagoras 1122");
-					//estudiante2.setFechaNac(LocalDate.of(1997, 8, 12));
-					estudiante2.setIsEnable(true);
-					estudiante2.setAccountNonExpired(true);
-					estudiante2.setAccountNonLocked(true);
-					estudiante2.setCredentialsNonExpired(true);
-					usuarioRepository.save(estudiante2);
+				Funcionario funcionario1 = new Funcionario();
+				Funcionario funcionario2 = new Funcionario();
 
-					estudiante3.setNombre("Ana Maria");
-					estudiante3.setApellido("Diaz");
-					estudiante3.setEmail("AnaMariaDiaz@mail.com");
-					estudiante3.setPassword(passwordEncoder.encode("1234"));
-					estudiante3.setCi("36984582");
-					estudiante3.setTelefono("095664889");
-					estudiante3.setDomicilio("Cmno Carrasco 2551");
-					//estudiante3.setFechaNac(LocalDate.of(1996, 10, 30));
-					estudiante3.setIsEnable(true);
-					estudiante3.setAccountNonExpired(true);
-					estudiante3.setAccountNonLocked(true);
-					estudiante3.setCredentialsNonExpired(true);
-					usuarioRepository.save(estudiante3);
-				}
-				if (usuarioRepository.findByCi("42687516").isEmpty()) {
-					funcionario.setNombre("Carla");
-					funcionario.setApellido("Miranda");
-					funcionario.setEmail("CarlaMiranda@mail.com");
-					funcionario.setPassword(passwordEncoder.encode("1234"));
-					funcionario.setCi("42687516");
-					funcionario.setTelefono("097895632");
-					funcionario.setDomicilio("Bv Artigas 3556");
-					//funcionario.setFechaNac(LocalDate.of(1990, 3, 10));
-					funcionario.setIsEnable(true);
-					funcionario.setAccountNonExpired(true);
-					funcionario.setAccountNonLocked(true);
-					funcionario.setCredentialsNonExpired(true);
-					usuarioRepository.save(funcionario);
-				}
-				if (usuarioRepository.findByCi("31247689").isEmpty()) {
-					Usuario coordinador = new Coordinador();
-					coordinador.setNombre("Juan Pablo");
-					coordinador.setApellido("Salinas");
-					coordinador.setEmail("JuanPSalinas@mail.com");
-					coordinador.setPassword(passwordEncoder.encode("1234"));
-					coordinador.setCi("31247689");
-					coordinador.setTelefono("094658759");
-					coordinador.setDomicilio("Av Italia 6554");
-					//coordinador.setFechaNac(LocalDate.of(1985, 12, 20));
-					coordinador.setIsEnable(true);
-					coordinador.setAccountNonExpired(true);
-					coordinador.setAccountNonLocked(true);
-					coordinador.setCredentialsNonExpired(true);
-					usuarioRepository.save(coordinador);
-				}
+				Estudiante estudiante1 = new Estudiante();
+                Estudiante estudiante2 = new Estudiante();
+                Estudiante estudiante3 = new Estudiante();
+				Estudiante estudiante4 = new Estudiante();
+				Estudiante estudiante5 = new Estudiante();
+				Estudiante estudiante6 = new Estudiante();
+				Estudiante estudiante7 = new Estudiante();
+				Estudiante estudiante8 = new Estudiante();
+				Estudiante estudiante9 = new Estudiante();
 
-				//-----CARRERAS-----
-				// Comprueba si la carrera ya existe antes de intentar insertarla
-				Carrera savedCarrera1 = new Carrera();
-				if (!carreraRepository.existsByNombre("Tecnologo informatico")) {
-					Carrera carrera1 = new Carrera();
-					carrera1.setNombre("Tecnologo informatico");
-					carrera1.setDescripcion("Carrera de tecnologo informatico donde se enseña a programar en java, c++, c# y python");
-					carrera1.setExistePlanEstudio(true);
-					savedCarrera1 = carreraRepository.save(carrera1);
-				}
 
-				Carrera savedCarrera2 = new Carrera();
-				if (!carreraRepository.existsByNombre("Diseño UX/UI")) {
-					Carrera carrera2 = new Carrera();
-					carrera2.setNombre("Diseño UX/UI");
-					carrera2.setDescripcion("Carrera de diseño UX/UI donde se enseña a diseñar interfaces de usuario y experiencia de usuario");
-					carrera2.setExistePlanEstudio(false);
-					savedCarrera2 = carreraRepository.save(carrera2);
-				}
+                //---------------------------------------------------------------------------------------USUARIOS------------------------------------------------------------------------------------------------------------------------
+                createAndSaveUser(usuarioRepository, admin, "Pedro", "Perez", "PedroPeAdmin@mail.com", "1234", "61647956", "091367159", "Lindoro Forteza 5548", passwordEncoder);
+                createAndSaveUser(usuarioRepository, estudiante1, "Luis", "Diaz", "LuisDiaz@mail.com", "1234", "42569843", "093874635", "Elias Regules 7898", passwordEncoder);
+				createAndSaveUser(usuarioRepository, estudiante2, "Horacio", "Hernandez", "HoriHernandez@mail.com", "1234", "61253594", "096558132", "Pitagoras 1122", passwordEncoder);
+				createAndSaveUser(usuarioRepository, estudiante3, "Ana Maria", "Diaz", "AnaMariaDiaz@mail.com", "1234", "36984582", "095664889", "Cmno Carrasco 2551", passwordEncoder);
+				createAndSaveUser(usuarioRepository, estudiante4, "Lucas", "Hernandez", "LucasHernandez@mail.com", "1234", "36714582", "095554889", "Missipi 2551", passwordEncoder);
+				createAndSaveUser(usuarioRepository, estudiante5, "Serena", "Williams","SerenaWi@mail.com", "1234", "84714582", "095554871", "Gonzalo Ramirez 4795", passwordEncoder);
+				createAndSaveUser(usuarioRepository, estudiante6, "Agustin", "Cannobio","AgusCanobbio@mail.com", "1234", "15714582", "095554571", "Zum felde 1475", passwordEncoder);
+				createAndSaveUser(usuarioRepository, estudiante7, "Diego", "Forlan","DiegoForlan@mail.com", "1234", "84824582", "095144871", "Chacarita 1457", passwordEncoder);
+				createAndSaveUser(usuarioRepository, estudiante8, "Nicolas", "Badaracco","NicoBada@mail.com", "1234", "19514582", "096374871", "Porongos 4795", passwordEncoder);
+				createAndSaveUser(usuarioRepository, estudiante9, "Mauricio", "Mujica","MauriMu@mail.com", "1234", "48314582", "091654871", "Jose Cabrera 3335", passwordEncoder);
+				createAndSaveUser(usuarioRepository, funcionario1, "Carla", "Miranda", "CarlaMiranda@mail.com", "1234", "42687516", "097895632", "Bv Artigas 3556", passwordEncoder);
+				createAndSaveUser(usuarioRepository, funcionario2, "Andrew", "Garfield", "AndrewGarfield@mail.com", "1234", "42917516", "097145632", "Bv España 3556", passwordEncoder);
+				createAndSaveUser(usuarioRepository, coordinador1, "Juan Pablo", "Salinas", "JuanPSalinas@mail.com", "1234", "31247689", "094658759", "Av Italia 6554", passwordEncoder);
+				createAndSaveUser(usuarioRepository, coordinador2, "Fernando", "Dearrascaeta", "FerDearrasca@mail.com", "1234", "31177689", "094798759", "Ruta IB 6554", passwordEncoder);
 
-				Carrera carrera3 = new Carrera();
-				carrera3.setNombre("Tecnologo Audiovisual");
-				carrera3.setDescripcion("Carrera de tecnologo audiovisual donde se enseña a editar videos y sonido");
-				carrera3.setExistePlanEstudio(true);
-				Carrera savedCarrera3 = carreraRepository.save(carrera3);
+                //-----------------------------------------------------------------------------------CARRERAS--------------------------------------------------------------------------------------------------------------------
+				Carrera savedCarrera1 = createAndSaveCarrera(carreraRepository, "Tecnologo informatico", "Carrera de tecnologo informatico donde se enseña a programar en java, c++, c# y python", true);
+				Carrera savedCarrera2 = createAndSaveCarrera(carreraRepository, "Diseño UX/UI", "Carrera de diseño UX/UI donde se enseña a diseñar interfaces de usuario y experiencia de usuario", false);
+				Carrera savedCarrera3 = createAndSaveCarrera(carreraRepository, "Tecnologo Audiovisual", "Carrera de tecnologo audiovisual donde se enseña a editar videos y sonido", true);
 
-				//-----ASIGNATURAS-----
-				// SOLO VERIFICO SI EXISTE COE COMO PARA DARME CUENTA SI SE INSERTO LA DUMMY DATA PREVIAMENTE O NO (PARA SABER SI SE EJECUTO CON CREATE O UPDATE)
-				if (!asignaturaRepository.existsByNombre("Comunicacion oral y Escrita")) {
-					createAsignaturaInitData(asignaturaRepository, "Comunicacion oral y Escrita", "Asignatura de comunicacion oral y escrita", 4, 3, savedCarrera1);
-					createAsignaturaInitData(asignaturaRepository, "Matematica discreta y logica 1", "Conjuntos y subconjuntos", 3, 2 , savedCarrera1);
-					createAsignaturaInitData(asignaturaRepository, "Programacion avanzada", "OOP con java", 2, 1 ,savedCarrera1);
+                //----------------------------------------------------------------------------------ASIGNATURAS-------------------------------------------------------------------------------------------------------------
+                Asignatura COE = createAsignaturaInitData(asignaturaRepository, "Comunicacion oral y Escrita", "Asignatura de comunicacion oral y escrita", 4, 3, savedCarrera1);
+				Asignatura MDL1 = createAsignaturaInitData(asignaturaRepository, "Matematica discreta y logica 1", "Conjuntos y subconjuntos", 3, 2, savedCarrera1);
+				Asignatura PAV = createAsignaturaInitData(asignaturaRepository, "Programacion avanzada", "OOP con java", 2, 1, savedCarrera1);
 
-					createAsignaturaInitData(asignaturaRepository, "Diseño de Interfaz", "Asignatura de diseño de interfaz de usuario", 4, 0, savedCarrera2);
-					createAsignaturaInitData(asignaturaRepository, "Experiencia de Usuario", "Asignatura de experiencia de usuario", 3,  0, savedCarrera2);
-					createAsignaturaInitData(asignaturaRepository, "Prototipado", "Asignatura de prototipado de interfaces", 2,  0, savedCarrera2);
+                createAsignaturaInitData(asignaturaRepository, "Diseño de Interfaz", "Asignatura de diseño de interfaz de usuario", 4, 0, savedCarrera2);
+                createAsignaturaInitData(asignaturaRepository, "Experiencia de Usuario", "Asignatura de experiencia de usuario", 3, 0, savedCarrera2);
+                createAsignaturaInitData(asignaturaRepository, "Prototipado", "Asignatura de prototipado de interfaces", 2, 0, savedCarrera2);
 
-					createAsignaturaInitData(asignaturaRepository, "Grabacion con camara PRO", "Grabacion Full HD 4k", 2, 1, savedCarrera3);
-					createAsignaturaInitData(asignaturaRepository, "Adobe PRO", "Edicion de videos", 8, 2 , savedCarrera3);
-					createAsignaturaInitData(asignaturaRepository, "Photoshop", "Photoshop con adobe ilustrator", 1, 3 ,savedCarrera3);
-				}
+                createAsignaturaInitData(asignaturaRepository, "Grabacion con camara PRO", "Grabacion Full HD 4k", 2, 1, savedCarrera3);
+                createAsignaturaInitData(asignaturaRepository, "Adobe PRO", "Edicion de videos", 8, 2, savedCarrera3);
+                createAsignaturaInitData(asignaturaRepository, "Photoshop", "Photoshop con adobe ilustrator", 1, 3, savedCarrera3);
 
-				// -----TRAMITES-----
-				createTramiteInitData(tramiteRepository, estudiante1, savedCarrera3, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE,null);
-				createTramiteInitData(tramiteRepository, estudiante1, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE,null);
-				createTramiteInitData(tramiteRepository, estudiante2, savedCarrera3, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE,null);
-				createTramiteInitData(tramiteRepository, estudiante2, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE,null);
+                // -------------------------------------------------------------------------------------TRAMITES---------------------------------------------------------------------------------------------------
+                createTramiteInitData(tramiteRepository, estudiante1, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE, null,"");
+                createTramiteInitData(tramiteRepository, estudiante2, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE, null,"");
 
-				createTramiteInitData(tramiteRepository, estudiante3, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.ACEPTADO, funcionario);
-				createTramiteInitData(tramiteRepository, estudiante3, savedCarrera3, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.ACEPTADO,funcionario);
-				createTramiteInitData(tramiteRepository, estudiante3, savedCarrera1, TipoTramite.SOLICITUD_DE_TITULO, EstadoTramite.PENDIENTE,null);
-				createTramiteInitData(tramiteRepository, estudiante3, savedCarrera3, TipoTramite.SOLICITUD_DE_TITULO, EstadoTramite.PENDIENTE,null);
+				createTramiteInitData(tramiteRepository, estudiante3, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.ACEPTADO, funcionario1,"");
+				createTramiteInitData(tramiteRepository, estudiante4, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.ACEPTADO, funcionario1,"");
+				createTramiteInitData(tramiteRepository, estudiante5, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.ACEPTADO, funcionario1,"");
+				createTramiteInitData(tramiteRepository, estudiante7, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.ACEPTADO, funcionario1,"");
+				createTramiteInitData(tramiteRepository, estudiante8, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.ACEPTADO, funcionario1,"");
+				createTramiteInitData(tramiteRepository, estudiante9, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.ACEPTADO, funcionario1,"");
+				
+				createTramiteInitData(tramiteRepository, estudiante6, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.RECHAZADO, funcionario1,"Faltante de documentacion");
 
-				// -----INSCRIPCIONCARRERA-----
-				InscripcionCarrera inscripcionCarrera1 = new InscripcionCarrera();
-				inscripcionCarrera1.setEstudiante(estudiante3);
-				inscripcionCarrera1.setCarrera(savedCarrera1);
-				inscripcionCarrera1.setEstado(EstadoInscripcionCarrera.CURSANDO);
-				inscripcionCarrera1.setFechaInscripcion(LocalDate.now());
-				inscripcionCarreraRepository.save(inscripcionCarrera1);
+				createTramiteInitData(tramiteRepository, estudiante4, savedCarrera1, TipoTramite.SOLICITUD_DE_TITULO, EstadoTramite.ACEPTADO, coordinador1,"");
+				createTramiteInitData(tramiteRepository, estudiante5, savedCarrera1, TipoTramite.SOLICITUD_DE_TITULO, EstadoTramite.RECHAZADO, coordinador2,"No se tienen los creditos necesarios para solicitar el titulo");
 
-				InscripcionCarrera inscripcionCarrera2= new InscripcionCarrera();
-				inscripcionCarrera2.setEstudiante(estudiante3);
-				inscripcionCarrera2.setCarrera(savedCarrera3);
-				inscripcionCarrera2.setEstado(EstadoInscripcionCarrera.COMPLETADA);
-				inscripcionCarrera2.setFechaInscripcion(LocalDate.now());
-				inscripcionCarreraRepository.save(inscripcionCarrera2);
+                // ----------------------------------------------------------------------------------INSCRIPCIONCARRERA-----------------------------------------------------------------------------------------
+				createAndSaveInscripcionCarrera(inscripcionCarreraRepository, estudiante3, savedCarrera1, EstadoInscripcionCarrera.CURSANDO ,LocalDate.now().minusMonths(5));
+				createAndSaveInscripcionCarrera(inscripcionCarreraRepository, estudiante5, savedCarrera1, EstadoInscripcionCarrera.CURSANDO, LocalDate.now().minusMonths(10));
+				createAndSaveInscripcionCarrera(inscripcionCarreraRepository, estudiante7, savedCarrera1, EstadoInscripcionCarrera.CURSANDO ,LocalDate.now().minusMonths(5));
+				createAndSaveInscripcionCarrera(inscripcionCarreraRepository, estudiante4, savedCarrera1, EstadoInscripcionCarrera.COMPLETADA ,LocalDate.now().minusYears(2));
+				createAndSaveInscripcionCarrera(inscripcionCarreraRepository, estudiante8, savedCarrera1, EstadoInscripcionCarrera.CURSANDO, LocalDate.now().minusMonths(11));
+				createAndSaveInscripcionCarrera(inscripcionCarreraRepository, estudiante9, savedCarrera1, EstadoInscripcionCarrera.CURSANDO ,LocalDate.now().minusMonths(2));
 
-				// -----INSCRIPCIONCARRERA-----
-				InscripcionCarrera inscripcionCarrera3 = new InscripcionCarrera();
-				inscripcionCarrera3.setEstudiante(estudiante2);
-				inscripcionCarrera3.setCarrera(savedCarrera3);
-				inscripcionCarrera3.setEstado(EstadoInscripcionCarrera.CURSANDO);
-				inscripcionCarrera3.setFechaInscripcion(LocalDate.now());
-				inscripcionCarreraRepository.save(inscripcionCarrera3);
+                //---------------------------------------------------------------------------------------- DOCENTES ----------------------------------------------------------------------------------------
+				Docente docente1 = createAndSaveDocente(docenteRepository, "Fernando", "Garcia", "42569897");
+				Docente docente2 = createAndSaveDocente(docenteRepository, "Manuel", "Palomino", "42585843");
+				Docente docente3 = createAndSaveDocente(docenteRepository, "Veronica", "Gonzalez", "42569734");
 
-				//---- DOCENTES ----
-				Docente docente1 = new Docente();
-				docente1.setNombre("Fernando");
-				docente1.setApellido("Garcia");
-				docente1.setDocumento("42569897");
-				docenteRepository.save(docente1);
+                //----------------------------------------------------------------------------------------- CURSOS -----------------------------------------------------------------------------------------
+				//TECNOLOGO INFORMATICO
 
-				Docente docente2 = new Docente();
-				docente2.setNombre("Manuel");
-				docente2.setApellido("Gayoso");
-				docente2.setDocumento("42585843");
-				docenteRepository.save(docente2);
+				//CURSOS FINALIZADOS (VIEJOS)
+				Curso cursoCOEViejo = createAndSaveCurso(cursoRepository, Estado.FINALIZADO, COE, LocalDate.of(2023, 7, 15), LocalDate.of(2023, 11, 15), docente1, 30);
+				Curso cursoMDL1Viejo = createAndSaveCurso(cursoRepository, Estado.FINALIZADO, MDL1, LocalDate.of(2023, 7, 15), LocalDate.of(2023, 11, 15), docente2, 30);
+				Curso cursoPAVViejo = createAndSaveCurso(cursoRepository, Estado.FINALIZADO, PAV, LocalDate.of(2023, 7, 15), LocalDate.of(2023, 11, 15), docente3, 30);
 
-				Docente docente3 = new Docente();
-				docente3.setNombre("Veronica");
-				docente3.setApellido("Gonzalez");
-				docente3.setDocumento("42569734");
-				docenteRepository.save(docente3);
+				//CURSOS ACTIVOS (FECHAS DINAMICAS)
+				Curso cursoCOE = createAndSaveCurso(cursoRepository, Estado.ACTIVO, COE, LocalDate.now().plusDays(20), LocalDate.now().plusDays(20).plusMonths(4), docente1, 30);
+				Curso cursoMDL1 = createAndSaveCurso(cursoRepository, Estado.ACTIVO, MDL1, LocalDate.now().plusDays(20), LocalDate.now().plusDays(20).plusMonths(4), docente2, 30);
+				Curso cursoPAV = createAndSaveCurso(cursoRepository, Estado.ACTIVO, PAV, LocalDate.now().plusDays(20), LocalDate.now().plusDays(20).plusMonths(4), docente3, 30);
+				//HORARIOS
+				createAndSaveHorario(horarioRepository,DiaSemana.LUNES, LocalTime.of(8, 0), LocalTime.of(10, 0), cursoCOE);
+				createAndSaveHorario(horarioRepository,DiaSemana.MIERCOLES, LocalTime.of(10, 0), LocalTime.of(12, 0), cursoCOE);
+				createAndSaveHorario(horarioRepository,DiaSemana.MARTES, LocalTime.of(9, 0), LocalTime.of(11, 0), cursoMDL1);
+				createAndSaveHorario(horarioRepository,DiaSemana.JUEVES, LocalTime.of(11, 0), LocalTime.of(13, 0), cursoMDL1);
+				createAndSaveHorario(horarioRepository,DiaSemana.MIERCOLES, LocalTime.of(8, 0), LocalTime.of(10, 0), cursoPAV);
+				createAndSaveHorario(horarioRepository,DiaSemana.VIERNES, LocalTime.of(10, 0), LocalTime.of(12, 0), cursoPAV);
 
-				//----- CURSOS -----
-				Curso curso1 = new Curso();
-				curso1.setEstado(Estado.ACTIVO);
-				curso1.setAsignatura(asignaturaRepository.findById(1L).get());
-				LocalDate fechaInicio = LocalDate.of(2025, 3, 15); // Año, Mes (1-12), Día
-				curso1.setFechaInicio(fechaInicio);
-				LocalDate fechaFin = LocalDate.of(2025, 07, 15); // Año, Mes (1-12), Día
-				curso1.setFechaFin(fechaFin);
-				curso1.setDocente(docente1);
-				curso1.setDiasPrevInsc(3000);
-				cursoRepository.save(curso1);
+				//CURSOS FUTUROS (NO SE PUEDE INSCRIBIR AUN)
+				Curso cursoCOEFuturo = createAndSaveCurso(cursoRepository, Estado.ACTIVO, COE, LocalDate.now().plusDays(40), LocalDate.now().plusDays(40).plusMonths(4), docente1, 30);
+				Curso cursoMDL1Futuro = createAndSaveCurso(cursoRepository, Estado.ACTIVO, MDL1, LocalDate.now().plusDays(40), LocalDate.now().plusDays(40).plusMonths(4), docente2, 30);
 
-				Curso curso2 = new Curso();
-				curso2.setEstado(Estado.FINALIZADO);
-				curso2.setAsignatura(asignaturaRepository.findById(1L).get());
-				fechaInicio = LocalDate.of(2023, 3, 15); // Año, Mes (1-12), Día
-				curso2.setFechaInicio(fechaInicio);
-				fechaFin = LocalDate.of(2023, 07, 15); // Año, Mes (1-12), Día
-				curso2.setFechaFin(fechaFin);
-				curso2.setDocente(docente1);
-				curso2.setDiasPrevInsc(30);
-				cursoRepository.save(curso2);
+				//------------------------------------------------------------------------------- INSCRIPCIONCURSO -------------------------------------------------------------------------------
+				// INSCRIPCIONES CURSOS VIEJOS QUE EXONERO EL ESTUDIANTE 7 (TIENE TODOS LOS CREDITOS PARA SOLICITAR EL TITULO)
+				InscripcionCurso inscripcionCurso1 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante7, cursoCOEViejo, EstadoInscripcionCurso.COMPLETADA, CalificacionCurso.EXONERADO, LocalDate.of(2023, 7, 10) );
+				InscripcionCurso inscripcionCurso2 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante7, cursoMDL1Viejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.EXONERADO, LocalDate.of(2023, 7, 10));
+				InscripcionCurso inscripcionCurso3 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante7, cursoPAVViejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.EXONERADO, LocalDate.of(2023, 7, 10));
 
-				//----- INSCRIPCIONCURSO -----
-				InscripcionCurso inscripcionCurso1 = new InscripcionCurso();
-				inscripcionCurso1.setFechaInscripcion(LocalDateTime.now());
-				inscripcionCurso1.setEstudiante(estudiante2);
-				inscripcionCurso1.setCurso(curso1);
-				inscripcionCurso1.setCalificacion(CalificacionCurso.AEXAMEN);
-				inscripcionCursoRepository.save(inscripcionCurso1);
+				// INSCRIPCIONES A CURSO EN DISTINTOS ESTADOS
+				InscripcionCurso inscripcionCurso4 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante5, cursoCOEViejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.AEXAMEN,LocalDate.of(2023, 7, 10));
+				InscripcionCurso inscripcionCurso5 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante5, cursoMDL1, EstadoInscripcionCurso.CURSANDO,CalificacionCurso.PENDIENTE, LocalDate.now());
+				InscripcionCurso inscripcionCurso6 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante5, cursoPAVViejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.AEXAMEN, LocalDate.of(2023, 7, 10));
 
-				InscripcionCurso inscripcionCurso2 = new InscripcionCurso();
-				inscripcionCurso2.setFechaInscripcion(LocalDateTime.now());
-				inscripcionCurso2.setEstudiante(estudiante3);
-				inscripcionCurso2.setCurso(curso1);
-				inscripcionCurso2.setCalificacion(CalificacionCurso.AEXAMEN);
-				inscripcionCursoRepository.save(inscripcionCurso2);
+				InscripcionCurso inscripcionCurso7 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante8, cursoCOEViejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.EXONERADO, LocalDate.of(2023, 7, 10));
+				InscripcionCurso inscripcionCurso8 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante8, cursoMDL1Viejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.AEXAMEN, LocalDate.of(2023, 7, 10));
+				InscripcionCurso inscripcionCurso9 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante8, cursoPAVViejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.AEXAMEN, LocalDate.of(2023, 7, 10));
 
-				//----- PERIODO EXAMEN -----
-				PeriodoExamen periodoExamen1 = new PeriodoExamen();
-				periodoExamen1.setFechaInicio(LocalDateTime.now().plusDays(5));
-				periodoExamen1.setFechaFin(LocalDateTime.now().plusDays(10));
-				periodoExamen1.setCarrera(carreraRepository.findById(1L).get());
-				periodoExamenRepository.save(periodoExamen1);
+				InscripcionCurso inscripcionCurso10 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante9, cursoCOEViejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.RECURSA, LocalDate.of(2023, 7, 10));
+				InscripcionCurso inscripcionCurso11 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante9, cursoMDL1, EstadoInscripcionCurso.CURSANDO,CalificacionCurso.PENDIENTE, LocalDate.now());
+				InscripcionCurso inscripcionCurso12 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante9, cursoPAVViejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.EXONERADO, LocalDate.of(2023, 7, 10));
 
-				//----- EXAMEN -----
-				Examen examen1 = new Examen();
-				examen1.setFecha(LocalDateTime.now().plusDays(7));
-				examen1.setDiasPrevInsc(20);
-				examen1.setEstado(Estado.ACTIVO);
-				examen1.setAsignatura(asignaturaRepository.findById(1L).get());
-				examen1.setDocentes(new ArrayList<>());
-				examen1.getDocentes().add(docenteRepository.findById(1L).get());
-				examenRepository.save(examen1);
+				//ESTUDIANTE 3 NO ESTA INSCRIPTO A NINGUN CURSO
 
-				Examen examen2 = new Examen();
-				examen2.setFecha(LocalDateTime.now().minusDays(30));
-				examen2.setDiasPrevInsc(20);
-				examen2.setEstado(Estado.FINALIZADO);
-				examen2.setAsignatura(asignaturaRepository.findById(1L).get());
-				examen2.setDocentes(new ArrayList<>());
-				examen2.getDocentes().add(docenteRepository.findById(1L).get());
-				examenRepository.save(examen2);
+                //------------------------------------------------------------------------------- PERIODO EXAMEN ----------------------------------------------------------------------------------
+				PeriodoExamen periodoExamen1 = createAndSavePeriodoExamen(periodoExamenRepository, carreraRepository, 1L, 5, 10);
 
-				//----- INSCRIPCIONEXAMEN -----
-				InscripcionExamen inscripcionExamen1 = new InscripcionExamen();
-				inscripcionExamen1.setEstudiante(estudiante1);
-				inscripcionExamen1.setExamen(examen1);
-				inscripcionExamen1.setCalificacion(CalificacionExamen.PENDIENTE);
-				inscripcionExamenRepository.save(inscripcionExamen1);
+                //------------------------------------------------------------------------------------- EXAMEN -------------------------------------------------------------------------------------
+				// ACTIVOS
+				Examen examenCOE = createAndSaveExamen(examenRepository, LocalDateTime.now().plusDays(7), 20, Estado.ACTIVO, COE, docente1);
+				Examen examenPAV = createAndSaveExamen(examenRepository, LocalDateTime.now().plusDays(7), 20, Estado.ACTIVO, PAV, docente3);
+				Examen examenMDL1 = createAndSaveExamen(examenRepository, LocalDateTime.now().plusDays(7), 20, Estado.ACTIVO, MDL1, docente2);
 
-				InscripcionExamen inscripcionExamen2 = new InscripcionExamen();
-				inscripcionExamen2.setEstudiante(estudiante2);
-				inscripcionExamen2.setExamen(examen2);
-				inscripcionExamen2.setCalificacion(CalificacionExamen.PENDIENTE);
-				inscripcionExamenRepository.save(inscripcionExamen2);
+				// FINALIZADOS
+				Examen examenMDL1Finalizado = createAndSaveExamen(examenRepository, LocalDateTime.now().minusMonths(5), 20, Estado.FINALIZADO, MDL1, docente2);
+				Examen examenPAVFinalizado = createAndSaveExamen(examenRepository, LocalDateTime.now().minusMonths(5), 20, Estado.FINALIZADO, PAV, docente3);
+				Examen examenCOEFinalizado = createAndSaveExamen(examenRepository, LocalDateTime.now().minusMonths(5), 20, Estado.FINALIZADO, COE, docente1);
 
+                //----- INSCRIPCIONEXAMEN -----
+				InscripcionExamen inscripcionExamen1 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante5, examenPAVFinalizado, CalificacionExamen.REPROBADO, LocalDateTime.now().minusMonths(5).minusDays(2));
+				InscripcionExamen inscripcionExamen2 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante5, examenPAV, CalificacionExamen.PENDIENTE,LocalDateTime.now());
+				InscripcionExamen inscripcionExamen7 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante5, examenCOEFinalizado, CalificacionExamen.APROBADO,LocalDateTime.now().minusMonths(5).minusDays(2));
+
+				InscripcionExamen inscripcionExamen3 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante8, examenPAVFinalizado, CalificacionExamen.REPROBADO,LocalDateTime.now().minusMonths(5).minusDays(2));
+				InscripcionExamen inscripcionExamen4 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante8, examenPAV, CalificacionExamen.PENDIENTE,LocalDateTime.now());
+				InscripcionExamen inscripcionExamen5 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante8, examenMDL1Finalizado, CalificacionExamen.REPROBADO,LocalDateTime.now().minusMonths(5).minusDays(2));
+				InscripcionExamen inscripcionExamen6 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante8, examenMDL1, CalificacionExamen.PENDIENTE,LocalDateTime.now());
+            }
+        };
+    }
+
+	private void createAndSaveUser(UsuarioRepository usuarioRepository, Usuario user, String nombre, String apellido, String email, String password, String ci, String telefono, String domicilio, PasswordEncoder passwordEncoder) {
+		user.setNombre(nombre);
+		user.setApellido(apellido);
+		user.setEmail(email);
+		user.setPassword(passwordEncoder.encode(password));
+		user.setCi(ci);
+		user.setTelefono(telefono);
+		user.setDomicilio(domicilio);
+		user.setIsEnable(true);
+		user.setAccountNonExpired(true);
+		user.setAccountNonLocked(true);
+		user.setCredentialsNonExpired(true);
+		usuarioRepository.save(user);
+	}
+
+	private Carrera createAndSaveCarrera(CarreraRepository carreraRepository, String nombre, String descripcion, boolean existePlanEstudio) {
+    Carrera carrera = new Carrera();
+    carrera.setNombre(nombre);
+    carrera.setDescripcion(descripcion);
+    carrera.setExistePlanEstudio(existePlanEstudio);
+    return carreraRepository.save(carrera);
+	}
+
+	private Asignatura createAsignaturaInitData(AsignaturaRepository asignaturaRepository, String nombre, String descripcion, Integer creditos, Integer semestrePlanEstudio, Carrera carrera) {
+		Asignatura asignatura = new Asignatura(null, nombre, descripcion, creditos, semestrePlanEstudio, carrera, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+		return asignaturaRepository.save(asignatura);
+	}
+
+    private void createTramiteInitData(TramiteRepository tramiteRepository, Estudiante estudiante, Carrera savedCarrera, TipoTramite tipoTramite, EstadoTramite estadoTramite, Usuario usuarioResponsable, String motivoRechazo) {
+        Tramite tramite = new Tramite();
+        tramite.setUsuarioSolicitante(estudiante);
+        tramite.setTipo(tipoTramite);
+        tramite.setEstado(estadoTramite);
+        tramite.setFechaCreacion(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
+        tramite.setCarrera(savedCarrera);
+        if (estadoTramite.equals(EstadoTramite.ACEPTADO) || estadoTramite.equals(EstadoTramite.RECHAZADO)) {
+            tramite.setUsuarioResponsable(usuarioResponsable);
+			if (estadoTramite.equals(EstadoTramite.RECHAZADO)){
+				tramite.setMotivoRechazo(motivoRechazo);
 			}
-		};
+        }
+        tramiteRepository.save(tramite);
+    }
+
+	private void createAndSaveInscripcionCarrera(InscripcionCarreraRepository inscripcionCarreraRepository, Estudiante estudiante, Carrera carrera, EstadoInscripcionCarrera estado, LocalDate fechaInscripcion) {
+		InscripcionCarrera inscripcionCarrera = new InscripcionCarrera();
+		inscripcionCarrera.setEstudiante(estudiante);
+		inscripcionCarrera.setCarrera(carrera);
+		inscripcionCarrera.setEstado(estado);
+		inscripcionCarrera.setFechaInscripcion(fechaInscripcion);
+		inscripcionCarreraRepository.save(inscripcionCarrera);
 	}
 
-	private void createTramiteInitData(TramiteRepository tramiteRepository, Estudiante estudiante, Carrera savedCarrera, TipoTramite tipoTramite, EstadoTramite estadoTramite, Usuario usuarioResponsable) {
-		Tramite tramite = new Tramite();
-		tramite.setUsuarioSolicitante(estudiante);
-		tramite.setTipo(tipoTramite);
-		tramite.setEstado(estadoTramite);
-		tramite.setFechaCreacion(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
-		tramite.setCarrera(savedCarrera);
-		if(estadoTramite.equals(EstadoTramite.ACEPTADO) || estadoTramite.equals(EstadoTramite.RECHAZADO)){
-			tramite.setUsuarioResponsable(usuarioResponsable);
-		}
-		tramiteRepository.save(tramite);
+	private Docente createAndSaveDocente(DocenteRepository docenteRepository, String nombre, String apellido, String documento) {
+		Docente docente = new Docente();
+		docente.setNombre(nombre);
+		docente.setApellido(apellido);
+		docente.setDocumento(documento);
+		return docenteRepository.save(docente);
 	}
 
-	private void createAsignaturaInitData(AsignaturaRepository asignaturaRepository, String nombre, String descripcion, Integer creditos, Integer semestrePlanEstudio ,Carrera carrera) {
-		if(!asignaturaRepository.existsByNombreAndCarreraId(nombre, carrera.getId())){
-
-			Asignatura asignatura = new Asignatura(null, nombre, descripcion, creditos, semestrePlanEstudio, carrera, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-			asignaturaRepository.save(asignatura);
-		}
+	private Curso createAndSaveCurso(CursoRepository cursoRepository, Estado estado, Asignatura asignatura, LocalDate fechaInicio, LocalDate fechaFin, Docente docente, int diasPrevInsc) {
+		Curso curso = new Curso();
+		curso.setEstado(estado);
+		curso.setAsignatura(asignatura);
+		curso.setFechaInicio(fechaInicio);
+		curso.setFechaFin(fechaFin);
+		curso.setDocente(docente);
+		curso.setDiasPrevInsc(diasPrevInsc);
+		return cursoRepository.save(curso);
 	}
+
+	private InscripcionCurso createAndSaveInscripcionCurso(InscripcionCursoRepository inscripcionCursoRepository, Estudiante estudiante, Curso curso, EstadoInscripcionCurso estadoInscripcionCurso,CalificacionCurso calificacion, LocalDate fechaInscripcion) {
+		InscripcionCurso inscripcionCurso = new InscripcionCurso();
+		inscripcionCurso.setEstudiante(estudiante);
+		inscripcionCurso.setCurso(curso);
+		inscripcionCurso.setEstado(estadoInscripcionCurso);
+		inscripcionCurso.setCalificacion(calificacion);
+		inscripcionCurso.setFechaInscripcion(fechaInscripcion);
+		return inscripcionCursoRepository.save(inscripcionCurso);
+	}
+
+	private PeriodoExamen createAndSavePeriodoExamen(PeriodoExamenRepository periodoExamenRepository, CarreraRepository carreraRepository, Long carreraId, int startDays, int endDays) {
+		PeriodoExamen periodoExamen = new PeriodoExamen();
+		periodoExamen.setFechaInicio(LocalDateTime.now().plusDays(startDays));
+		periodoExamen.setFechaFin(LocalDateTime.now().plusDays(endDays));
+		periodoExamen.setCarrera(carreraRepository.findById(carreraId).get());
+		return periodoExamenRepository.save(periodoExamen);
+	}
+
+	private Examen createAndSaveExamen(ExamenRepository examenRepository, LocalDateTime fecha, int diasPrevInsc, Estado estado, Asignatura asignatura, Docente docente) {
+		Examen examen = new Examen();
+		examen.setFecha(fecha);
+		examen.setDiasPrevInsc(diasPrevInsc);
+		examen.setEstado(estado);
+		examen.setAsignatura(asignatura);
+		examen.setDocentes(new ArrayList<>());
+		examen.getDocentes().add(docente);
+		return examenRepository.save(examen);
+	}
+
+	private InscripcionExamen createAndSaveInscripcionExamen(InscripcionExamenRepository inscripcionExamenRepository, Estudiante estudiante, Examen examen, CalificacionExamen calificacion, LocalDateTime fechaInscripcion) {
+		InscripcionExamen inscripcionExamen = new InscripcionExamen();
+		inscripcionExamen.setEstudiante(estudiante);
+		inscripcionExamen.setExamen(examen);
+		inscripcionExamen.setCalificacion(calificacion);
+		inscripcionExamen.setFechaInscripcion(fechaInscripcion);
+		return inscripcionExamenRepository.save(inscripcionExamen);
+	}
+
+	private void createAndSaveHorario(HorarioRepository horarioRepository , DiaSemana dia, LocalTime horaInicio, LocalTime horaFin, Curso curso) {
+		Horario horario = new Horario();
+		horario.setDia(dia);
+		horario.setHoraInicio(horaInicio);
+		horario.setHoraFin(horaFin);
+		horario.setCurso(curso);
+		horarioRepository.save(horario);
+	}
+
+	private Actividad createAndSaveActividad(ActividadRepository actividadRepository, TipoActividad tipoActividad, String descripcion) {
+		Actividad actividad = new Actividad();
+		actividad.setTipoActividad(tipoActividad);
+		actividad.setDescripcion(descripcion);
+		return actividadRepository.save(actividad);
+	}
+
 }
