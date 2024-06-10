@@ -1,29 +1,43 @@
 package com.tecnoinf.gestedu.services.implementations;
 
-import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
-import com.tecnoinf.gestedu.dtos.curso.CursoHorarioDTO;
-import com.tecnoinf.gestedu.dtos.curso.HorarioDTO;
-import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
-import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoDTO;
-import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenDTO;
-import com.tecnoinf.gestedu.exceptions.CalificacionCursoException;
-import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
-import com.tecnoinf.gestedu.models.*;
-import com.tecnoinf.gestedu.models.enums.*;
-import com.tecnoinf.gestedu.repositories.*;
-import com.tecnoinf.gestedu.services.interfaces.ActividadService;
-import com.tecnoinf.gestedu.services.interfaces.EmailService;
-import com.tecnoinf.gestedu.services.interfaces.InscripcionCursoService;
-import jakarta.mail.MessagingException;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
+import com.tecnoinf.gestedu.dtos.curso.CursoHorarioDTO;
+import com.tecnoinf.gestedu.dtos.curso.HorarioDTO;
+import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
+import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoDTO;
+import com.tecnoinf.gestedu.exceptions.CalificacionCursoException;
+import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
+import com.tecnoinf.gestedu.models.Asignatura;
+import com.tecnoinf.gestedu.models.Curso;
+import com.tecnoinf.gestedu.models.Estudiante;
+import com.tecnoinf.gestedu.models.Horario;
+import com.tecnoinf.gestedu.models.InscripcionCarrera;
+import com.tecnoinf.gestedu.models.InscripcionCurso;
+import com.tecnoinf.gestedu.models.Usuario;
+import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
+import com.tecnoinf.gestedu.models.enums.Estado;
+import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCarrera;
+import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCurso;
+import com.tecnoinf.gestedu.models.enums.TipoActividad;
+import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
+import com.tecnoinf.gestedu.repositories.CursoRepository;
+import com.tecnoinf.gestedu.repositories.EstudianteRepository;
+import com.tecnoinf.gestedu.repositories.InscripcionCarreraRepository;
+import com.tecnoinf.gestedu.repositories.InscripcionCursoRepository;
+import com.tecnoinf.gestedu.repositories.UsuarioRepository;
+import com.tecnoinf.gestedu.services.interfaces.ActividadService;
+import com.tecnoinf.gestedu.services.interfaces.EmailService;
+import com.tecnoinf.gestedu.services.interfaces.InscripcionCursoService;
 
 @Service
 public class InscripcionCursoServiceImpl implements InscripcionCursoService {
@@ -265,6 +279,7 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                 Optional<Curso> cursoOptional = cursoRepository.findById(inscripciones.getCurso().getId());
                 Curso curso = cursoOptional.orElseThrow(() -> new RuntimeException("Curso no encontrado"));
                 //Ponemos los datos
+                auxCursoHorario.setCursoId(curso.getId());//agrego Id
                 auxCursoHorario.setFechaInicio(curso.getFechaInicio());
                 auxCursoHorario.setFechaFin(curso.getFechaFin());
                 auxCursoHorario.setEstado(curso.getEstado());
