@@ -374,8 +374,8 @@ public class GestionEducativaOnlineApplication {
 
 	private PeriodoExamen createAndSavePeriodoExamen(PeriodoExamenRepository periodoExamenRepository, Carrera carrera, int startDays, int endDays) {
 		PeriodoExamen periodoExamen = new PeriodoExamen();
-		periodoExamen.setFechaInicio(LocalDateTime.now().plusDays(startDays));
-		periodoExamen.setFechaFin(LocalDateTime.now().plusDays(endDays));
+		periodoExamen.setFechaInicio(LocalDate.now().plusDays(startDays));
+		periodoExamen.setFechaFin(LocalDate.now().plusDays(endDays));
 		periodoExamen.setCarrera(carrera);
 		return periodoExamenRepository.save(periodoExamen);
 	}

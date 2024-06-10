@@ -39,11 +39,8 @@ public class PeriodoExamenServiceImpl implements PeriodoExamenService {
     @Override
     public PeriodoExamenDTO registrarPeriodoExamen(PeriodoExamenDTO periodoExamenDTO) {
 
-        LocalDate dateInicio = LocalDate.parse(periodoExamenDTO.getFechaInicio());
-        LocalDateTime fechaInicio = dateInicio.atStartOfDay();
-
-        LocalDate dateFin = LocalDate.parse(periodoExamenDTO.getFechaFin());
-        LocalDateTime fechaFin = dateFin.atTime(23, 59, 59, 999999999);
+        LocalDate fechaInicio = periodoExamenDTO.getFechaInicio();
+        LocalDate fechaFin = periodoExamenDTO.getFechaFin();
 
         PeriodoExamen periodoExamen = new PeriodoExamen();
         validarFechas(fechaInicio, fechaFin);
@@ -59,16 +56,16 @@ public class PeriodoExamenServiceImpl implements PeriodoExamenService {
         return new PeriodoExamenDTO(periodoExamen);
     }
 
-    private void validarFechas(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
+    private void validarFechas(LocalDate fechaInicio, LocalDate fechaFin) {
         if(fechaInicio.isAfter(fechaFin)) {
             throw new FechaException("La fecha de inicio no puede ser mayor a la fecha de fin");
         }
-        if(fechaFin.isBefore(LocalDateTime.now())) {
+        if(fechaFin.isBefore(LocalDate.now())) {
             throw new FechaException("La fecha de fin no puede ser menor a la fecha actual");
         }
     }
 
-    private void verificarPeriodoExistente(LocalDateTime fechaInicio, LocalDateTime fechaFin, Long carreraId) {
+    private void verificarPeriodoExistente(LocalDate fechaInicio, LocalDate fechaFin, Long carreraId) {
         Optional<PeriodoExamen> existePeriodoExamenCarrera = periodoExamenRepository.findByFechaInicioAndFechaFinAndCarreraId(fechaInicio, fechaFin, carreraId);
         if (existePeriodoExamenCarrera.isPresent()) {
             throw new UniqueFieldException("Ya existe un período de examen con las mismas fechas para la carrera " + carreraId);
@@ -85,13 +82,13 @@ public class PeriodoExamenServiceImpl implements PeriodoExamenService {
         }
     }
 
-    private boolean interseccionDeFechas(LocalDateTime fechaInicio, LocalDateTime fechaFin, PeriodoExamen periodoExistente) {
+    private boolean interseccionDeFechas(LocalDate fechaInicio, LocalDate fechaFin, PeriodoExamen periodoExistente) {
         return (fechaInicio.isAfter(periodoExistente.getFechaInicio()) && fechaInicio.isBefore(periodoExistente.getFechaFin())) ||
                 (fechaFin.isAfter(periodoExistente.getFechaInicio()) && fechaFin.isBefore(periodoExistente.getFechaFin())) ||
                 fechaInicio.equals(periodoExistente.getFechaInicio()) || fechaFin.equals(periodoExistente.getFechaFin());
     }
 
-    private boolean conteniendoFechas(LocalDateTime fechaInicio, LocalDateTime fechaFin, PeriodoExamen periodoExistente) {
+    private boolean conteniendoFechas(LocalDate fechaInicio, LocalDate fechaFin, PeriodoExamen periodoExistente) {
         return (periodoExistente.getFechaInicio().isAfter(fechaInicio) && periodoExistente.getFechaInicio().isBefore(fechaFin)) ||
                 (periodoExistente.getFechaFin().isAfter(fechaInicio) && periodoExistente.getFechaFin().isBefore(fechaFin)) ||
                 periodoExistente.getFechaInicio().equals(fechaInicio) || periodoExistente.getFechaFin().equals(fechaFin);

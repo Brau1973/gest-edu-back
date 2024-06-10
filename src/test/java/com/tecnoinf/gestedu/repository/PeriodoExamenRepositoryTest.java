@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -35,8 +36,8 @@ public class PeriodoExamenRepositoryTest {
         entityManager.persist(carrera);
         periodoExamen = new PeriodoExamen();
         periodoExamen.setCarrera(carrera);
-        periodoExamen.setFechaInicio(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0));
-        periodoExamen.setFechaFin(LocalDateTime.now().plusDays(1).withHour(23).withMinute(59).withSecond(59).withNano(0));
+        periodoExamen.setFechaInicio(LocalDate.now());
+        periodoExamen.setFechaFin(LocalDate.now().plusDays(1));
         entityManager.persist(periodoExamen);
     }
 

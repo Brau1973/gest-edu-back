@@ -30,6 +30,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -98,8 +99,8 @@ public class ExamenServiceImplTest {
         PeriodoExamen periodoExamen = new PeriodoExamen();
         periodoExamen.setId(1L);
         periodoExamen.setCarrera(carrera);
-        periodoExamen.setFechaInicio(LocalDateTime.parse(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
-        periodoExamen.setFechaFin(LocalDateTime.parse(LocalDateTime.now().plusDays(5).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
+        periodoExamen.setFechaInicio(LocalDate.now());
+        periodoExamen.setFechaFin(LocalDate.now().plusDays(10));
 
         Asignatura asignatura = new Asignatura();
         asignatura.setId(1L);
@@ -153,8 +154,8 @@ public class ExamenServiceImplTest {
 
         PeriodoExamen periodoExamen = new PeriodoExamen();
         periodoExamen.setId(1L);
-        periodoExamen.setFechaInicio(LocalDateTime.now().plusDays(5));
-        periodoExamen.setFechaFin(LocalDateTime.now().plusDays(15));
+        periodoExamen.setFechaInicio(LocalDate.now().plusDays(5));
+        periodoExamen.setFechaFin(LocalDate.now().plusDays(15));
 
         Examen examen = new Examen();
         examen.setId(1L);
@@ -208,8 +209,8 @@ public class ExamenServiceImplTest {
 
         PeriodoExamen periodoExamen = new PeriodoExamen();
         periodoExamen.setId(1L);
-        periodoExamen.setFechaInicio(LocalDateTime.now().plusDays(5));
-        periodoExamen.setFechaFin(LocalDateTime.now().plusDays(15));
+        periodoExamen.setFechaInicio(LocalDate.now().plusDays(5));
+        periodoExamen.setFechaFin(LocalDate.now().plusDays(15));
 
         Examen examen = new Examen();
         examen.setId(1L);
@@ -264,8 +265,8 @@ public class ExamenServiceImplTest {
 
         PeriodoExamen periodoExamen = new PeriodoExamen();
         periodoExamen.setId(1L);
-        periodoExamen.setFechaInicio(LocalDateTime.now().plusDays(5));
-        periodoExamen.setFechaFin(LocalDateTime.now().plusDays(15));
+        periodoExamen.setFechaInicio(LocalDate.now().plusDays(5));
+        periodoExamen.setFechaFin(LocalDate.now().plusDays(15));
 
         Examen examen = new Examen();
         examen.setId(1L);
@@ -383,8 +384,8 @@ public class ExamenServiceImplTest {
 
         PeriodoExamen periodoExamen = new PeriodoExamen();
         periodoExamen.setId(1L);
-        periodoExamen.setFechaInicio(LocalDateTime.now().minusDays(5));
-        periodoExamen.setFechaFin(LocalDateTime.now().plusDays(15));
+        periodoExamen.setFechaInicio(LocalDate.now().minusDays(5));
+        periodoExamen.setFechaFin(LocalDate.now().plusDays(15));
 
         Examen examen = new Examen();
         examen.setId(1L);

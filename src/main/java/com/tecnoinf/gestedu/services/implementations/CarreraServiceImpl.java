@@ -148,7 +148,7 @@ public class CarreraServiceImpl implements CarreraService {
     @Override
     public Page<PeriodoExamenDTO> obtenerPeriodosExamenCarrera(Long id, Pageable pageable){
         List<PeriodoExamenDTO> periodosExamenDTO = new ArrayList<>();
-        List<PeriodoExamen> periodosExamen = periodoExamenRepository.findAllByCarreraIdAndFechaFinAfter(id, LocalDateTime.now(), pageable).stream().toList();
+        List<PeriodoExamen> periodosExamen = periodoExamenRepository.findAllByCarreraIdAndFechaFinAfter(id, LocalDate.now(), pageable).stream().toList();
         for (PeriodoExamen periodoExamen : periodosExamen) {
             PeriodoExamenDTO periodoExamenDTO = new PeriodoExamenDTO(periodoExamen);
             periodosExamenDTO.add(periodoExamenDTO);

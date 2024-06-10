@@ -1,10 +1,13 @@
 package com.tecnoinf.gestedu.dtos.usuario;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.tecnoinf.gestedu.models.Usuario;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -20,7 +23,8 @@ public class UsuarioDTO {
     private String password;
     private String telefono;
     private String domicilio;
-    private String fechaNac;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate fechaNac;
     private String imagen;
 
     public UsuarioDTO(Usuario usuario) {
@@ -32,7 +36,7 @@ public class UsuarioDTO {
         this.telefono = usuario.getTelefono();
         this.domicilio = usuario.getDomicilio();
         if (usuario.getFechaNac() != null) {
-            this.fechaNac = usuario.getFechaNac().toString();
+            this.fechaNac = usuario.getFechaNac();
         } else {
             this.fechaNac = null;
         }
