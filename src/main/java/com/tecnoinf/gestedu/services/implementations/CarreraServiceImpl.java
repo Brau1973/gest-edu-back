@@ -217,6 +217,7 @@ public class CarreraServiceImpl implements CarreraService {
                     List<Curso> cursos = asignatura.getCursos();
                     for (Curso curso : cursos) {
                         CursoHorarioDTO cursoHorarioDTO = new CursoHorarioDTO();
+                        cursoHorarioDTO.setCursoId(curso.getId());
                         cursoHorarioDTO.setAsignaturaNombre(asignatura.getNombre());
                         cursoHorarioDTO.setFechaInicio(curso.getFechaInicio());
                         cursoHorarioDTO.setFechaFin(curso.getFechaFin());
