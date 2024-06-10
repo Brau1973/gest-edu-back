@@ -185,7 +185,7 @@ public class EstudianteControllerIntegrationTest {
 
         // Crear Inscripcion Curso
         InscripcionCurso inscripcionCurso2 = new InscripcionCurso();
-        inscripcionCurso2.setFechaInscripcion(LocalDateTime.now());
+        inscripcionCurso2.setFechaInscripcion(LocalDate.now());
         inscripcionCurso2.setEstado(EstadoInscripcionCurso.CURSANDO);
         inscripcionCurso2.setEstudiante(estudiante1);
         inscripcionCurso2.setCurso(curso2);

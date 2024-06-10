@@ -207,7 +207,7 @@ public class InscripcionCursoControllerIntegrationTest {
 
         //Crear Inscripcion Curso
         InscripcionCurso inscripcionCurso = new InscripcionCurso();
-        inscripcionCurso.setFechaInscripcion(LocalDateTime.now());
+        inscripcionCurso.setFechaInscripcion(LocalDate.now());
         inscripcionCurso.setEstudiante(estudiante);
         inscripcionCurso.setCurso(curso);
         inscripcionCurso.setCalificacion(CalificacionCurso.PENDIENTE);
@@ -291,7 +291,7 @@ public class InscripcionCursoControllerIntegrationTest {
 
         //Crear Inscripcion Curso
         InscripcionCurso inscripcionCurso = new InscripcionCurso();
-        inscripcionCurso.setFechaInscripcion(LocalDateTime.now());
+        inscripcionCurso.setFechaInscripcion(LocalDate.now());
         inscripcionCurso.setEstudiante(estudiante);
         inscripcionCurso.setCurso(curso);
         inscripcionCurso.setCalificacion(CalificacionCurso.PENDIENTE);
