@@ -49,22 +49,18 @@ public class PeriodoExamenServiceImplTest {
         doNothing().when(actividadService).registrarActividad(any(), any());
     }
 
-    private PeriodoExamenDTO crearPeriodoExamenDTO(LocalDateTime fechaInicio, LocalDateTime fechaFin, Long carreraId) {
+    private PeriodoExamenDTO crearPeriodoExamenDTO(LocalDate fechaInicio, LocalDate fechaFin, Long carreraId) {
         PeriodoExamenDTO periodoExamenDTO = new PeriodoExamenDTO();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
-        String fechaInicioStr = fechaInicio.format(formatter);
-        String fechaFinStr = fechaFin.format(formatter);
-
-        periodoExamenDTO.setFechaInicio(fechaInicioStr);
-        periodoExamenDTO.setFechaFin(fechaFinStr);
+        periodoExamenDTO.setFechaInicio(fechaInicio);
+        periodoExamenDTO.setFechaFin(fechaFin);
         periodoExamenDTO.setCarreraid(carreraId);
         return periodoExamenDTO;
     }
 
     @Test
     public void testRegistrarPeriodoExamen_FechaInicioMayorAFechaFin() {
-        PeriodoExamenDTO periodoExamenDTO = crearPeriodoExamenDTO(LocalDateTime.now().plusDays(1), LocalDateTime.now(), 1L);
+        PeriodoExamenDTO periodoExamenDTO = crearPeriodoExamenDTO(LocalDate.now().plusDays(1), LocalDate.now(), 1L);
         assertThrows(FechaException.class, () -> periodoExamenService.registrarPeriodoExamen(periodoExamenDTO));
     }
 //SI ANDA MANUAL
@@ -93,10 +89,10 @@ public class PeriodoExamenServiceImplTest {
 
     @Test
     public void testRegistrarPeriodoExamen_PeriodoExistenteComprendidoEnNuevo() {
-        PeriodoExamenDTO periodoExamenDTO = crearPeriodoExamenDTO(LocalDateTime.now(), LocalDateTime.now().plusDays(3), 1L);
+        PeriodoExamenDTO periodoExamenDTO = crearPeriodoExamenDTO(LocalDate.now(), LocalDate.now().plusDays(3), 1L);
         PeriodoExamen periodoExamenExistente = new PeriodoExamen();
-        periodoExamenExistente.setFechaInicio(LocalDateTime.now().plusDays(1));
-        periodoExamenExistente.setFechaFin(LocalDateTime.now().plusDays(2));
+        periodoExamenExistente.setFechaInicio(LocalDate.now().plusDays(1));
+        periodoExamenExistente.setFechaFin(LocalDate.now().plusDays(2));
 
         Carrera carrera = new Carrera();
         carrera.setId(1L);
@@ -110,10 +106,10 @@ public class PeriodoExamenServiceImplTest {
 
     @Test
     public void testRegistrarPeriodoExamen_NuevoPeriodoComprendidoEnExistente() {
-        PeriodoExamenDTO periodoExamenDTO = crearPeriodoExamenDTO(LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(2), 1L);
+        PeriodoExamenDTO periodoExamenDTO = crearPeriodoExamenDTO(LocalDate.now().plusDays(1), LocalDate.now().plusDays(2), 1L);
         PeriodoExamen periodoExamenExistente = new PeriodoExamen();
-        periodoExamenExistente.setFechaInicio(LocalDateTime.now());
-        periodoExamenExistente.setFechaFin(LocalDateTime.now().plusDays(3));
+        periodoExamenExistente.setFechaInicio(LocalDate.now());
+        periodoExamenExistente.setFechaFin(LocalDate.now().plusDays(3));
 
         Carrera carrera = new Carrera();
         carrera.setId(1L);
@@ -127,7 +123,7 @@ public class PeriodoExamenServiceImplTest {
 
     @Test
     public void testRegistrarPeriodoExamen_CarreraNoExistente() {
-        PeriodoExamenDTO periodoExamenDTO = crearPeriodoExamenDTO(LocalDateTime.now(), LocalDateTime.now().plusDays(1), 1L);
+        PeriodoExamenDTO periodoExamenDTO = crearPeriodoExamenDTO(LocalDate.now(), LocalDate.now().plusDays(1), 1L);
 
         when(carreraRepository.findById(periodoExamenDTO.getCarreraid()))
                 .thenReturn(Optional.empty());
@@ -137,7 +133,7 @@ public class PeriodoExamenServiceImplTest {
 
     @Test
     public void testRegistrarPeriodoExamen_Exito() {
-        PeriodoExamenDTO periodoExamenDTO = crearPeriodoExamenDTO(LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(2), 1L);
+        PeriodoExamenDTO periodoExamenDTO = crearPeriodoExamenDTO(LocalDate.now().plusDays(1), LocalDate.now().plusDays(2), 1L);
         Carrera carrera = new Carrera();
         carrera.setId(1L);
 
@@ -147,18 +143,10 @@ public class PeriodoExamenServiceImplTest {
         when(periodoExamenRepository.findAllByCarreraId(periodoExamenDTO.getCarreraid()))
                 .thenReturn(Collections.emptyList());
 
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
-        LocalDate fechaInicioDate = LocalDate.parse(periodoExamenDTO.getFechaInicio(), formatter);
-        LocalDate fechaFinDate = LocalDate.parse(periodoExamenDTO.getFechaFin(), formatter);
-
-        LocalDateTime fechaInicio = fechaInicioDate.atTime(0, 0); // Esto establece la hora a 00:00
-        LocalDateTime fechaFin = fechaFinDate.atTime(23, 59, 59, 999999999); // Esto establece la hora a 23:59:59.999999999
-
-
         PeriodoExamen periodoExamenGuardado = new PeriodoExamen();
         periodoExamenGuardado.setId(1L);
-        periodoExamenGuardado.setFechaInicio(fechaInicio);
-        periodoExamenGuardado.setFechaFin(fechaFin);
+        periodoExamenGuardado.setFechaInicio(LocalDate.now().plusDays(1));
+        periodoExamenGuardado.setFechaFin(LocalDate.now().plusDays(2));
         periodoExamenGuardado.setCarrera(carrera);
 
         when(periodoExamenRepository.save(new PeriodoExamen())).thenReturn(periodoExamenGuardado);

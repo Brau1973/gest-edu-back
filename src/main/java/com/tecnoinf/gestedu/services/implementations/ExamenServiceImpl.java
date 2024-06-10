@@ -22,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -116,13 +117,15 @@ public class ExamenServiceImpl implements ExamenService {
     }
 
     private boolean isFechaDentroDePeriodo(LocalDateTime fechaExamen, List<PeriodoExamenDTO> periodosExamen) {
+        LocalDate fechaExamenDate = fechaExamen.toLocalDate();
         return periodosExamen.stream().anyMatch(periodoExamen -> {
-            LocalDateTime fechaInicio = LocalDateTime.parse(periodoExamen.getFechaInicio());
-            LocalDateTime fechaFin = LocalDateTime.parse(periodoExamen.getFechaFin());
-            return (fechaExamen.isAfter(fechaInicio) || fechaExamen.isEqual(fechaInicio)) &&
-                    (fechaExamen.isBefore(fechaFin) || fechaExamen.isEqual(fechaFin));
+            LocalDate fechaInicio = periodoExamen.getFechaInicio();
+            LocalDate fechaFin = periodoExamen.getFechaFin();
+            return (fechaExamenDate.isAfter(fechaInicio) || fechaExamenDate.isEqual(fechaInicio)) &&
+                    (fechaExamenDate.isBefore(fechaFin) || fechaExamenDate.isEqual(fechaFin));
         });
     }
+
 
     @Override
     public InscripcionExamenDTO inscribirseExamen(CreateInscripcionExamenDTO inscripcionExamenDto){
