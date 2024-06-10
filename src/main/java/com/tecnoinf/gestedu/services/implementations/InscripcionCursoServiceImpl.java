@@ -112,14 +112,15 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
     }
 
     @Override
-    public InscripcionCursoDTO createInscripcionCurso(InscripcionCursoDTO inscripcionCursoDTO) {
-        Usuario estudiante = estudianteRepository.findById(inscripcionCursoDTO.getEstudianteId())
-                .orElseThrow(() -> new ResourceNotFoundException("Estudiante not found with id " + inscripcionCursoDTO.getEstudianteId()));
+    public InscripcionCursoDTO createInscripcionCurso(InscripcionCursoDTO inscripcionCursoDTO, String name) {
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(name);
+        if (usuario.isEmpty()) {
+            throw new ResourceNotFoundException("Usuario no encontrado.");
+        }
+        Estudiante estudiante = (Estudiante) usuario.get();
 
         Curso curso = cursoRepository.findById(inscripcionCursoDTO.getCursoId())
                 .orElseThrow(() -> new ResourceNotFoundException("Curso not found with id " + inscripcionCursoDTO.getCursoId()));
-
-        Estudiante auxEstudiante = (Estudiante) estudiante;
 
         //Me fijo en qué carreras está inscripto el estudiante
         List<InscripcionCarrera> inscripcionTodasCarrerasAlumno = inscripcionCarreraRepository.findInscripcionCarreraEstudianteById(inscripcionCursoDTO.getEstudianteId());
@@ -141,7 +142,7 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                             InscripcionCurso inscripcionCurso = new InscripcionCurso();
                             inscripcionCurso.setCalificacion(CalificacionCurso.PENDIENTE);
                             inscripcionCurso.setEstado(EstadoInscripcionCurso.CURSANDO);
-                            inscripcionCurso.setEstudiante((Estudiante) estudiante);
+                            inscripcionCurso.setEstudiante(estudiante);
                             inscripcionCurso.setCurso(curso);
                             inscripcionCurso.setFechaInscripcion(LocalDateTime.now());
                             InscripcionCurso createdInscripcion = inscripcionCursoRepository.save(inscripcionCurso);
@@ -153,7 +154,7 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                             if (exoneroCursosPrevios(asignaturasPrevias, inscripcionCursos)) {
                                 InscripcionCurso inscripcionCurso = new InscripcionCurso();
                                 inscripcionCurso.setCalificacion(CalificacionCurso.PENDIENTE);
-                                inscripcionCurso.setEstudiante((Estudiante) estudiante);
+                                inscripcionCurso.setEstudiante(estudiante);
                                 inscripcionCurso.setCurso(curso);
                                 inscripcionCurso.setFechaInscripcion(LocalDateTime.now());
                                 InscripcionCurso createdInscripcion = inscripcionCursoRepository.save(inscripcionCurso);
