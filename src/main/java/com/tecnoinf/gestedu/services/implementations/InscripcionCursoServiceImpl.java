@@ -144,7 +144,6 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                             inscripcionCurso.setEstado(EstadoInscripcionCurso.CURSANDO);
                             inscripcionCurso.setEstudiante(estudiante);
                             inscripcionCurso.setCurso(curso);
-                            inscripcionCurso.setFechaInscripcion(LocalDateTime.now());
                             InscripcionCurso createdInscripcion = inscripcionCursoRepository.save(inscripcionCurso);
                             return modelMapper.map(createdInscripcion, InscripcionCursoDTO.class);
                         }
@@ -156,10 +155,10 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                                 inscripcionCurso.setCalificacion(CalificacionCurso.PENDIENTE);
                                 inscripcionCurso.setEstudiante(estudiante);
                                 inscripcionCurso.setCurso(curso);
-                                inscripcionCurso.setFechaInscripcion(LocalDateTime.now());
+                                inscripcionCurso.setFechaInscripcion(LocalDate.now());
                                 InscripcionCurso createdInscripcion = inscripcionCursoRepository.save(inscripcionCurso);
 
-                                actividadService.registrarActividad(TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso exitoso");
+                                actividadService.registrarActividad(TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " + inscripcionCursoDTO.getCursoId() + " exitosa.");
 
                                 return modelMapper.map(createdInscripcion, InscripcionCursoDTO.class);
                             } else {

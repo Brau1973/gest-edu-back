@@ -155,7 +155,7 @@ public class ExamenServiceImpl implements ExamenService {
         inscripcion.setExamen(examen);
         inscripcionExamenRepository.save(inscripcion);
 
-        actividadService.registrarActividad(TipoActividad.INSCRIPCION_A_EXAMEN, "Inscripcion a examen");
+        actividadService.registrarActividad(TipoActividad.INSCRIPCION_A_EXAMEN, "Inscripcion a examen con id " + examen.getId() + " exitosa.");
 
         return new InscripcionExamenDTO(inscripcion);
     }

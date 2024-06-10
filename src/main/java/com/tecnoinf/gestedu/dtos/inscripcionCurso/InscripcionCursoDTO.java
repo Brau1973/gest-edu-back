@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class InscripcionCursoDTO {
     private Long id;
-    private LocalDateTime fechaInscripcion;
+    private LocalDate fechaInscripcion;
     private EstadoInscripcionCurso estado;
     private CalificacionCurso calificacion;
     private Long estudianteId;
