@@ -279,7 +279,7 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                 Optional<Curso> cursoOptional = cursoRepository.findById(inscripciones.getCurso().getId());
                 Curso curso = cursoOptional.orElseThrow(() -> new RuntimeException("Curso no encontrado"));
                 //Ponemos los datos
-                auxCursoHorario.setCursoId(curso.getId());
+                auxCursoHorario.setCursoId(curso.getId());//agrego Id
                 auxCursoHorario.setFechaInicio(curso.getFechaInicio());
                 auxCursoHorario.setFechaFin(curso.getFechaFin());
                 auxCursoHorario.setEstado(curso.getEstado());
