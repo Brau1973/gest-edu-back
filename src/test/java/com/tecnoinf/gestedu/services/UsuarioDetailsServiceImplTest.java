@@ -19,6 +19,7 @@ import org.mockito.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 class UsuarioDetailsServiceImplTest {
@@ -51,7 +52,7 @@ class UsuarioDetailsServiceImplTest {
         // Arrange
         CrearUsuarioDTO createUsuarioDTO = new CrearUsuarioDTO(
                 "1234567", "nombre", "apellido", "email@email", "password",
-                "telefono", "domicilio", new Date(), TipoUsuario.COORDINADOR);
+                "telefono", "domicilio", LocalDate.now(), TipoUsuario.COORDINADOR);
 
         Coordinador usuario = new Coordinador();
 
@@ -97,7 +98,7 @@ class UsuarioDetailsServiceImplTest {
         // Arrange
         CrearUsuarioDTO createUsuarioDTO = new CrearUsuarioDTO(
                 "ci", "nombre", "apellido", "email@email", "password",
-                "telefono", "domicilio", new Date(), TipoUsuario.ADMINISTRADOR);
+                "telefono", "domicilio", LocalDate.now(), TipoUsuario.ADMINISTRADOR);
 
         Administrador usuario = new Administrador();
         usuario.setCi(createUsuarioDTO.getCi());
