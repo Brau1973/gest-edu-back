@@ -1,11 +1,13 @@
 package com.tecnoinf.gestedu.dtos.usuario;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.tecnoinf.gestedu.dtos.TipoUsuario;
 import com.tecnoinf.gestedu.models.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -19,7 +21,8 @@ public class BasicInfoUsuarioDTO {
     private String email;
     private String telefono;
     private String domicilio;
-    private Date fechaNac;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate fechaNac;
     private String imagen;
     private TipoUsuario tipoUsuario;
 
