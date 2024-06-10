@@ -38,7 +38,7 @@ public class GestionEducativaOnlineApplication {
                                       InscripcionCarreraRepository inscripcionCarreraRepository, TramiteRepository tramiteRepository,
                                       DocenteRepository docenteRepository, CursoRepository cursoRepository, PeriodoExamenRepository periodoExamenRepository,
                                       ExamenRepository examenRepository, InscripcionCursoRepository inscripcionCursoRepository,
-                                      InscripcionExamenRepository inscripcionExamenRepository, HorarioRepository horarioRepository) {
+                                      InscripcionExamenRepository inscripcionExamenRepository, HorarioRepository horarioRepository, ActividadRepository actividadRepository) {
 
         return (args) -> {
             if (ddlAuto.equals("create") || ddlAuto.equals("create-drop")) {
@@ -85,34 +85,80 @@ public class GestionEducativaOnlineApplication {
 				Carrera savedCarrera2 = createAndSaveCarrera(carreraRepository, "Diseño UX/UI", "Carrera de diseño UX/UI donde se enseña a diseñar interfaces de usuario y experiencia de usuario", false);
 				Carrera savedCarrera3 = createAndSaveCarrera(carreraRepository, "Tecnologo Audiovisual", "Carrera de tecnologo audiovisual donde se enseña a editar videos y sonido", true);
 
+				createAndSaveActividad(actividadRepository, TipoActividad.ALTA_CARRERA, "Se ha creado la carrera " + savedCarrera1.getNombre(), coordinador1, LocalDateTime.of(2021, 5, 10, 10, 0));
+				createAndSaveActividad(actividadRepository, TipoActividad.ALTA_CARRERA, "Se ha creado la carrera " + savedCarrera2.getNombre(), coordinador1, LocalDateTime.of(2021, 5, 10, 10, 0));
+				createAndSaveActividad(actividadRepository, TipoActividad.ALTA_CARRERA, "Se ha creado la carrera " + savedCarrera3.getNombre(), coordinador1, LocalDateTime.of(2021, 5, 10, 10, 0));
+
                 //----------------------------------------------------------------------------------ASIGNATURAS-------------------------------------------------------------------------------------------------------------
                 Asignatura COE = createAsignaturaInitData(asignaturaRepository, "Comunicacion oral y Escrita", "Asignatura de comunicacion oral y escrita", 4, 3, savedCarrera1);
 				Asignatura MDL1 = createAsignaturaInitData(asignaturaRepository, "Matematica discreta y logica 1", "Conjuntos y subconjuntos", 3, 2, savedCarrera1);
 				Asignatura PAV = createAsignaturaInitData(asignaturaRepository, "Programacion avanzada", "OOP con java", 2, 1, savedCarrera1);
 
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_ASIGNATURA, "Se ha creado la asignatura " + COE.getNombre() + " en la carrera " + savedCarrera1.getNombre() + " (id Carrera: " + savedCarrera1.getId() + ")", coordinador1, LocalDateTime.of(2021, 5, 10, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_ASIGNATURA, "Se ha creado la asignatura " + MDL1.getNombre() + " en la carrera " + savedCarrera1.getNombre() + " (id Carrera: " + savedCarrera1.getId() + ")", coordinador1, LocalDateTime.of(2021, 5, 10, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_ASIGNATURA, "Se ha creado la asignatura " + PAV.getNombre() + " en la carrera " + savedCarrera1.getNombre() + " (id Carrera: " + savedCarrera1.getId() + ")", coordinador1, LocalDateTime.of(2021, 5, 10, 10, 0));
+
                 createAsignaturaInitData(asignaturaRepository, "Diseño de Interfaz", "Asignatura de diseño de interfaz de usuario", 4, 0, savedCarrera2);
                 createAsignaturaInitData(asignaturaRepository, "Experiencia de Usuario", "Asignatura de experiencia de usuario", 3, 0, savedCarrera2);
                 createAsignaturaInitData(asignaturaRepository, "Prototipado", "Asignatura de prototipado de interfaces", 2, 0, savedCarrera2);
+
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_ASIGNATURA, "Se ha creado la asignatura " + "Diseño de Interfaz" + " en la carrera " + savedCarrera2.getNombre() + " (id Carrera: " + savedCarrera2.getId() + ")", coordinador1, LocalDateTime.of(2021, 5, 10, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_ASIGNATURA, "Se ha creado la asignatura " + "Experiencia de Usuario" + " en la carrera " + savedCarrera2.getNombre() + " (id Carrera: " + savedCarrera2.getId() + ")", coordinador1, LocalDateTime.of(2021, 5, 10, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_ASIGNATURA, "Se ha creado la asignatura " + "Prototipado" + " en la carrera " + savedCarrera2.getNombre() + " (id Carrera: " + savedCarrera2.getId() + ")", coordinador1, LocalDateTime.of(2021, 5, 10, 10, 0));
 
                 createAsignaturaInitData(asignaturaRepository, "Grabacion con camara PRO", "Grabacion Full HD 4k", 2, 1, savedCarrera3);
                 createAsignaturaInitData(asignaturaRepository, "Adobe PRO", "Edicion de videos", 8, 2, savedCarrera3);
                 createAsignaturaInitData(asignaturaRepository, "Photoshop", "Photoshop con adobe ilustrator", 1, 3, savedCarrera3);
 
-                // -------------------------------------------------------------------------------------TRAMITES---------------------------------------------------------------------------------------------------
-                createTramiteInitData(tramiteRepository, estudiante1, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE, null,"");
-                createTramiteInitData(tramiteRepository, estudiante2, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE, null,"");
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_ASIGNATURA, "Se ha creado la asignatura " + "Grabacion con camara PRO" + " en la carrera " + savedCarrera3.getNombre() + " (id Carrera: " + savedCarrera3.getId() + ")", coordinador1, LocalDateTime.of(2021, 5, 10, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_ASIGNATURA, "Se ha creado la asignatura " + "Adobe PRO" + " en la carrera " + savedCarrera3.getNombre() + " (id Carrera: " + savedCarrera3.getId() + ")", coordinador1, LocalDateTime.of(2021, 5, 10, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_ASIGNATURA, "Se ha creado la asignatura " + "Photoshop" + " en la carrera " + savedCarrera3.getNombre() + " (id Carrera: " + savedCarrera3.getId() + ")", coordinador1, LocalDateTime.of(2021, 5, 10, 10, 0));
 
+                // -------------------------------------------------------------------------------------TRAMITES---------------------------------------------------------------------------------------------------
+                //TRAMITES Y ACTIVIDADES DE INSCRIPCION A CARRERA DE LOS ESTUDIANTES 1 Y 2
+				createTramiteInitData(tramiteRepository, estudiante1, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE, null,"");
+				createAndSaveActividad(actividadRepository,TipoActividad.SOLICITUD_INSCRIPCION_CARRERA, "Se solicito la inscripcion a la carrera " + savedCarrera1.getNombre(), estudiante1, LocalDateTime.of(2024, 5, 10, 10, 0));
+
+				createTramiteInitData(tramiteRepository, estudiante2, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.PENDIENTE, null,"");
+				createAndSaveActividad(actividadRepository,TipoActividad.SOLICITUD_INSCRIPCION_CARRERA, "Se solicito la inscripcion a la carrera " + savedCarrera1.getNombre(), estudiante2, LocalDateTime.of(2024, 5, 10, 10, 0));
+
+				//ACTIVIDAD SOLICITUD DE INSCRIPCION A CARRERA DE LOS ESTUDIANTES 3 AL 9
+				createAndSaveActividad(actividadRepository,TipoActividad.SOLICITUD_INSCRIPCION_CARRERA, "Se solicito la inscripcion a la carrera " + savedCarrera1.getNombre(), estudiante3, LocalDateTime.of(2024, 5, 10, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.SOLICITUD_INSCRIPCION_CARRERA, "Se solicito la inscripcion a la carrera " + savedCarrera1.getNombre(), estudiante4, LocalDateTime.of(2024, 5, 10, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.SOLICITUD_INSCRIPCION_CARRERA, "Se solicito la inscripcion a la carrera " + savedCarrera1.getNombre(), estudiante5, LocalDateTime.of(2024, 5, 10, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.SOLICITUD_INSCRIPCION_CARRERA, "Se solicito la inscripcion a la carrera " + savedCarrera1.getNombre(), estudiante7, LocalDateTime.of(2024, 5, 10, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.SOLICITUD_INSCRIPCION_CARRERA, "Se solicito la inscripcion a la carrera " + savedCarrera1.getNombre(), estudiante8, LocalDateTime.of(2024, 5, 10, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.SOLICITUD_INSCRIPCION_CARRERA, "Se solicito la inscripcion a la carrera " + savedCarrera1.getNombre(), estudiante9, LocalDateTime.of(2024, 5, 10, 10, 0));
+
+				//ACTIVIDAD SE ACEPTA LA SOLICITUD DE INSCRIPCION A CARRERA DE LOS ESTUDIANTES 3 AL 9
+				createAndSaveActividad(actividadRepository,TipoActividad.APROBACION_SOLICITUD_INSCRIPCION_CARRERA, "Se aprobo la solicitud de inscripcion del estudiante " + estudiante3.getNombre() + " a la carrera " + savedCarrera1.getNombre(), funcionario1, LocalDateTime.of(2024, 5, 12, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.APROBACION_SOLICITUD_INSCRIPCION_CARRERA, "Se aprobo la solicitud de inscripcion del estudiante " + estudiante4.getNombre() + " a la carrera " + savedCarrera1.getNombre(), funcionario1, LocalDateTime.of(2024, 5, 12, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.APROBACION_SOLICITUD_INSCRIPCION_CARRERA, "Se aprobo la solicitud de inscripcion del estudiante " + estudiante5.getNombre() + " a la carrera " + savedCarrera1.getNombre(), funcionario1, LocalDateTime.of(2024, 5, 12, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.APROBACION_SOLICITUD_INSCRIPCION_CARRERA, "Se aprobo la solicitud de inscripcion del estudiante " + estudiante7.getNombre() + " a la carrera " + savedCarrera1.getNombre(), funcionario1, LocalDateTime.of(2024, 5, 12, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.APROBACION_SOLICITUD_INSCRIPCION_CARRERA, "Se aprobo la solicitud de inscripcion del estudiante " + estudiante8.getNombre() + " a la carrera " + savedCarrera1.getNombre(), funcionario1, LocalDateTime.of(2024, 5, 12, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.APROBACION_SOLICITUD_INSCRIPCION_CARRERA, "Se aprobo la solicitud de inscripcion del estudiante " + estudiante9.getNombre() + " a la carrera " + savedCarrera1.getNombre(), funcionario1, LocalDateTime.of(2024, 5, 12, 10, 0));
+
+				//TRAMITES RESULTANTES DE LA SOLICITUD DE INSCRIPCION A CARRERA DE LOS ESTUDIANTES 3 AL 9
 				createTramiteInitData(tramiteRepository, estudiante3, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.ACEPTADO, funcionario1,"");
 				createTramiteInitData(tramiteRepository, estudiante4, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.ACEPTADO, funcionario1,"");
 				createTramiteInitData(tramiteRepository, estudiante5, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.ACEPTADO, funcionario1,"");
 				createTramiteInitData(tramiteRepository, estudiante7, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.ACEPTADO, funcionario1,"");
 				createTramiteInitData(tramiteRepository, estudiante8, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.ACEPTADO, funcionario1,"");
 				createTramiteInitData(tramiteRepository, estudiante9, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.ACEPTADO, funcionario1,"");
-				
-				createTramiteInitData(tramiteRepository, estudiante6, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.RECHAZADO, funcionario1,"Faltante de documentacion");
 
+				//TRAMITE Y ACTIVIDAD DE LA SOLICITUD DE INSCRIPCION A CARRERA DEL ESTUDIANTE 6 (SE RECHAZA)
+				createTramiteInitData(tramiteRepository, estudiante6, savedCarrera1, TipoTramite.INSCRIPCION_A_CARRERA, EstadoTramite.RECHAZADO, funcionario1,"Faltante de documentacion");
+				createAndSaveActividad(actividadRepository,TipoActividad.SOLICITUD_INSCRIPCION_CARRERA, "Se solicito la inscripcion a la carrera " + savedCarrera1.getNombre(), estudiante6, LocalDateTime.of(2024, 5, 10, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.RECHAZO_SOLICITUD_INSCRIPCION_CARRERA, "Se rechazo la solicitud de inscripcion del estudiante " + estudiante6.getNombre() + " a la carrera " + savedCarrera1.getNombre(), funcionario1, LocalDateTime.of(2024, 5, 12, 10, 0));
+
+				//TRAMITE Y ACTIVIDAD DE LA SOLICITUD DE TITULO DE LOS ESTUDIANTES 4 Y 5
 				createTramiteInitData(tramiteRepository, estudiante4, savedCarrera1, TipoTramite.SOLICITUD_DE_TITULO, EstadoTramite.ACEPTADO, coordinador1,"");
+				createAndSaveActividad(actividadRepository,TipoActividad.SOLICITUD_TITULO, "Se solicito el titulo de la carrera " + savedCarrera1.getNombre(), estudiante4, LocalDateTime.of(2024, 5, 10, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.APROBACION_SOLICITUD_TITULO, "Se aprobo la solicitud de titulo del estudiante " + estudiante4.getNombre() + " de la carrera " + savedCarrera1.getNombre(), coordinador1, LocalDateTime.of(2024, 5, 12, 10, 0));
+
 				createTramiteInitData(tramiteRepository, estudiante5, savedCarrera1, TipoTramite.SOLICITUD_DE_TITULO, EstadoTramite.RECHAZADO, coordinador2,"No se tienen los creditos necesarios para solicitar el titulo");
+				createAndSaveActividad(actividadRepository,TipoActividad.SOLICITUD_TITULO, "Se solicito el titulo de la carrera " + savedCarrera1.getNombre(), estudiante5, LocalDateTime.of(2024, 5, 10, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.RECHAZO_SOLICITUD_TITULO, "Se rechazo la solicitud de titulo del estudiante " + estudiante5.getNombre() + " de la carrera " + savedCarrera1.getNombre(), coordinador2, LocalDateTime.of(2024, 5, 12, 10, 0));
 
                 // ----------------------------------------------------------------------------------INSCRIPCIONCARRERA-----------------------------------------------------------------------------------------
 				createAndSaveInscripcionCarrera(inscripcionCarreraRepository, estudiante3, savedCarrera1, EstadoInscripcionCarrera.CURSANDO ,LocalDate.now().minusMonths(5));
@@ -127,6 +173,10 @@ public class GestionEducativaOnlineApplication {
 				Docente docente2 = createAndSaveDocente(docenteRepository, "Manuel", "Palomino", "42585843");
 				Docente docente3 = createAndSaveDocente(docenteRepository, "Veronica", "Gonzalez", "42569734");
 
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_DOCENTE, "Se ha creado el docente con nombre" + docente1.getNombre(), funcionario1, LocalDateTime.of(2022, 3, 20, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_DOCENTE, "Se ha creado el docente con nombre" + docente2.getNombre(), funcionario1, LocalDateTime.of(2022, 3, 20, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_DOCENTE, "Se ha creado el docente con nombre" + docente3.getNombre(), funcionario1, LocalDateTime.of(2022, 3, 20, 10, 0));
+
                 //----------------------------------------------------------------------------------------- CURSOS -----------------------------------------------------------------------------------------
 				//TECNOLOGO INFORMATICO
 
@@ -134,11 +184,18 @@ public class GestionEducativaOnlineApplication {
 				Curso cursoCOEViejo = createAndSaveCurso(cursoRepository, Estado.FINALIZADO, COE, LocalDate.of(2023, 7, 15), LocalDate.of(2023, 11, 15), docente1, 30);
 				Curso cursoMDL1Viejo = createAndSaveCurso(cursoRepository, Estado.FINALIZADO, MDL1, LocalDate.of(2023, 7, 15), LocalDate.of(2023, 11, 15), docente2, 30);
 				Curso cursoPAVViejo = createAndSaveCurso(cursoRepository, Estado.FINALIZADO, PAV, LocalDate.of(2023, 7, 15), LocalDate.of(2023, 11, 15), docente3, 30);
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + COE.getNombre() + " con fecha de inicio " + cursoCOEViejo.getFechaInicio() + " y fecha de fin " + cursoCOEViejo.getFechaFin(), funcionario1, LocalDateTime.of(2023, 6, 8, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + MDL1.getNombre() + " con fecha de inicio " + cursoMDL1Viejo.getFechaInicio() + " y fecha de fin " + cursoMDL1Viejo.getFechaFin(), funcionario1, LocalDateTime.of(2023, 6, 8, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + PAV.getNombre() + " con fecha de inicio " + cursoPAVViejo.getFechaInicio() + " y fecha de fin " + cursoPAVViejo.getFechaFin(), funcionario1, LocalDateTime.of(2023, 6, 8, 10, 0));
 
 				//CURSOS ACTIVOS (FECHAS DINAMICAS)
 				Curso cursoCOE = createAndSaveCurso(cursoRepository, Estado.ACTIVO, COE, LocalDate.now().plusDays(20), LocalDate.now().plusDays(20).plusMonths(4), docente1, 30);
 				Curso cursoMDL1 = createAndSaveCurso(cursoRepository, Estado.ACTIVO, MDL1, LocalDate.now().plusDays(20), LocalDate.now().plusDays(20).plusMonths(4), docente2, 30);
 				Curso cursoPAV = createAndSaveCurso(cursoRepository, Estado.ACTIVO, PAV, LocalDate.now().plusDays(20), LocalDate.now().plusDays(20).plusMonths(4), docente3, 30);
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + COE.getNombre() + " con fecha de inicio " + cursoCOE.getFechaInicio() + " y fecha de fin " + cursoCOE.getFechaFin(), funcionario1, LocalDateTime.now().minusDays(20));
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + MDL1.getNombre() + " con fecha de inicio " + cursoMDL1.getFechaInicio() + " y fecha de fin " + cursoMDL1.getFechaFin(), funcionario1, LocalDateTime.now().minusDays(20));
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + PAV.getNombre() + " con fecha de inicio " + cursoPAV.getFechaInicio() + " y fecha de fin " + cursoPAV.getFechaFin(), funcionario1, LocalDateTime.now().minusDays(20));
+
 				//HORARIOS
 				createAndSaveHorario(horarioRepository,DiaSemana.LUNES, LocalTime.of(8, 0), LocalTime.of(10, 0), cursoCOE);
 				createAndSaveHorario(horarioRepository,DiaSemana.MIERCOLES, LocalTime.of(10, 0), LocalTime.of(12, 0), cursoCOE);
@@ -146,34 +203,55 @@ public class GestionEducativaOnlineApplication {
 				createAndSaveHorario(horarioRepository,DiaSemana.JUEVES, LocalTime.of(11, 0), LocalTime.of(13, 0), cursoMDL1);
 				createAndSaveHorario(horarioRepository,DiaSemana.MIERCOLES, LocalTime.of(8, 0), LocalTime.of(10, 0), cursoPAV);
 				createAndSaveHorario(horarioRepository,DiaSemana.VIERNES, LocalTime.of(10, 0), LocalTime.of(12, 0), cursoPAV);
+				createAndSaveActividad(actividadRepository,TipoActividad.REGISTRO_HORARIOS_CURSO, "Se ha registrado un horario para el curso con id " + cursoCOE.getId(), funcionario1, LocalDateTime.now().minusDays(20));
+				createAndSaveActividad(actividadRepository,TipoActividad.REGISTRO_HORARIOS_CURSO, "Se ha registrado un horario para el curso con id " + cursoMDL1.getId(), funcionario1, LocalDateTime.now().minusDays(20));
+				createAndSaveActividad(actividadRepository,TipoActividad.REGISTRO_HORARIOS_CURSO, "Se ha registrado un horario para el curso con id " + cursoPAV.getId(), funcionario1, LocalDateTime.now().minusDays(20));
+				createAndSaveActividad(actividadRepository,TipoActividad.REGISTRO_HORARIOS_CURSO, "Se ha registrado un horario para el curso con id " + cursoCOE.getId(), funcionario1, LocalDateTime.now().minusDays(20));
+				createAndSaveActividad(actividadRepository,TipoActividad.REGISTRO_HORARIOS_CURSO, "Se ha registrado un horario para el curso con id " + cursoMDL1.getId(), funcionario1, LocalDateTime.now().minusDays(20));
+				createAndSaveActividad(actividadRepository,TipoActividad.REGISTRO_HORARIOS_CURSO, "Se ha registrado un horario para el curso con id " + cursoPAV.getId(), funcionario1, LocalDateTime.now().minusDays(20));
 
 				//CURSOS FUTUROS (NO SE PUEDE INSCRIBIR AUN)
 				Curso cursoCOEFuturo = createAndSaveCurso(cursoRepository, Estado.ACTIVO, COE, LocalDate.now().plusDays(40), LocalDate.now().plusDays(40).plusMonths(4), docente1, 30);
 				Curso cursoMDL1Futuro = createAndSaveCurso(cursoRepository, Estado.ACTIVO, MDL1, LocalDate.now().plusDays(40), LocalDate.now().plusDays(40).plusMonths(4), docente2, 30);
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + COE.getNombre() + " con fecha de inicio " + cursoCOEFuturo.getFechaInicio() + " y fecha de fin " + cursoCOEFuturo.getFechaFin(), funcionario1, LocalDateTime.now().minusDays(20));
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + MDL1.getNombre() + " con fecha de inicio " + cursoMDL1Futuro.getFechaInicio() + " y fecha de fin " + cursoMDL1Futuro.getFechaFin(), funcionario1, LocalDateTime.now().minusDays(20));
 
 				//------------------------------------------------------------------------------- INSCRIPCIONCURSO -------------------------------------------------------------------------------
 				// INSCRIPCIONES CURSOS VIEJOS QUE EXONERO EL ESTUDIANTE 7 (TIENE TODOS LOS CREDITOS PARA SOLICITAR EL TITULO)
 				InscripcionCurso inscripcionCurso1 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante7, cursoCOEViejo, EstadoInscripcionCurso.COMPLETADA, CalificacionCurso.EXONERADO, LocalDate.of(2023, 7, 10) );
 				InscripcionCurso inscripcionCurso2 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante7, cursoMDL1Viejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.EXONERADO, LocalDate.of(2023, 7, 10));
 				InscripcionCurso inscripcionCurso3 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante7, cursoPAVViejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.EXONERADO, LocalDate.of(2023, 7, 10));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoCOEViejo.getId() , estudiante7, LocalDateTime.of(2023,7,10,0,0));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoMDL1Viejo.getId(), estudiante7, LocalDateTime.of(2023,7,10,0,0));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoPAVViejo.getId(), estudiante7, LocalDateTime.of(2023,7,10,0,0));
 
 				// INSCRIPCIONES A CURSO EN DISTINTOS ESTADOS
 				InscripcionCurso inscripcionCurso4 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante5, cursoCOEViejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.AEXAMEN,LocalDate.of(2023, 7, 10));
 				InscripcionCurso inscripcionCurso5 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante5, cursoMDL1, EstadoInscripcionCurso.CURSANDO,CalificacionCurso.PENDIENTE, LocalDate.now());
 				InscripcionCurso inscripcionCurso6 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante5, cursoPAVViejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.AEXAMEN, LocalDate.of(2023, 7, 10));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoCOEViejo.getId(), estudiante5, LocalDateTime.of(2023,7,10,0,0));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoMDL1.getId(), estudiante5, LocalDateTime.of(2023,7,10,0,0));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoPAVViejo.getId(), estudiante5, LocalDateTime.of(2023,7,10,0,0));
 
 				InscripcionCurso inscripcionCurso7 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante8, cursoCOEViejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.EXONERADO, LocalDate.of(2023, 7, 10));
 				InscripcionCurso inscripcionCurso8 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante8, cursoMDL1Viejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.AEXAMEN, LocalDate.of(2023, 7, 10));
 				InscripcionCurso inscripcionCurso9 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante8, cursoPAVViejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.AEXAMEN, LocalDate.of(2023, 7, 10));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoCOEViejo.getId(), estudiante8, LocalDateTime.of(2023,7,10,0,0));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoMDL1Viejo.getId(), estudiante8, LocalDateTime.of(2023,7,10,0,0));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoPAVViejo.getId(), estudiante8, LocalDateTime.of(2023,7,10,0,0));
 
 				InscripcionCurso inscripcionCurso10 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante9, cursoCOEViejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.RECURSA, LocalDate.of(2023, 7, 10));
 				InscripcionCurso inscripcionCurso11 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante9, cursoMDL1, EstadoInscripcionCurso.CURSANDO,CalificacionCurso.PENDIENTE, LocalDate.now());
 				InscripcionCurso inscripcionCurso12 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante9, cursoPAVViejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.EXONERADO, LocalDate.of(2023, 7, 10));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoCOEViejo.getId(), estudiante9, LocalDateTime.of(2023,7,10,0,0));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoMDL1.getId(), estudiante9, LocalDateTime.of(2023,7,10,0,0));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoPAVViejo.getId(), estudiante9, LocalDateTime.of(2023,7,10,0,0));
 
 				//ESTUDIANTE 3 NO ESTA INSCRIPTO A NINGUN CURSO
 
                 //------------------------------------------------------------------------------- PERIODO EXAMEN ----------------------------------------------------------------------------------
-				PeriodoExamen periodoExamen1 = createAndSavePeriodoExamen(periodoExamenRepository, carreraRepository, 1L, 5, 10);
+				PeriodoExamen periodoExamen1 = createAndSavePeriodoExamen(periodoExamenRepository, savedCarrera1, 5, 10);
+				createAndSaveActividad(actividadRepository,TipoActividad.REGISTRO_PERIODO_EXAMEN, "Se ha registrado un nuevo periodo de examen para la carrera con id " + savedCarrera1.getId() + " con fecha de inicio " + LocalDateTime.now().plusDays(5) + " y fecha de fin " + LocalDateTime.now().plusDays(10), funcionario1, LocalDateTime.now().minusDays(20));
 
                 //------------------------------------------------------------------------------------- EXAMEN -------------------------------------------------------------------------------------
 				// ACTIVOS
@@ -185,16 +263,26 @@ public class GestionEducativaOnlineApplication {
 				Examen examenMDL1Finalizado = createAndSaveExamen(examenRepository, LocalDateTime.now().minusMonths(5), 20, Estado.FINALIZADO, MDL1, docente2);
 				Examen examenPAVFinalizado = createAndSaveExamen(examenRepository, LocalDateTime.now().minusMonths(5), 20, Estado.FINALIZADO, PAV, docente3);
 				Examen examenCOEFinalizado = createAndSaveExamen(examenRepository, LocalDateTime.now().minusMonths(5), 20, Estado.FINALIZADO, COE, docente1);
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_EXAMEN, "Se ha creado un examen para la asignatura" + MDL1.getNombre() + " con fecha de inicio " + examenMDL1Finalizado.getFecha(), funcionario1, LocalDateTime.now().minusMonths(5).minusDays(20));
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_EXAMEN, "Se ha creado un examen para la asignatura" + PAV.getNombre() + " con fecha de inicio " + examenPAVFinalizado.getFecha(), funcionario1, LocalDateTime.now().minusMonths(5).minusDays(20));
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_EXAMEN, "Se ha creado un examen para la asignatura" + COE.getNombre() + " con fecha de inicio " + examenCOEFinalizado.getFecha(), funcionario1, LocalDateTime.now().minusMonths(5).minusDays(20));
 
                 //----- INSCRIPCIONEXAMEN -----
 				InscripcionExamen inscripcionExamen1 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante5, examenPAVFinalizado, CalificacionExamen.REPROBADO, LocalDateTime.now().minusMonths(5).minusDays(2));
 				InscripcionExamen inscripcionExamen2 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante5, examenPAV, CalificacionExamen.PENDIENTE,LocalDateTime.now());
 				InscripcionExamen inscripcionExamen7 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante5, examenCOEFinalizado, CalificacionExamen.APROBADO,LocalDateTime.now().minusMonths(5).minusDays(2));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_EXAMEN, "Inscripcion a examen con id " + examenPAVFinalizado.getId() + " exitosa.", estudiante5, LocalDateTime.now().minusMonths(5).minusDays(2));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_EXAMEN, "Inscripcion a examen con id " + examenPAV.getId() + " exitosa.", estudiante5, LocalDateTime.now());
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_EXAMEN, "Inscripcion a examen con id " + examenCOEFinalizado.getId() + " exitosa.", estudiante5, LocalDateTime.now().minusMonths(5).minusDays(2));
 
 				InscripcionExamen inscripcionExamen3 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante8, examenPAVFinalizado, CalificacionExamen.REPROBADO,LocalDateTime.now().minusMonths(5).minusDays(2));
 				InscripcionExamen inscripcionExamen4 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante8, examenPAV, CalificacionExamen.PENDIENTE,LocalDateTime.now());
 				InscripcionExamen inscripcionExamen5 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante8, examenMDL1Finalizado, CalificacionExamen.REPROBADO,LocalDateTime.now().minusMonths(5).minusDays(2));
 				InscripcionExamen inscripcionExamen6 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante8, examenMDL1, CalificacionExamen.PENDIENTE,LocalDateTime.now());
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_EXAMEN, "Inscripcion a examen con id " + examenPAVFinalizado.getId() + " exitosa.", estudiante8, LocalDateTime.now().minusMonths(5).minusDays(2));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_EXAMEN, "Inscripcion a examen con id " + examenPAV.getId() + " exitosa.", estudiante8, LocalDateTime.now());
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_EXAMEN, "Inscripcion a examen con id " + examenMDL1Finalizado.getId() + " exitosa.", estudiante8, LocalDateTime.now().minusMonths(5).minusDays(2));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_EXAMEN, "Inscripcion a examen con id " + examenMDL1.getId() + " exitosa.", estudiante8, LocalDateTime.now());
             }
         };
     }
@@ -281,11 +369,11 @@ public class GestionEducativaOnlineApplication {
 		return inscripcionCursoRepository.save(inscripcionCurso);
 	}
 
-	private PeriodoExamen createAndSavePeriodoExamen(PeriodoExamenRepository periodoExamenRepository, CarreraRepository carreraRepository, Long carreraId, int startDays, int endDays) {
+	private PeriodoExamen createAndSavePeriodoExamen(PeriodoExamenRepository periodoExamenRepository, Carrera carrera, int startDays, int endDays) {
 		PeriodoExamen periodoExamen = new PeriodoExamen();
 		periodoExamen.setFechaInicio(LocalDateTime.now().plusDays(startDays));
 		periodoExamen.setFechaFin(LocalDateTime.now().plusDays(endDays));
-		periodoExamen.setCarrera(carreraRepository.findById(carreraId).get());
+		periodoExamen.setCarrera(carrera);
 		return periodoExamenRepository.save(periodoExamen);
 	}
 
@@ -318,10 +406,12 @@ public class GestionEducativaOnlineApplication {
 		horarioRepository.save(horario);
 	}
 
-	private Actividad createAndSaveActividad(ActividadRepository actividadRepository, TipoActividad tipoActividad, String descripcion) {
+	private Actividad createAndSaveActividad(ActividadRepository actividadRepository, TipoActividad tipoActividad, String descripcion, Usuario usuario, LocalDateTime fechaCreacion) {
 		Actividad actividad = new Actividad();
 		actividad.setTipoActividad(tipoActividad);
 		actividad.setDescripcion(descripcion);
+		actividad.setUsuario(usuario);
+		actividad.setFecha(fechaCreacion);
 		return actividadRepository.save(actividad);
 	}
 

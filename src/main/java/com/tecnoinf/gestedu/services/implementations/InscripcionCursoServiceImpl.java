@@ -158,7 +158,7 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                                 inscripcionCurso.setFechaInscripcion(LocalDate.now());
                                 InscripcionCurso createdInscripcion = inscripcionCursoRepository.save(inscripcionCurso);
 
-                                actividadService.registrarActividad(TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso exitoso");
+                                actividadService.registrarActividad(TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " + inscripcionCursoDTO.getCursoId() + " exitosa.");
 
                                 return modelMapper.map(createdInscripcion, InscripcionCursoDTO.class);
                             } else {
