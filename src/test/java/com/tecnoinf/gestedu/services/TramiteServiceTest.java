@@ -1,14 +1,14 @@
 package com.tecnoinf.gestedu.services;
 
 import com.tecnoinf.gestedu.dtos.Tramite.TramiteDTO;
-import com.tecnoinf.gestedu.dtos.inscripcionCarrera.InscripcionCarreraDTO;
+import java.util.Arrays;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.exceptions.TramiteNotFoundException;
 import com.tecnoinf.gestedu.exceptions.TramiteNotPendienteException;
 import com.tecnoinf.gestedu.exceptions.TramitePendienteExistenteException;
 import com.tecnoinf.gestedu.models.Carrera;
 import com.tecnoinf.gestedu.models.Estudiante;
-import com.tecnoinf.gestedu.models.Funcionario;
+
 import com.tecnoinf.gestedu.models.Tramite;
 import com.tecnoinf.gestedu.models.enums.EstadoTramite;
 import com.tecnoinf.gestedu.models.enums.TipoTramite;
@@ -19,8 +19,10 @@ import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import com.tecnoinf.gestedu.services.implementations.TramiteServiceImpl;
 import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.EmailService;
+import com.tecnoinf.gestedu.services.interfaces.EstudianteService;
 import com.tecnoinf.gestedu.services.interfaces.InscripcionCarreraService;
 import jakarta.mail.MessagingException;
+import org.hibernate.mapping.Any;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -40,6 +42,9 @@ public class TramiteServiceTest {
 
     @InjectMocks
     private TramiteServiceImpl tramiteService;
+
+    @Mock
+    private EstudianteService estudianteService;
 
     @Mock
     private InscripcionCarreraService inscripcionCarreraService;
@@ -254,6 +259,23 @@ public class TramiteServiceTest {
         Tramite tramite = new Tramite();
         List<Tramite> tramites = Collections.singletonList(tramite);
         TramiteDTO tramiteDTO = new TramiteDTO();
+        Estudiante estudiante = new Estudiante();
+        estudiante.setEmail("test@test.com");
+        Tramite tramite1 = new Tramite();
+        Tramite tramite2 = new Tramite();
+        Estudiante usuario = new Estudiante();
+        usuario.setEmail("test@test.com");
+        tramite1.setUsuarioSolicitante(usuario);
+        tramite2.setUsuarioSolicitante(usuario);
+        tramite.setUsuarioSolicitante(estudiante);
+
+        when(estudianteService.obtenerCreditosAprobados(any(Estudiante.class), any(Carrera.class))).thenReturn(0);
+        when(estudianteRepository.findEstudianteByEmail("test@test.com")).thenReturn(Optional.of(estudiante));
+        when(tramiteRepository.findAllByUsuarioSolicitante(estudiante)).thenReturn(tramites);
+        when(estudianteRepository.findByEmail("test@test.com")).thenReturn(Optional.of(estudiante));
+        when(tramiteRepository.findAllByUsuarioSolicitante(estudiante)).thenReturn(tramites);
+        when(modelMapper.map(any(Tramite.class), eq(TramiteDTO.class))).thenReturn(tramiteDTO);
+        when(estudianteService.obtenerCreditosAprobados(any(Estudiante.class), any(Carrera.class))).thenReturn(10);
         when(tramiteRepository.findAllByTipoAndEstado(TipoTramite.SOLICITUD_DE_TITULO, EstadoTramite.PENDIENTE)).thenReturn(tramites);
         when(modelMapper.map(tramite, TramiteDTO.class)).thenReturn(tramiteDTO);
 
@@ -279,26 +301,33 @@ public class TramiteServiceTest {
     }
 
     @Test
-    public void listarTramitesEstudiante_returnsListOfTramiteDTOs_whenTramitesExist() {
-        // Given
-        Estudiante estudiante = new Estudiante();
-        estudiante.setEmail("test@test.com");
+public void listarTramitesEstudiante_returnsListOfTramiteDTOs_whenTramitesExist() {
+    // Given
+    Estudiante estudiante = new Estudiante();
+    estudiante.setEmail("test@test.com");
+    Tramite tramite1 = new Tramite();
+    Tramite tramite2 = new Tramite();
+    Estudiante usuario = new Estudiante();
+    usuario.setEmail("test@test.com");
+    tramite1.setUsuarioSolicitante(usuario);
+    tramite2.setUsuarioSolicitante(usuario);
+    List<Tramite> tramites = Arrays.asList(tramite1, tramite2);
+    TramiteDTO tramiteDTO = new TramiteDTO();
 
-        Tramite tramite = new Tramite();
-        List<Tramite> tramites = Collections.singletonList(tramite);
-        TramiteDTO tramiteDTO = new TramiteDTO();
+    when(estudianteService.obtenerCreditosAprobados(any(Estudiante.class), any(Carrera.class))).thenReturn(0);
+    when(estudianteRepository.findEstudianteByEmail("test@test.com")).thenReturn(Optional.of(estudiante));
+    when(tramiteRepository.findAllByUsuarioSolicitante(estudiante)).thenReturn(tramites);
+    when(estudianteRepository.findByEmail("test@test.com")).thenReturn(Optional.of(estudiante));
+    when(tramiteRepository.findAllByUsuarioSolicitante(estudiante)).thenReturn(tramites);
+    when(modelMapper.map(any(Tramite.class), eq(TramiteDTO.class))).thenReturn(tramiteDTO);
+    when(estudianteService.obtenerCreditosAprobados(any(Estudiante.class), any(Carrera.class))).thenReturn(10);
 
-        when(estudianteRepository.findByEmail("test@test.com")).thenReturn(Optional.of(estudiante));
-        when(tramiteRepository.findAllByUsuarioSolicitante(estudiante)).thenReturn(tramites);
-        when(modelMapper.map(tramite, TramiteDTO.class)).thenReturn(tramiteDTO);
+    // When
+    List<TramiteDTO> result = tramiteService.listarTramitesEstudiante("test@test.com");
 
-        // When
-        List<TramiteDTO> result = tramiteService.listarTramitesEstudiante("test@test.com");
-
-        // Then
-        assertFalse(result.isEmpty());
-        assertEquals(tramiteDTO, result.get(0));
-    }
+    // Then
+    assertEquals(2, result.size());
+}
 
     @Test
     public void listarTramitesEstudiante_returnsEmptyList_whenNoTramitesExist() {
@@ -328,6 +357,4 @@ public class TramiteServiceTest {
             tramiteService.listarTramitesEstudiante("test@test.com");
         });
     }
-
-
 }

@@ -103,4 +103,11 @@ public class TramiteController {
         return ResponseEntity.ok().body(tramiteService.listarTramitesSolicitudTituloResueltos());
     }
 
+    //@PreAuthorize("hasAuthority('ROL_COORDINADOR , ROL_FUNCIONARIO')")
+    @Operation(summary = "Obtener un tramite por su id")
+    @GetMapping("/{tramiteId}")
+    public ResponseEntity<?> getTramiteById(@PathVariable Long tramiteId) {
+        return ResponseEntity.ok().body(tramiteService.getTramiteById(tramiteId));
+    }
+
 }

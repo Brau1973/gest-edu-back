@@ -18,7 +18,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -339,7 +338,8 @@ public class EstudianteServiceImpl implements EstudianteService {
         return escolaridadDTO;
     }
 
-    private Integer obtenerCreditosAprobados(Estudiante estudiante, Carrera carrera){
+    @Override
+    public Integer obtenerCreditosAprobados(Estudiante estudiante, Carrera carrera){
         Integer creditosAprobados = 0;
         Set<Asignatura> asignaturasAprobadas = new HashSet<>();
 

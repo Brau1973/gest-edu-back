@@ -19,6 +19,8 @@ public class InscripcionExamen {
     private Long id;
 
     private LocalDate fechaInscripcion = LocalDate.now();
+
+    @Enumerated(EnumType.STRING)
     private CalificacionExamen calificacion = CalificacionExamen.PENDIENTE;
 
     @ManyToOne

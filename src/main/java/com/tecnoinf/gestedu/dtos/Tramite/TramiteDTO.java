@@ -18,7 +18,8 @@ public class TramiteDTO {
     private LocalDateTime fechaActualizacion;
     private LocalDateTime fechaCreacion;
     private TipoTramite tipo;
-    private String nombreCarrera;
+    private Long carreraId;
+    private Integer creditosAprobados;
     private UsuarioTramiteInfoDTO usuarioSolicitante;
     private UsuarioTramiteInfoDTO usuarioResponsable;
 }
