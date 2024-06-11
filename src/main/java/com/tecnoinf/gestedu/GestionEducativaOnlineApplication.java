@@ -152,7 +152,7 @@ public class GestionEducativaOnlineApplication {
 				createAndSaveActividad(actividadRepository,TipoActividad.SOLICITUD_INSCRIPCION_CARRERA, "Se solicito la inscripcion a la carrera " + savedCarrera1.getNombre(), estudiante6, LocalDateTime.of(2024, 5, 10, 10, 0));
 				createAndSaveActividad(actividadRepository,TipoActividad.RECHAZO_SOLICITUD_INSCRIPCION_CARRERA, "Se rechazo la solicitud de inscripcion del estudiante " + estudiante6.getNombre() + " a la carrera " + savedCarrera1.getNombre(), funcionario1, LocalDateTime.of(2024, 5, 12, 10, 0));
 
-				//TRAMITE Y ACTIVIDAD DE LA SOLICITUD DE TITULO DE LOS ESTUDIANTES 4 Y 5
+				//TRAMITE Y ACTIVIDAD DE LA SOLICITUD DE TITULO DE LOS ESTUDIANTES 4, 5 y 9 (el 9 pide el titulo pero le faltan creditos)
 				createTramiteInitData(tramiteRepository, estudiante4, savedCarrera1, TipoTramite.SOLICITUD_DE_TITULO, EstadoTramite.ACEPTADO, coordinador1,"");
 				createAndSaveActividad(actividadRepository,TipoActividad.SOLICITUD_TITULO, "Se solicito el titulo de la carrera " + savedCarrera1.getNombre(), estudiante4, LocalDateTime.of(2024, 5, 10, 10, 0));
 				createAndSaveActividad(actividadRepository,TipoActividad.APROBACION_SOLICITUD_TITULO, "Se aprobo la solicitud de titulo del estudiante " + estudiante4.getNombre() + " de la carrera " + savedCarrera1.getNombre(), coordinador1, LocalDateTime.of(2024, 5, 12, 10, 0));
@@ -160,6 +160,9 @@ public class GestionEducativaOnlineApplication {
 				createTramiteInitData(tramiteRepository, estudiante5, savedCarrera1, TipoTramite.SOLICITUD_DE_TITULO, EstadoTramite.RECHAZADO, coordinador2,"No se tienen los creditos necesarios para solicitar el titulo");
 				createAndSaveActividad(actividadRepository,TipoActividad.SOLICITUD_TITULO, "Se solicito el titulo de la carrera " + savedCarrera1.getNombre(), estudiante5, LocalDateTime.of(2024, 5, 10, 10, 0));
 				createAndSaveActividad(actividadRepository,TipoActividad.RECHAZO_SOLICITUD_TITULO, "Se rechazo la solicitud de titulo del estudiante " + estudiante5.getNombre() + " de la carrera " + savedCarrera1.getNombre(), coordinador2, LocalDateTime.of(2024, 5, 12, 10, 0));
+
+				createTramiteInitData(tramiteRepository, estudiante9, savedCarrera1, TipoTramite.SOLICITUD_DE_TITULO, EstadoTramite.PENDIENTE, coordinador1,"");
+				createAndSaveActividad(actividadRepository,TipoActividad.SOLICITUD_TITULO, "Se solicito el titulo de la carrera " + savedCarrera1.getNombre(), estudiante9, LocalDateTime.of(2024, 5, 10, 10, 0));
 
                 // ----------------------------------------------------------------------------------INSCRIPCIONCARRERA-----------------------------------------------------------------------------------------
 				createAndSaveInscripcionCarrera(inscripcionCarreraRepository, estudiante3, savedCarrera1, EstadoInscripcionCarrera.CURSANDO ,LocalDate.now().minusMonths(5));
@@ -225,6 +228,14 @@ public class GestionEducativaOnlineApplication {
 				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoCOEViejo.getId() , estudiante7, LocalDateTime.of(2023,7,10,0,0));
 				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoMDL1Viejo.getId(), estudiante7, LocalDateTime.of(2023,7,10,0,0));
 				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoPAVViejo.getId(), estudiante7, LocalDateTime.of(2023,7,10,0,0));
+
+				// INSCRIPCIONES CURSOS VIEJOS QUE EXONERO EL ESTUDIANTE 4 (Ya tiene el titulo solicitado y aceptado)
+				InscripcionCurso inscripcionCurso13 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante4, cursoCOEViejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.EXONERADO, LocalDate.of(2023, 7, 10));
+				InscripcionCurso inscripcionCurso14 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante4, cursoMDL1Viejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.EXONERADO, LocalDate.of(2023, 7, 10));
+				InscripcionCurso inscripcionCurso15 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante4, cursoPAVViejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.EXONERADO, LocalDate.of(2023, 7, 10));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoCOEViejo.getId(), estudiante4, LocalDateTime.of(2023,7,10,0,0));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoMDL1Viejo.getId(), estudiante4, LocalDateTime.of(2023,7,10,0,0));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoPAVViejo.getId(), estudiante4, LocalDateTime.of(2023,7,10,0,0));
 
 				// INSCRIPCIONES A CURSO EN DISTINTOS ESTADOS
 				InscripcionCurso inscripcionCurso4 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante5, cursoCOEViejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.AEXAMEN,LocalDate.of(2023, 7, 10));

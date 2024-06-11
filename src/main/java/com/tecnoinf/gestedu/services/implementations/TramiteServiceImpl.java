@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TramiteServiceImpl implements TramiteService {
@@ -35,12 +36,13 @@ public class TramiteServiceImpl implements TramiteService {
     private final InscripcionCarreraService inscripcionCarreraService;
     private final TituloService tituloService;
     private final ActividadService actividadService;
+    private final EstudianteService estudianteService;
 
     @Autowired
     public TramiteServiceImpl(EstudianteRepository estudianteRepository, CarreraRepository carreraRepository,
                               TramiteRepository tramiteRepository, ModelMapper modelMapper, EmailService emailService,
                               UsuarioRepository usuarioRepository, InscripcionCarreraService inscripcionCarreraService,
-                              TituloService tituloService, ActividadService actividadService) {
+                              TituloService tituloService, ActividadService actividadService, EstudianteService estudianteService) {
         this.estudianteRepository = estudianteRepository;
         this.carreraRepository = carreraRepository;
         this.tramiteRepository = tramiteRepository;
@@ -50,6 +52,7 @@ public class TramiteServiceImpl implements TramiteService {
         this.inscripcionCarreraService = inscripcionCarreraService;
         this.tituloService = tituloService;
         this.actividadService = actividadService;
+        this.estudianteService = estudianteService;
     }
 
     @Override
@@ -59,7 +62,8 @@ public class TramiteServiceImpl implements TramiteService {
 
         //Verificar si el estudiante ya tiene un trámite pendiente asociado con la misma carrera y con el mismo tipo
         if (tramiteRepository.existsByUsuarioSolicitanteAndCarreraAndTipoAndEstado(estudiante, carrera, tipoTramite, EstadoTramite.PENDIENTE)) {
-            throw new TramitePendienteExistenteException("El estudiante " + estudiante.getNombre() + " ya tiene un trámite pendiente de inscripción a la carrera " + carrera.getNombre());
+            throw new TramitePendienteExistenteException("El estudiante " + estudiante.getNombre() + " ya tiene un trámite pendiente del tipo "
+                    + tipoTramite + "relacionado con la carrera" +carrera.getNombre());
         }
 
         Tramite tramite = new Tramite();
@@ -93,8 +97,8 @@ public class TramiteServiceImpl implements TramiteService {
     public List<TramiteDTO> listarTramitesSolicitudTituloPendientes() {
         List<Tramite> tramites = tramiteRepository.findAllByTipoAndEstado(TipoTramite.SOLICITUD_DE_TITULO, EstadoTramite.PENDIENTE);
         return tramites.stream()
-                .map(tramite -> modelMapper.map(tramite, TramiteDTO.class))
-                .toList();
+                .map(this::mapTramiteToDTOAndAddCreditosAprobados)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -112,8 +116,8 @@ public class TramiteServiceImpl implements TramiteService {
         Estudiante estudiante = getEstudianteByEmail(email);
         List<Tramite> tramites = tramiteRepository.findAllByUsuarioSolicitante(estudiante);
         return tramites.stream()
-                .map(tramite -> modelMapper.map(tramite, TramiteDTO.class))
-                .toList();
+                .map(this::mapTramiteToDTOAndAddCreditosAprobados)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -128,8 +132,14 @@ public class TramiteServiceImpl implements TramiteService {
     public List<TramiteDTO> listarTramitesSolicitudTituloResueltos() {
         List<Tramite> tramites = tramiteRepository.findAllByTipoAndEstadoIn(TipoTramite.SOLICITUD_DE_TITULO, List.of(EstadoTramite.ACEPTADO, EstadoTramite.RECHAZADO));
         return tramites.stream()
-                .map(tramite -> modelMapper.map(tramite, TramiteDTO.class))
-                .toList();
+                .map(this::mapTramiteToDTOAndAddCreditosAprobados)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public TramiteDTO getTramiteById(Long tramiteId) {
+        Tramite tramite = obtenerTramiteById(tramiteId);
+        return this.mapTramiteToDTOAndAddCreditosAprobados(tramite);
     }
 
     @Override
@@ -143,7 +153,7 @@ public class TramiteServiceImpl implements TramiteService {
     }
 
     private TramiteDTO processTramite(Long tramiteId, String email, EstadoTramite estado, String motivoRechazo) throws MessagingException {
-        Tramite tramite = getTramiteById(tramiteId);
+        Tramite tramite = obtenerTramiteById(tramiteId);
         verificarEstadoPendienteTramite(tramite);
         Usuario usuarioResponsable = getUsuarioResponsableByEmail(email);
 
@@ -184,6 +194,14 @@ public class TramiteServiceImpl implements TramiteService {
         return modelMapper.map(savedTramite, TramiteDTO.class);
     }
 
+    private TramiteDTO mapTramiteToDTOAndAddCreditosAprobados(Tramite tramite) {
+        TramiteDTO tramiteDTO = modelMapper.map(tramite, TramiteDTO.class);
+        Estudiante estudianteSolicitante = getEstudianteSolicitanteByEmail(tramite);
+        Integer creditosAprobados = estudianteService.obtenerCreditosAprobados(estudianteSolicitante, tramite.getCarrera());
+        tramiteDTO.setCreditosAprobados(creditosAprobados);
+        return tramiteDTO;
+    }
+
     private Estudiante getEstudianteByEmail(String email) {
         return (Estudiante) estudianteRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Estudiante not found with email " + email));
@@ -200,7 +218,7 @@ public class TramiteServiceImpl implements TramiteService {
         return carrera;
     }
 
-    private Tramite getTramiteById(Long tramiteId) {
+    private Tramite obtenerTramiteById(Long tramiteId) {
         return tramiteRepository.findById(tramiteId)
                 .orElseThrow(() -> new TramiteNotFoundException("Tramite not found with id " + tramiteId));
     }

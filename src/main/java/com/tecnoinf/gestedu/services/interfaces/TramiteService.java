@@ -16,4 +16,5 @@ public interface TramiteService {
     List<TramiteDTO> listarTramitesEstudiante(String email);
     List<TramiteDTO> listarTramitesInscripcionCarreraResueltos();
     List<TramiteDTO> listarTramitesSolicitudTituloResueltos();
+    TramiteDTO getTramiteById(Long tramiteId);
 }
