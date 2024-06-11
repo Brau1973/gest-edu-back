@@ -1,6 +1,6 @@
 package com.tecnoinf.gestedu.services.implementations;
 
-import com.tecnoinf.gestedu.dtos.EmailValuesDTO;
+import com.tecnoinf.gestedu.dtos.TokenPassDTO;
 import com.tecnoinf.gestedu.dtos.usuario.AuthLoginRequest;
 import com.tecnoinf.gestedu.dtos.usuario.AuthResponse;
 import com.tecnoinf.gestedu.models.Usuario;
@@ -11,11 +11,9 @@ import com.tecnoinf.gestedu.services.interfaces.EmailService;
 import com.tecnoinf.gestedu.services.interfaces.InvitadoService;
 import com.tecnoinf.gestedu.util.JwtUtils;
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,7 +23,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
 import java.util.*;
 
@@ -106,9 +103,9 @@ public class InvitadoServiceImpl implements InvitadoService {
     }
 
     @Override
-    public void sendEmailResetPass(EmailValuesDTO dto, Usuario usuario) throws MessagingException {
+    public void sendEmailResetPass(TokenPassDTO dto, Usuario usuario) throws MessagingException {
         String link = urlFront + dto.getTokenPassword();
-        actividadService.registrarActividad(TipoActividad.RECUPERAR_CONTRASENA_POR_MAIL, "Se ha solicitado resetear la contraseña");
+        //actividadService.registrarActividad(TipoActividad.RECUPERAR_CONTRASENA_POR_MAIL, "Se ha solicitado resetear la contraseña");// no existe usuario autenticado
         emailService.sendResetPasswordEmail(dto.getMailTo(), usuario.getNombre(), link);
     }
 }

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmailValuesDTO {
+public class TokenPassDTO {
     private String mailFrom;
     private String mailTo;
     private String mailSubject;
