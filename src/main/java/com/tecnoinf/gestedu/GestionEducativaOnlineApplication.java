@@ -256,30 +256,30 @@ public class GestionEducativaOnlineApplication {
 
                 //------------------------------------------------------------------------------------- EXAMEN -------------------------------------------------------------------------------------
 				// ACTIVOS
-				Examen examenCOE = createAndSaveExamen(examenRepository, LocalDateTime.now().plusDays(7), 20, Estado.ACTIVO, COE, docente1);
-				Examen examenPAV = createAndSaveExamen(examenRepository, LocalDateTime.now().plusDays(7), 20, Estado.ACTIVO, PAV, docente3);
-				Examen examenMDL1 = createAndSaveExamen(examenRepository, LocalDateTime.now().plusDays(7), 20, Estado.ACTIVO, MDL1, docente2);
+				Examen examenCOE = createAndSaveExamen(examenRepository, LocalDateTime.now().plusDays(7).truncatedTo(ChronoUnit.HOURS), 20, Estado.ACTIVO, COE, docente1);
+				Examen examenPAV = createAndSaveExamen(examenRepository, LocalDateTime.now().plusDays(7).truncatedTo(ChronoUnit.HOURS), 20, Estado.ACTIVO, PAV, docente3);
+				Examen examenMDL1 = createAndSaveExamen(examenRepository, LocalDateTime.now().plusDays(7).truncatedTo(ChronoUnit.HOURS), 20, Estado.ACTIVO, MDL1, docente2);
 
 				// FINALIZADOS
-				Examen examenMDL1Finalizado = createAndSaveExamen(examenRepository, LocalDateTime.now().minusMonths(5), 20, Estado.FINALIZADO, MDL1, docente2);
-				Examen examenPAVFinalizado = createAndSaveExamen(examenRepository, LocalDateTime.now().minusMonths(5), 20, Estado.FINALIZADO, PAV, docente3);
-				Examen examenCOEFinalizado = createAndSaveExamen(examenRepository, LocalDateTime.now().minusMonths(5), 20, Estado.FINALIZADO, COE, docente1);
+				Examen examenMDL1Finalizado = createAndSaveExamen(examenRepository, LocalDateTime.now().minusMonths(5).truncatedTo(ChronoUnit.HOURS), 20, Estado.FINALIZADO, MDL1, docente2);
+				Examen examenPAVFinalizado = createAndSaveExamen(examenRepository, LocalDateTime.now().minusMonths(5).truncatedTo(ChronoUnit.HOURS), 20, Estado.FINALIZADO, PAV, docente3);
+				Examen examenCOEFinalizado = createAndSaveExamen(examenRepository, LocalDateTime.now().minusMonths(5).truncatedTo(ChronoUnit.HOURS), 20, Estado.FINALIZADO, COE, docente1);
 				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_EXAMEN, "Se ha creado un examen para la asignatura" + MDL1.getNombre() + " con fecha de inicio " + examenMDL1Finalizado.getFecha(), funcionario1, LocalDateTime.now().minusMonths(5).minusDays(20));
 				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_EXAMEN, "Se ha creado un examen para la asignatura" + PAV.getNombre() + " con fecha de inicio " + examenPAVFinalizado.getFecha(), funcionario1, LocalDateTime.now().minusMonths(5).minusDays(20));
 				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_EXAMEN, "Se ha creado un examen para la asignatura" + COE.getNombre() + " con fecha de inicio " + examenCOEFinalizado.getFecha(), funcionario1, LocalDateTime.now().minusMonths(5).minusDays(20));
 
                 //----- INSCRIPCIONEXAMEN -----
-				InscripcionExamen inscripcionExamen1 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante5, examenPAVFinalizado, CalificacionExamen.REPROBADO, LocalDateTime.now().minusMonths(5).minusDays(2));
-				InscripcionExamen inscripcionExamen2 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante5, examenPAV, CalificacionExamen.PENDIENTE,LocalDateTime.now());
-				InscripcionExamen inscripcionExamen7 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante5, examenCOEFinalizado, CalificacionExamen.APROBADO,LocalDateTime.now().minusMonths(5).minusDays(2));
+				InscripcionExamen inscripcionExamen1 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante5, examenPAVFinalizado, CalificacionExamen.REPROBADO, LocalDate.now().minusMonths(5).minusDays(2));
+				InscripcionExamen inscripcionExamen2 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante5, examenPAV, CalificacionExamen.PENDIENTE,LocalDate.now());
+				InscripcionExamen inscripcionExamen7 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante5, examenCOEFinalizado, CalificacionExamen.APROBADO,LocalDate.now().minusMonths(5).minusDays(2));
 				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_EXAMEN, "Inscripcion a examen con id " + examenPAVFinalizado.getId() + " exitosa.", estudiante5, LocalDateTime.now().minusMonths(5).minusDays(2));
 				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_EXAMEN, "Inscripcion a examen con id " + examenPAV.getId() + " exitosa.", estudiante5, LocalDateTime.now());
 				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_EXAMEN, "Inscripcion a examen con id " + examenCOEFinalizado.getId() + " exitosa.", estudiante5, LocalDateTime.now().minusMonths(5).minusDays(2));
 
-				InscripcionExamen inscripcionExamen3 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante8, examenPAVFinalizado, CalificacionExamen.REPROBADO,LocalDateTime.now().minusMonths(5).minusDays(2));
-				InscripcionExamen inscripcionExamen4 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante8, examenPAV, CalificacionExamen.PENDIENTE,LocalDateTime.now());
-				InscripcionExamen inscripcionExamen5 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante8, examenMDL1Finalizado, CalificacionExamen.REPROBADO,LocalDateTime.now().minusMonths(5).minusDays(2));
-				InscripcionExamen inscripcionExamen6 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante8, examenMDL1, CalificacionExamen.PENDIENTE,LocalDateTime.now());
+				InscripcionExamen inscripcionExamen3 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante8, examenPAVFinalizado, CalificacionExamen.REPROBADO,LocalDate.now().minusMonths(5).minusDays(2));
+				InscripcionExamen inscripcionExamen4 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante8, examenPAV, CalificacionExamen.PENDIENTE,LocalDate.now());
+				InscripcionExamen inscripcionExamen5 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante8, examenMDL1Finalizado, CalificacionExamen.REPROBADO,LocalDate.now().minusMonths(5).minusDays(2));
+				InscripcionExamen inscripcionExamen6 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante8, examenMDL1, CalificacionExamen.PENDIENTE,LocalDate.now());
 				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_EXAMEN, "Inscripcion a examen con id " + examenPAVFinalizado.getId() + " exitosa.", estudiante8, LocalDateTime.now().minusMonths(5).minusDays(2));
 				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_EXAMEN, "Inscripcion a examen con id " + examenPAV.getId() + " exitosa.", estudiante8, LocalDateTime.now());
 				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_EXAMEN, "Inscripcion a examen con id " + examenMDL1Finalizado.getId() + " exitosa.", estudiante8, LocalDateTime.now().minusMonths(5).minusDays(2));
@@ -391,7 +391,7 @@ public class GestionEducativaOnlineApplication {
 		return examenRepository.save(examen);
 	}
 
-	private InscripcionExamen createAndSaveInscripcionExamen(InscripcionExamenRepository inscripcionExamenRepository, Estudiante estudiante, Examen examen, CalificacionExamen calificacion, LocalDateTime fechaInscripcion) {
+	private InscripcionExamen createAndSaveInscripcionExamen(InscripcionExamenRepository inscripcionExamenRepository, Estudiante estudiante, Examen examen, CalificacionExamen calificacion, LocalDate fechaInscripcion) {
 		InscripcionExamen inscripcionExamen = new InscripcionExamen();
 		inscripcionExamen.setEstudiante(estudiante);
 		inscripcionExamen.setExamen(examen);

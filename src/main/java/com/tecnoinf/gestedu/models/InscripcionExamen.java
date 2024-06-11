@@ -4,7 +4,7 @@ import com.tecnoinf.gestedu.models.enums.CalificacionExamen;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 
 @Data
@@ -18,7 +18,7 @@ public class InscripcionExamen {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime fechaInscripcion = LocalDateTime.now();
+    private LocalDate fechaInscripcion = LocalDate.now();
     private CalificacionExamen calificacion = CalificacionExamen.PENDIENTE;
 
     @ManyToOne
