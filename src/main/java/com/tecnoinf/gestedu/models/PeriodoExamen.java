@@ -18,8 +18,8 @@ public class PeriodoExamen {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDateTime fechaInicio;
-    private LocalDateTime fechaFin;
+    private LocalDate fechaInicio;
+    private LocalDate fechaFin;
 
     @ManyToOne
     @JoinColumn(name = "carrera_id")

@@ -9,6 +9,7 @@ import com.tecnoinf.gestedu.repositories.TokenPassRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,8 +22,7 @@ public class TokenPassService {
 
     public String crearTokenPassword(Usuario usuario) {
         String token = UUID.randomUUID().toString();
-        Date vencimiento = new Date();
-        vencimiento.setTime(vencimiento.getTime() + 3600000); // 1 hora
+        LocalDateTime vencimiento = LocalDateTime.now().plusHours(2);
 
         TokenPass tokenPass = new TokenPass();
         tokenPass.setToken(token);
@@ -43,7 +43,7 @@ public class TokenPassService {
         if (!tokenPass.get().getActivo()) {
             throw new TokenInactivoException("El tokenPass no está activo");
         }
-        if (tokenPass.get().getVencimiento().before(new Date())) {
+        if (tokenPass.get().getVencimiento().isBefore(LocalDateTime.now())) {
             throw new TokenVencidoException("El tokenPass ha vencido");
         }
         return Optional.ofNullable(tokenPass.get().getUsuario());

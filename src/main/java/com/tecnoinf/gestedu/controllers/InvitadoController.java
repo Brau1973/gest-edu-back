@@ -1,6 +1,6 @@
 package com.tecnoinf.gestedu.controllers;
 
-import com.tecnoinf.gestedu.dtos.EmailValuesDTO;
+import com.tecnoinf.gestedu.dtos.TokenPassDTO;
 import com.tecnoinf.gestedu.dtos.TipoUsuario;
 import com.tecnoinf.gestedu.dtos.certificado.CertificadoDTO;
 import com.tecnoinf.gestedu.dtos.usuario.AuthLoginRequest;
@@ -77,7 +77,7 @@ public class InvitadoController {
 
     @Operation(summary = "Enviar correo para recuperar contraseña")
     @PostMapping("/correoPassword")
-    public ResponseEntity<?> sendEmailResetPassword(@RequestBody EmailValuesDTO dto) throws MessagingException {
+    public ResponseEntity<?> sendEmailResetPassword(@RequestBody TokenPassDTO dto) throws MessagingException {
         Optional<Usuario> usuario = usuarioService.getByEmail(dto.getMailTo());
         if(usuario.isEmpty()) {
             return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
