@@ -81,13 +81,9 @@ public class ExamenServiceImplTest {
 
     @Test
     public void testAltaExamen() {
-
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-
         CreateExamenDTO createExamenDto = new CreateExamenDTO();
         createExamenDto.setAsignaturaId(1L);
-        LocalDateTime fecha = LocalDateTime.now().plusDays(3);
-        createExamenDto.setFecha(fecha.format(formatter));
+        createExamenDto.setFecha(LocalDateTime.now().plusDays(3));
         createExamenDto.setDiasPrevInsc(5);
         Long[] docenteIds = new Long[1];
         docenteIds[0] = 1L;
@@ -759,7 +755,7 @@ public class ExamenServiceImplTest {
 
         assertNotNull(result);
         assertEquals(examenId, result.getId());
-        assertEquals(fecha.toString(), result.getFecha());
+        assertEquals(fecha, result.getFecha());
         assertEquals("Matemáticas", result.getAsignatura().getNombre());
         assertEquals(1, result.getDocentes().size());
         assertEquals("Profesor X", result.getDocentes().get(0).getNombre());

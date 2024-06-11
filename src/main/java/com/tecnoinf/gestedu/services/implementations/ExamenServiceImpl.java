@@ -73,7 +73,7 @@ public class ExamenServiceImpl implements ExamenService {
             throw new ResourceNotFoundException("Se requiere al menos un docente para crear un examen.");
         }
 
-        LocalDateTime fechaExamen = LocalDateTime.parse(createExamenDto.getFecha());
+        LocalDateTime fechaExamen = createExamenDto.getFecha();
 
         validarFechaExamen(fechaExamen, asignatura);
 
@@ -106,7 +106,7 @@ public class ExamenServiceImpl implements ExamenService {
 
     private Examen crearExamen(CreateExamenDTO createExamenDto, Asignatura asignatura, List<Docente> docentes) {
 
-        LocalDateTime fechaExamen = LocalDateTime.parse(createExamenDto.getFecha());
+        LocalDateTime fechaExamen = createExamenDto.getFecha();
 
         Examen examen = new Examen();
         examen.setFecha(fechaExamen.withSecond(0).withNano(0));
@@ -152,7 +152,7 @@ public class ExamenServiceImpl implements ExamenService {
         }
 
         InscripcionExamen inscripcion = new InscripcionExamen();
-        inscripcion.setFechaInscripcion(LocalDateTime.now());
+        inscripcion.setFechaInscripcion(LocalDate.now());
         inscripcion.setCalificacion(CalificacionExamen.PENDIENTE);
         inscripcion.setEstudiante((Estudiante) usuario.get());
         inscripcion.setExamen(examen);
@@ -306,7 +306,7 @@ public class ExamenServiceImpl implements ExamenService {
                 .orElseThrow(() -> new ResourceNotFoundException("Examen no encontrado."));
         ActaExamenDTO actaExamen = new ActaExamenDTO();
         actaExamen.setId(examen.getId());
-        actaExamen.setFecha(examen.getFecha().toString());
+        actaExamen.setFecha(examen.getFecha());
         actaExamen.setAsignatura(new AsignaturaDTO(examen.getAsignatura()));
         actaExamen.setDocentes(examen.getDocentes().stream().map(DocenteDTO::new).toList());
         actaExamen.setInscripciones(examen.getInscripciones().stream().map(InscripcionExamenDTO::new).toList());
