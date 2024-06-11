@@ -8,12 +8,15 @@ import com.tecnoinf.gestedu.models.TokenPass;
 import com.tecnoinf.gestedu.models.Usuario;
 import com.tecnoinf.gestedu.repositories.TokenPassRepository;
 import com.tecnoinf.gestedu.services.implementations.TokenPassService;
+import net.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -42,7 +45,7 @@ class TokenPassServiceTest {
         String token = UUID.randomUUID().toString();
         TokenPass tokenPass = new TokenPass();
         tokenPass.setToken(token);
-        tokenPass.setVencimiento(new Date(System.currentTimeMillis() + 3600000)); // 1 hour later
+        tokenPass.setVencimiento(LocalDateTime.now().plusHours(2));
         tokenPass.setActivo(true);
         tokenPass.setUsuario(usuario);
 
@@ -63,7 +66,7 @@ class TokenPassServiceTest {
         Coordinador usuario = new Coordinador();
         TokenPass tokenPass = new TokenPass();
         tokenPass.setToken("validToken");
-        tokenPass.setVencimiento(new Date(System.currentTimeMillis() + 3600000)); // 1 hour later
+        tokenPass.setVencimiento(LocalDateTime.now().plusHours(2));
         tokenPass.setActivo(true);
         tokenPass.setUsuario(usuario);
 
@@ -95,7 +98,7 @@ class TokenPassServiceTest {
         // Arrange
         TokenPass tokenPass = new TokenPass();
         tokenPass.setToken("inactiveToken");
-        tokenPass.setVencimiento(new Date(System.currentTimeMillis() + 3600000)); // 1 hour later
+        tokenPass.setVencimiento(LocalDateTime.now().plusHours(2));
         tokenPass.setActivo(false);
 
         when(tokenPassRepository.findByToken(anyString())).thenReturn(Optional.of(tokenPass));
@@ -112,7 +115,7 @@ class TokenPassServiceTest {
         // Arrange
         TokenPass tokenPass = new TokenPass();
         tokenPass.setToken("expiredToken");
-        tokenPass.setVencimiento(new Date(System.currentTimeMillis() - 3600000)); // 1 hour ago
+        tokenPass.setVencimiento(LocalDateTime.now().minusHours(1));
         tokenPass.setActivo(true);
 
         when(tokenPassRepository.findByToken(anyString())).thenReturn(Optional.of(tokenPass));
