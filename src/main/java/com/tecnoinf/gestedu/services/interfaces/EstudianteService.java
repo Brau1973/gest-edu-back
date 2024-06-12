@@ -26,4 +26,5 @@ public interface EstudianteService {
     Page<AsignaturaDTO> obtenerAsignaturasParaInscripcion(Long id, String emailEstudiante, Pageable pageable);
     EscolaridadDTO generarEscolaridad(Long carreraId, String name);
     Integer obtenerCreditosAprobados(Estudiante estudiante, Carrera carrera);
+    void registrarTokenFirebase(String name, String tokenFirebase);
 }
