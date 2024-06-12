@@ -5,9 +5,9 @@ services:
     ports:
       - 8080:8080
     environment:
-      DB_URL: jdbc:postgresql://db:5432/gest_edu
-      DB_USER_NAME: postgres
-      DB_PASSWORD: postgres
+      DB_URL: ${DB_URL}
+      DB_USER_NAME: ${DB_USER_NAME}
+      DB_PASSWORD: ${DB_PASSWORD}
     restart: always
     depends_on:
       - db
@@ -17,9 +17,9 @@ services:
     ports:
       - "5433:5432"
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: gest_edu
+      POSTGRES_USER: ${DB_USER_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - db_data:/var/lib/postgresql/data
 volumes:
