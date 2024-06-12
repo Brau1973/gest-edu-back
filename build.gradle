@@ -17,11 +17,9 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.2.2'
-	implementation 'org.springframework.boot:spring-boot-starter-data-neo4j'
 	implementation 'org.springframework.boot:spring-boot-starter-web:3.2.2'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'org.postgresql:postgresql'
+	runtimeOnly 'org.postgresql:postgresql:42.2.5'
 
 	//ENVIO DE MAIL
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
@@ -41,11 +39,9 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.mockito:mockito-core'
 	testImplementation 'org.mockito:mockito-junit-jupiter'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'org.postgresql:postgresql'
 }
 
 tasks.named('test') {
