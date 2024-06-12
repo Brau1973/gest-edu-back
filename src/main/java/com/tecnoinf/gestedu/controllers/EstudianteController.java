@@ -6,6 +6,7 @@ import com.tecnoinf.gestedu.dtos.certificado.CertificadoDTO;
 import com.tecnoinf.gestedu.dtos.escolaridad.EscolaridadDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
 import com.tecnoinf.gestedu.dtos.usuario.BasicInfoUsuarioDTO;
+import com.tecnoinf.gestedu.models.Estudiante;
 import com.tecnoinf.gestedu.services.interfaces.EstudianteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,10 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 import java.security.Principal;
@@ -130,6 +128,13 @@ public class EstudianteController {
         }
         EscolaridadDTO escolaridad = estudianteService.generarEscolaridad(carreraId, principal.getName());
         return ResponseEntity.ok(escolaridad);
+    }
+
+    @Operation(summary = "Registrar token Firebase de dispositivo para notificaciones push")
+    @PostMapping("/tokenFirebase")
+    public ResponseEntity<?> asignarTokenFirebase(Principal principal, @RequestBody String tokenFirebase) {
+        estudianteService.registrarTokenFirebase(principal.getName(), tokenFirebase);
+        return ResponseEntity.ok().build();
     }
 
 }
