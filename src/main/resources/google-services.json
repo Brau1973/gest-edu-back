@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "12698541745",
+    "project_id": "gestedu2024",
+    "storage_bucket": "gestedu2024.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:12698541745:android:4b2bdd7c249a6c939acc90",
+        "android_client_info": {
+          "package_name": "com.gestedu.android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3ABMBvQMufAbvvqDjQtm_emY6WcpE6bE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
