@@ -64,3 +64,7 @@ out/
 # Ignore the development properties file
 application-dev.properties
 *ssl-server.jks*
+
+# firebase
+src/main/resources/gestedu2024-firebase-adminsdk-ckzik-94200e2a5c.json
+src/main/resources/google-services.json
