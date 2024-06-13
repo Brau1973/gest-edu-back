@@ -22,6 +22,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -89,7 +90,8 @@ public class InscripcionCursoControllerIntegrationTest {
         doNothing().when(actividadService).registrarActividad(any(), any());
     }
 
-    /*@Test
+    @Test
+    @WithMockUser(username = "estudiante@gmail.com", roles = { "FUNCIONARIO" })
     @Transactional
     public void registerCurso()  throws Exception  {
         //Crear Estudiante
@@ -148,10 +150,12 @@ public class InscripcionCursoControllerIntegrationTest {
         mockMvc.perform(post("/inscripcionCurso")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(inscripcionCursoDTO)))
-                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                //.andExpect(jsonPath("$.cursoId").value(curso.getId()))
                 .andExpect(jsonPath("$.estudianteId").value(estudiante.getId()))
-                .andExpect(jsonPath("$.cursoId").value(curso.getId()));
-    }*/
+                .andExpect(jsonPath("$.fechaInscripcion").value(LocalDate.now().toString()))
+                .andExpect(jsonPath("$.calificacion").value("PENDIENTE"));
+    }
 
     @Test
     @Transactional
@@ -307,7 +311,8 @@ public class InscripcionCursoControllerIntegrationTest {
         assert !exists;
     }
 
-    /*@Test
+    @Test
+    @WithMockUser(username = "estudiante@gmail.com", roles = { "ESTUDIANTE" })
     @Transactional
     public void getCursosHorariosInscriptos() throws Exception {
         //Crear Estudiante
@@ -374,7 +379,7 @@ public class InscripcionCursoControllerIntegrationTest {
 
         //Crear Inscripcion Curso
         InscripcionCurso inscripcionCurso = new InscripcionCurso();
-        inscripcionCurso.setFechaInscripcion(LocalDateTime.now());
+        inscripcionCurso.setFechaInscripcion(LocalDate.now());
         inscripcionCurso.setEstudiante(estudiante);
         inscripcionCurso.setCurso(curso);
         inscripcionCurso.setCalificacion(CalificacionCurso.PENDIENTE);
@@ -407,19 +412,14 @@ public class InscripcionCursoControllerIntegrationTest {
         curso.setHorarios(horarios);
         curso = cursoRepository.save(curso);
         mockMvc.perform(get("/inscripcionCurso/cursos-inscripto")
-    System.out.println(cursoRepository.findById(curso.getId()));
-    System.out.println(curso.getFechaInicio().toString());
-        mockMvc.perform(get("/inscripcionCurso/" + estudiante.getId() + "/cursos-inscripto")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].cursoId").value(curso.getId()))
                 .andExpect(jsonPath("$[0].asignaturaNombre").value(asignatura.getNombre()))
                 .andExpect(jsonPath("$[0].docenteNombre").value(docente.getNombre()))
-                .andExpect(jsonPath("$[0].docenteApellido").value(docente.getApellido()))
-                .andExpect(jsonPath("$[0].horarios").isArray());
+                .andExpect(jsonPath("$[0].docenteApellido").value(docente.getApellido()));
     }
-
-     */
 }
 
 
