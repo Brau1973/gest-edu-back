@@ -4,6 +4,7 @@ import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.carrera.CreateCarreraDTO;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
+import com.tecnoinf.gestedu.dtos.curso.CursoHorarioDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCarrera.InscripcionCarreraDTO;
 import com.tecnoinf.gestedu.services.interfaces.CarreraService;
 import com.tecnoinf.gestedu.dtos.periodoExamen.PeriodoExamenDTO;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -116,8 +118,16 @@ public class CarreraController {
 
     @Operation(summary = "Obtener cursos activos de Carrera")
     @GetMapping("/{idCarrera}/cursos-activos")
-    public ResponseEntity<List<CursoDTO>> obtenerCursosActivosCarrera(@PathVariable Long idCarrera){
+    public ResponseEntity<List<CursoDTO>> obtenerCursosActivosCarrera(@PathVariable Long idCarrera) {
         List<CursoDTO> cursos = carreraService.obtenerCursosActivos(idCarrera);
         return ResponseEntity.ok().body(cursos);
+    }
+
+    @Operation(summary = "Litar Horarios de Cursos por Carrera")
+    @GetMapping("/{idCarrera}/horarios-cursos")
+    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    public ResponseEntity<Page<CursoHorarioDTO>> obtenerHorariosCursosCarrera(@PathVariable Long idCarrera, Pageable pageable){
+        Page<CursoHorarioDTO> cursosHorarios = carreraService.obtenerHorariosCursosCarrera(idCarrera, pageable);
+        return ResponseEntity.ok().body(cursosHorarios);
     }
 }
