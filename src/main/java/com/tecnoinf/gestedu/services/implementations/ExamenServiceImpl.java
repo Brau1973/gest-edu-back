@@ -285,7 +285,6 @@ public class ExamenServiceImpl implements ExamenService {
     }
 
     private void enviarNotificaciones(InscripcionExamen inscripcion) throws MessagingException {
-        // Crear y guardar la notificación
         Notificacion notificacion = new Notificacion();
         notificacion.setTitulo("Calificación de examen");
         notificacion.setDescripcion("Se ha registrado la calificación del examen de la asignatura "
@@ -295,10 +294,13 @@ public class ExamenServiceImpl implements ExamenService {
         notificacion.setLeido(false);
         notificacionRepository.save(notificacion);
 
-        // Intentar enviar la notificación
         try {
             List<String> tokens = inscripcion.getEstudiante().getTokenFirebase();
-            notificacionService.enviarNotificacion(notificacion, tokens);
+            if (tokens == null || tokens.isEmpty()) {
+                System.err.println("No se encontraron tokens para el estudiante: " + inscripcion.getEstudiante().getNombre());
+            } else {
+                notificacionService.enviarNotificacion(notificacion, tokens);
+            }
         } catch (FirebaseMessagingException e) {
             System.err.println("Error al enviar notificación: " + e.getMessage());
         }

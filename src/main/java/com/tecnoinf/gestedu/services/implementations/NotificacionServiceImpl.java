@@ -39,11 +39,6 @@ public class NotificacionServiceImpl implements NotificacionService {
 
     @Override
     public void enviarNotificacion(Notificacion notificacion, List<String> tokens) throws FirebaseMessagingException {
-
-        if (tokens == null || tokens.isEmpty()) {
-            throw new IllegalArgumentException("El token Firebase no puede ser nulo o vacío.");
-        }
-
         Map<String, String> datos = new HashMap<>();
         datos.put("fecha", notificacion.getFecha().toString());
         datos.put("destinatario", notificacion.getEstudiante().getNombre() + " " + notificacion.getEstudiante().getApellido());
@@ -52,15 +47,12 @@ public class NotificacionServiceImpl implements NotificacionService {
                 .setTitle(notificacion.getTitulo())
                 .setBody(notificacion.getDescripcion())
                 .build();
-
         MulticastMessage message = MulticastMessage.builder()
                 .setNotification(notification)
                 .addAllTokens(tokens)
                 .putAllData(datos)
                 .build();
-
         BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
-        System.out.println("Notificaciones enviadas: " + response.getSuccessCount() + " exitosas, " + response.getFailureCount() + " fallidas.");
     }
 
     @Override
@@ -88,7 +80,5 @@ public class NotificacionServiceImpl implements NotificacionService {
         List<Notificacion> notificaciones = notificacionRepository.findByEstudianteEmail(name);
         return (int) notificaciones.stream().filter(notificacion -> !notificacion.isLeido()).count();
     }
-
-
 
 }
