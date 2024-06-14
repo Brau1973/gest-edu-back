@@ -39,6 +39,11 @@ public class NotificacionServiceImpl implements NotificacionService {
 
     @Override
     public void enviarNotificacion(Notificacion notificacion, List<String> tokens) throws FirebaseMessagingException {
+
+        if (tokens == null || tokens.isEmpty()) {
+            throw new IllegalArgumentException("El token Firebase no puede ser nulo o vacío.");
+        }
+
         Map<String, String> datos = new HashMap<>();
         datos.put("fecha", notificacion.getFecha().toString());
         datos.put("destinatario", notificacion.getEstudiante().getNombre() + " " + notificacion.getEstudiante().getApellido());
