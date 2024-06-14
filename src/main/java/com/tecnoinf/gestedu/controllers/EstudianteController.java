@@ -69,6 +69,14 @@ public class EstudianteController {
         return ResponseEntity.ok(page);
     }
 
+    @Operation(summary = "Obtiene las carreras que el estudiante está inscripto y AUN NO ESTAN COMPLETADAS")
+    @GetMapping("/carreras-inscripto-no-completadas")
+    public ResponseEntity<Page<BasicInfoCarreraDTO>> getCarrerasInscriptoNoCompletadas(Principal principal, Pageable pageable) {
+        String email = principal.getName();
+        Page<BasicInfoCarreraDTO> page = estudianteService.getCarrerasInscriptoNoCompletadas(email, pageable);
+        return ResponseEntity.ok(page);
+    }
+
     @Operation(summary = "Listar examenes inscripto y vigentes")
     @GetMapping("/inscripto")
     //@PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")

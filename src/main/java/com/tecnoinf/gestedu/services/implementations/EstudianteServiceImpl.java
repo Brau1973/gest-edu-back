@@ -105,6 +105,19 @@ public class EstudianteServiceImpl implements EstudianteService {
     }
 
     @Override
+    public Page<BasicInfoCarreraDTO> getCarrerasInscriptoNoCompletadas(String email, Pageable pageable){
+        Optional<Usuario> estudiante = estudianteRepository.findByEmail(email);
+        if (estudiante.isEmpty()) {
+            throw new ResourceNotFoundException("Estudiante con email " + email + " no encontrado");
+        }
+        Page<Carrera> carreras = carreraRepository.findCarrerasWithPlanEstudioAndEstudianteInscriptoAndInscripcionEstadoCursando(estudiante.get().getId(), pageable);
+        List<BasicInfoCarreraDTO> carreraDTOs = carreras.stream()
+                .map(carrera -> modelMapper.map(carrera, BasicInfoCarreraDTO.class))
+                .collect(Collectors.toList());
+        return new PageImpl<>(carreraDTOs, pageable, carreraDTOs.size());
+    }
+
+    @Override
     public Page<AsignaturaDTO> obtenerAsignaturasAExamen(Long carreraId, String email, Pageable pageable){
         Optional<Usuario> estudiante = estudianteRepository.findByEmail(email);
         if (estudiante.isEmpty()) {
