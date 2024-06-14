@@ -43,7 +43,12 @@ public class NotificacionController {
     @Operation(summary = "Obtener notificaciones de un estudiante")
     @GetMapping
     public ResponseEntity<List<NotificacionDTO>> obtenerNotificaciones(Principal principal) {
-        return ResponseEntity.ok(notificacionService.obtenerNotificaciones(principal.getName()));
+        List<NotificacionDTO> notificaciones = notificacionService.obtenerNotificaciones(principal.getName());
+        if(notificaciones.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }else{
+            return ResponseEntity.ok(notificaciones);
+        }
     }
 
     @Operation(summary = "Obtener cantidad de notificaciones no leidas")
