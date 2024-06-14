@@ -64,7 +64,7 @@ public class NotificacionServiceImpl implements NotificacionService {
             }
         });
     }
-
+    
     @Override
     public List<NotificacionDTO> obtenerNotificaciones(String name){
         ModelMapper modelMapper = new ModelMapper();
@@ -80,5 +80,4 @@ public class NotificacionServiceImpl implements NotificacionService {
         List<Notificacion> notificaciones = notificacionRepository.findByEstudianteEmail(name);
         return (int) notificaciones.stream().filter(notificacion -> !notificacion.isLeido()).count();
     }
-
 }
