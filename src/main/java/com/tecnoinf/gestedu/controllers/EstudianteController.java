@@ -122,11 +122,4 @@ public class EstudianteController {
         return ResponseEntity.ok(escolaridad);
     }
 
-    @Operation(summary = "Registrar token Firebase de dispositivo para notificaciones push")
-    @PostMapping("/tokenFirebase")
-    public ResponseEntity<?> asignarTokenFirebase(Principal principal, @RequestBody String tokenFirebase) {
-        estudianteService.registrarTokenFirebase(principal.getName(), tokenFirebase);
-        return ResponseEntity.ok().build();
-    }
-
 }
