@@ -436,14 +436,4 @@ public class EstudianteServiceImpl implements EstudianteService {
         }
         return semestresDTO;
     }
-
-    @Override
-    public void registrarTokenFirebase(String name, String tokenFirebase){
-            Optional<Usuario> usuario = estudianteRepository.findByEmail(name);
-            if (usuario.isPresent()) {
-                Estudiante estudiante = (Estudiante) usuario.get();
-                estudiante.getTokenFirebase().add(tokenFirebase);
-                estudianteRepository.save(estudiante);
-            }
-    }
 }

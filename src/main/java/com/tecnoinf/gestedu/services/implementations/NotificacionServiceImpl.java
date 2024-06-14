@@ -1,18 +1,44 @@
 package com.tecnoinf.gestedu.services.implementations;
 
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.*;
+import com.tecnoinf.gestedu.dtos.NotificacionDTO;
+import com.tecnoinf.gestedu.models.Estudiante;
 import com.tecnoinf.gestedu.models.Notificacion;
-import com.tecnoinf.gestedu.services.interfaces.NotificationService;
+import com.tecnoinf.gestedu.models.Usuario;
+import com.tecnoinf.gestedu.repositories.EstudianteRepository;
+import com.tecnoinf.gestedu.repositories.NotificacionRepository;
+import com.tecnoinf.gestedu.repositories.UsuarioRepository;
+import com.tecnoinf.gestedu.services.interfaces.NotificacionService;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
-public class NotificacionServiceImpl implements NotificationService {
+@Service
+public class NotificacionServiceImpl implements NotificacionService {
 
-    public void enviarNotificacion(Notificacion notificacion) throws InterruptedException, ExecutionException {
+    private final UsuarioRepository estudianteRepository;
+    private final NotificacionRepository notificacionRepository;
+
+    public NotificacionServiceImpl(EstudianteRepository estudianteRepository, NotificacionRepository notificacionRepository) {
+        this.estudianteRepository = estudianteRepository;
+        this.notificacionRepository = notificacionRepository;
+    }
+
+    @Override
+    public void registrarTokenFirebase(String name, String tokenFirebase){
+        Optional<Usuario> usuario = estudianteRepository.findByEmail(name);
+        if (usuario.isPresent()) {
+            Estudiante estudiante = (Estudiante) usuario.get();
+            estudiante.getTokenFirebase().add(tokenFirebase);
+            estudianteRepository.save(estudiante);
+        }
+    }
+
+    @Override
+    public void enviarNotificacion(Notificacion notificacion, List<String> tokens) throws FirebaseMessagingException {
         Map<String, String> datos = new HashMap<>();
         datos.put("fecha", notificacion.getFecha().toString());
         datos.put("destinatario", notificacion.getEstudiante().getNombre() + " " + notificacion.getEstudiante().getApellido());
@@ -22,13 +48,42 @@ public class NotificacionServiceImpl implements NotificationService {
                 .setBody(notificacion.getDescripcion())
                 .build();
 
-        Message message = Message.builder()
+        MulticastMessage message = MulticastMessage.builder()
                 .setNotification(notification)
-                .setToken(notificacion.getToken())
+                .addAllTokens(tokens)
                 .putAllData(datos)
                 .build();
 
-        String response = FirebaseMessaging.getInstance().sendAsync(message).get();
-        System.out.println("Notificacion enviada: " + response);
+        BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
+        System.out.println("Notificaciones enviadas: " + response.getSuccessCount() + " exitosas, " + response.getFailureCount() + " fallidas.");
     }
+
+    @Override
+    public void marcarNotificacionLeida(String name, Long idNotificacion){
+        notificacionRepository.findById(idNotificacion).ifPresent(notificacion -> {
+            if (notificacion.getEstudiante().getEmail().equals(name)) {
+                notificacion.setLeido(true);
+                notificacionRepository.save(notificacion);
+            }
+        });
+    }
+
+    @Override
+    public List<NotificacionDTO> obtenerNotificaciones(String name){
+        ModelMapper modelMapper = new ModelMapper();
+        List<Notificacion> notificaciones = notificacionRepository.findByEstudianteEmail(name);
+        List<NotificacionDTO> notificacionesDTO = notificaciones.stream()
+                .map(notificacion -> modelMapper.map(notificacion, NotificacionDTO.class))
+                .collect(Collectors.toList());
+        return notificacionesDTO;
+    }
+
+    @Override
+    public Integer obtenerCantidadNotificacionesNoLeidas(String name){
+        List<Notificacion> notificaciones = notificacionRepository.findByEstudianteEmail(name);
+        return (int) notificaciones.stream().filter(notificacion -> !notificacion.isLeido()).count();
+    }
+
+
+
 }
