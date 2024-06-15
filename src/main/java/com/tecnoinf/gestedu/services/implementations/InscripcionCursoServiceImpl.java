@@ -23,8 +23,10 @@ import com.tecnoinf.gestedu.models.Estudiante;
 import com.tecnoinf.gestedu.models.Horario;
 import com.tecnoinf.gestedu.models.InscripcionCarrera;
 import com.tecnoinf.gestedu.models.InscripcionCurso;
+import com.tecnoinf.gestedu.models.InscripcionExamen;
 import com.tecnoinf.gestedu.models.Usuario;
 import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
+import com.tecnoinf.gestedu.models.enums.CalificacionExamen;
 import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCarrera;
 import com.tecnoinf.gestedu.models.enums.EstadoInscripcionCurso;
@@ -32,8 +34,10 @@ import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CursoRepository;
 import com.tecnoinf.gestedu.repositories.EstudianteRepository;
+import com.tecnoinf.gestedu.repositories.ExamenRepository;
 import com.tecnoinf.gestedu.repositories.InscripcionCarreraRepository;
 import com.tecnoinf.gestedu.repositories.InscripcionCursoRepository;
+import com.tecnoinf.gestedu.repositories.InscripcionExamenRepository;
 import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.EmailService;
@@ -47,15 +51,15 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
     private final InscripcionCarreraRepository inscripcionCarreraRepository;
     private final AsignaturaRepository asignaturaRepository;
     private final UsuarioRepository usuarioRepository;
+    private final InscripcionExamenRepository inscripcionExamenRepository;
     private final EmailService emailService;
     private final ModelMapper modelMapper;
     private final ActividadService actividadService;
 
-
     @Autowired
     public InscripcionCursoServiceImpl(CursoRepository cursoRepository, EstudianteRepository estudianteRepository,
                                        InscripcionCursoRepository inscripcionCursoRepository, InscripcionCarreraRepository inscripcionCarreraRepository,
-                                       AsignaturaRepository asignaturaRepository, UsuarioRepository usuarioRepository, EmailService emailService, ModelMapper modelMapper,
+                                       AsignaturaRepository asignaturaRepository, UsuarioRepository usuarioRepository, InscripcionExamenRepository inscripcionExamenRepository, EmailService emailService, ModelMapper modelMapper,
                                        ActividadService actividadService) {
         this.cursoRepository = cursoRepository;
         this.estudianteRepository = estudianteRepository;
@@ -63,6 +67,7 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
         this.inscripcionCarreraRepository = inscripcionCarreraRepository;
         this.asignaturaRepository = asignaturaRepository;
         this.usuarioRepository = usuarioRepository;
+        this.inscripcionExamenRepository = inscripcionExamenRepository;
         this.emailService = emailService;
         this.modelMapper = modelMapper;
         this.actividadService = actividadService;
@@ -80,7 +85,7 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
         return null;
     }
 
-    Boolean exoneroCursosPrevios(List<Asignatura> asignaturasPrevias, List<InscripcionCurso> inscripcionCursos) {
+    Boolean exoneroCursosPrevios(List<Asignatura> asignaturasPrevias, List<InscripcionCurso> inscripcionCursos, Long idEstudiante) {
         Integer cantPreviasExoneradas = 0;
         Integer contPrevias = 0;
         for (Asignatura auxAsignatura : asignaturasPrevias) {
@@ -91,6 +96,17 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                     //Chequeo que el alumno pasó el curso
                     if (auxInscripcionCurso.getCalificacion().equals(CalificacionCurso.EXONERADO)) {
                         cantPreviasExoneradas++;
+                    }
+                //Si no pasó el curso reviso el examen
+                    else{
+                        List<InscripcionExamen> inscripcionesExamenes = inscripcionExamenRepository.findAllByEstudianteIdAndExamenAsignaturaId(idEstudiante, auxAsignatura.getId());
+                        if(inscripcionesExamenes != null){
+                            for(InscripcionExamen inscripcionExamen: inscripcionesExamenes){
+                                if(inscripcionExamen.getCalificacion().equals(CalificacionExamen.APROBADO)){
+                                    cantPreviasExoneradas++;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -150,7 +166,7 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                         //Si tiene previas...
                         else {
                             //Tengo que chequear que las haya pasado
-                            if (exoneroCursosPrevios(asignaturasPrevias, inscripcionCursos)) {
+                            if (exoneroCursosPrevios(asignaturasPrevias, inscripcionCursos, estudiante.getId())) {
                                 InscripcionCurso inscripcionCurso = new InscripcionCurso();
                                 inscripcionCurso.setCalificacion(CalificacionCurso.PENDIENTE);
                                 inscripcionCurso.setEstudiante(estudiante);
@@ -161,7 +177,8 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                                 actividadService.registrarActividad(TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " + inscripcionCursoDTO.getCursoId() + " exitosa.");
 
                                 return modelMapper.map(createdInscripcion, InscripcionCursoDTO.class);
-                            } else {
+                            }                            
+                            else {
                                 throw new IllegalArgumentException("Faltan exonerar asignaturas previamente.");
                             }
                         }
