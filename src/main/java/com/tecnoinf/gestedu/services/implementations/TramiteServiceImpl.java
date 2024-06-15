@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.services.implementations;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import com.tecnoinf.gestedu.dtos.Tramite.TramiteDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.exceptions.TramiteNotFoundException;
@@ -9,16 +10,14 @@ import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.models.enums.EstadoTramite;
 import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.models.enums.TipoTramite;
-import com.tecnoinf.gestedu.repositories.CarreraRepository;
-import com.tecnoinf.gestedu.repositories.EstudianteRepository;
-import com.tecnoinf.gestedu.repositories.TramiteRepository;
-import com.tecnoinf.gestedu.repositories.UsuarioRepository;
+import com.tecnoinf.gestedu.repositories.*;
 import com.tecnoinf.gestedu.services.interfaces.*;
 import jakarta.mail.MessagingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -37,12 +36,15 @@ public class TramiteServiceImpl implements TramiteService {
     private final TituloService tituloService;
     private final ActividadService actividadService;
     private final EstudianteService estudianteService;
+    private final NotificacionService notificacionService;
+    private final NotificacionRepository notificacionRepository;
 
     @Autowired
     public TramiteServiceImpl(EstudianteRepository estudianteRepository, CarreraRepository carreraRepository,
                               TramiteRepository tramiteRepository, ModelMapper modelMapper, EmailService emailService,
                               UsuarioRepository usuarioRepository, InscripcionCarreraService inscripcionCarreraService,
-                              TituloService tituloService, ActividadService actividadService, EstudianteService estudianteService) {
+                              TituloService tituloService, ActividadService actividadService, EstudianteService estudianteService,
+                              NotificacionService notificacionService, NotificacionRepository notificacionRepository) {
         this.estudianteRepository = estudianteRepository;
         this.carreraRepository = carreraRepository;
         this.tramiteRepository = tramiteRepository;
@@ -53,6 +55,8 @@ public class TramiteServiceImpl implements TramiteService {
         this.tituloService = tituloService;
         this.actividadService = actividadService;
         this.estudianteService = estudianteService;
+        this.notificacionService = notificacionService;
+        this.notificacionRepository = notificacionRepository;
     }
 
     @Override
@@ -190,8 +194,31 @@ public class TramiteServiceImpl implements TramiteService {
                 emailService.sendRechazoTramiteTituloCarreraEmail("gestedu.info@gmail.com", estudianteSolicitante.getNombre(), carrera.getNombre(), usuarioResponsable.getNombre(), motivoRechazo);
             }
         }
+        enviarNotificaciones(carrera, estudianteSolicitante, usuarioResponsable.getNombre(), estadoTramite, motivoRechazo, tipoTramite);
 
         return modelMapper.map(savedTramite, TramiteDTO.class);
+    }
+
+    private void enviarNotificaciones(Carrera carrera, Estudiante estudianteSolicitante, String usuarioResponsable, EstadoTramite estadoTramite, String motivoRechazo, TipoTramite tipoTramite){
+        Notificacion notificacion = new Notificacion(LocalDate.now(), false, estudianteSolicitante);
+        notificacion.setTitulo("Tramite " + tipoTramite + " " + estadoTramite);
+        if(estadoTramite == EstadoTramite.RECHAZADO){
+            notificacion.setDescripcion("El tramite " + tipoTramite + " de la carrera " + carrera.getNombre() + " ha sido " + estadoTramite + " por " + usuarioResponsable + " por el motivo: " + motivoRechazo);
+        } else{
+            notificacion.setDescripcion("El tramite " + tipoTramite + " de la carrera " + carrera.getNombre() + " ha sido " + estadoTramite + " por " + usuarioResponsable + ".");
+        }
+        notificacionRepository.save(notificacion);
+
+        try {
+            List<String> tokens = estudianteSolicitante.getTokenFirebase();
+            if (tokens == null || tokens.isEmpty()) {
+                System.err.println("No se encontraron tokens para el estudiante: " + estudianteSolicitante.getNombre());
+            } else {
+                notificacionService.enviarNotificacion(notificacion, tokens);
+            }
+        } catch (FirebaseMessagingException e) {
+            System.err.println("Error al enviar notificación: " + e.getMessage());
+        }
     }
 
     private TramiteDTO mapTramiteToDTOAndAddCreditosAprobados(Tramite tramite) {
