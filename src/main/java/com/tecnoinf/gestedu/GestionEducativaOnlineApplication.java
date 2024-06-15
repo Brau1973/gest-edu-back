@@ -268,8 +268,8 @@ public class GestionEducativaOnlineApplication {
                 //------------------------------------------------------------------------------------- EXAMEN -------------------------------------------------------------------------------------
 				// ACTIVOS
 				Examen examenCOE = createAndSaveExamen(examenRepository, LocalDateTime.now().plusDays(7).truncatedTo(ChronoUnit.HOURS), 20, Estado.ACTIVO, COE, docente1);
-				Examen examenPAV = createAndSaveExamen(examenRepository, LocalDateTime.now().plusDays(7).truncatedTo(ChronoUnit.HOURS), 20, Estado.ACTIVO, PAV, docente3);
-				Examen examenMDL1 = createAndSaveExamen(examenRepository, LocalDateTime.now().plusDays(7).truncatedTo(ChronoUnit.HOURS), 20, Estado.ACTIVO, MDL1, docente2);
+				Examen examenPAV = createAndSaveExamen(examenRepository, LocalDateTime.now().plusDays(0).truncatedTo(ChronoUnit.HOURS), 20, Estado.ACTIVO, PAV, docente3);
+				Examen examenMDL1 = createAndSaveExamen(examenRepository, LocalDateTime.now().minusDays(3).truncatedTo(ChronoUnit.HOURS), 20, Estado.ACTIVO, MDL1, docente2);
 
 				// FINALIZADOS
 				Examen examenMDL1Finalizado = createAndSaveExamen(examenRepository, LocalDateTime.now().minusMonths(5).truncatedTo(ChronoUnit.HOURS), 20, Estado.FINALIZADO, MDL1, docente2);
