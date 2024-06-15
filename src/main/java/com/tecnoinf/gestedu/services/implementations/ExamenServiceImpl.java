@@ -285,13 +285,10 @@ public class ExamenServiceImpl implements ExamenService {
     }
 
     private void enviarNotificaciones(InscripcionExamen inscripcion) throws MessagingException {
-        Notificacion notificacion = new Notificacion();
+        Notificacion notificacion = new Notificacion(LocalDate.now(), false, inscripcion.getEstudiante());
         notificacion.setTitulo("Calificación de examen");
         notificacion.setDescripcion("Se ha registrado la calificación del examen de la asignatura "
                 + inscripcion.getExamen().getAsignatura().getNombre() + " con calificación " + inscripcion.getCalificacion());
-        notificacion.setEstudiante(inscripcion.getEstudiante());
-        notificacion.setFecha(LocalDate.now());
-        notificacion.setLeido(false);
         notificacionRepository.save(notificacion);
 
         try {

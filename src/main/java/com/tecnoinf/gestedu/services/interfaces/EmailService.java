@@ -37,5 +37,5 @@ public interface EmailService {
 
     //---------------------------------REGISTRAR CALIFICACIONES DE CURSO--------------------------------------
     @Async
-    void sendCalificacionCursoEmail(String to, String estudianteName, String asignaturaName, CalificacionCurso calificacion) throws MessagingException;
+    void sendCalificacionCursoEmail(String to, String estudianteName, String carreraName, String asignaturaName, String calificacion) throws MessagingException;
 }

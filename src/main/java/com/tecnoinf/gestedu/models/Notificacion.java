@@ -23,4 +23,10 @@ public class Notificacion {
 
     @ManyToOne
     private Estudiante estudiante;
+
+    public Notificacion(LocalDate fecha, boolean leido, Estudiante estudiante) {
+        this.fecha = fecha;
+        this.leido = leido;
+        this.estudiante = estudiante;
+    }
 }
