@@ -1,25 +1,38 @@
 package com.tecnoinf.gestedu.services.implementations;
 
+import java.lang.reflect.Type;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.stereotype.Service;
+
 import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.curso.HorarioDTO;
 import com.tecnoinf.gestedu.dtos.usuario.UsuarioDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
-import com.tecnoinf.gestedu.models.*;
+import com.tecnoinf.gestedu.models.Asignatura;
+import com.tecnoinf.gestedu.models.Curso;
+import com.tecnoinf.gestedu.models.Docente;
+import com.tecnoinf.gestedu.models.Estudiante;
+import com.tecnoinf.gestedu.models.Horario;
+import com.tecnoinf.gestedu.models.InscripcionCurso;
 import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.models.enums.TipoActividad;
-import com.tecnoinf.gestedu.repositories.*;
+import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
+import com.tecnoinf.gestedu.repositories.CursoRepository;
+import com.tecnoinf.gestedu.repositories.DocenteRepository;
+import com.tecnoinf.gestedu.repositories.EstudianteRepository;
+import com.tecnoinf.gestedu.repositories.HorarioRepository;
+import com.tecnoinf.gestedu.repositories.InscripcionCursoRepository;
 import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.CursoService;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.lang.reflect.Type;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.time.LocalTime;
 
 @Service
 public class CursoServiceImpl implements CursoService {
@@ -137,5 +150,28 @@ public class CursoServiceImpl implements CursoService {
 
         Type listType = new TypeToken<CursoDTO>(){}.getType();
         return modelMapper.map(curso, listType);
+    }
+
+    @Override
+    public Page<HorarioDTO> getHorariosByCurso(Long cursoId, Pageable pageable)
+    {
+        Curso curso = cursoRepository.findById(cursoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Curso not found with id " + cursoId));
+        List<Horario> horarios = curso.getHorarios();
+        List<HorarioDTO> listaHorarioDTO = new ArrayList<>();
+
+        if(horarios != null){
+            for(Horario aux : horarios){
+                HorarioDTO horarioDTO = new HorarioDTO();
+                horarioDTO.setId(aux.getId());
+                horarioDTO.setDia(aux.getDia());
+                horarioDTO.setHoraInicio(aux.getHoraInicio());
+                horarioDTO.setHoraFin(aux.getHoraFin());
+                listaHorarioDTO.add(horarioDTO);
+            }
+        }
+        return new PageImpl<>(listaHorarioDTO, pageable, listaHorarioDTO.size());
+        //Type listType = new TypeToken<List<HorarioDTO>>(){}.getType();
+        //return modelMapper.map(horarios, listType);
     }
 }
