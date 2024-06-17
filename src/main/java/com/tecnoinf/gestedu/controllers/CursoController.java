@@ -8,6 +8,8 @@ import com.tecnoinf.gestedu.dtos.usuario.UsuarioDTO;
 import com.tecnoinf.gestedu.services.interfaces.CursoService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,5 +55,12 @@ public class CursoController {
     public ResponseEntity<CursoDTO> getCursoById(@PathVariable Long cursoId){
         CursoDTO curso = cursoService.getCursoPorId(cursoId);
         return  ResponseEntity.ok(curso);
+    }
+
+    @Operation(summary = "Obtner Horarios del Curso")
+    @GetMapping("/{cursoId}/horarios")
+    public ResponseEntity<Page<HorarioDTO>> getHorariosByCursoId(@PathVariable Long cursoId, Pageable pageable){
+        Page<HorarioDTO> horarios = cursoService.getHorariosByCurso(cursoId, pageable);
+        return ResponseEntity.ok(horarios);
     }
 }
