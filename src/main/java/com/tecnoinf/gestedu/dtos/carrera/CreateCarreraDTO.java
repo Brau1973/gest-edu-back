@@ -10,6 +10,4 @@ import lombok.NoArgsConstructor;
 public class CreateCarreraDTO {
     private String nombre;
     private String descripcion;
-    private Integer duracionAnios;
-    private Integer creditos;
 }

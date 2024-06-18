@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.exceptions;
 
+import jakarta.mail.MessagingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,9 +15,14 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = { ResourceNotFoundException.class })
+    @ExceptionHandler(value = {
+            TramiteNotFoundException.class,
+            ResourceNotFoundException.class,
+            TokenInactivoException.class,
+            TokenVencidoException.class,
+            TokenInvalidoException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    protected ResponseEntity<Object> handleNotFound(RuntimeException ex) {
+    protected ResponseEntity<Map<String, Object>> handleNotFound(RuntimeException ex) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("message", ex.getMessage());
@@ -24,13 +30,38 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = { UniqueFieldException.class })
+    @ExceptionHandler(value = {
+            UniqueFieldException.class,
+            PlanEstudioNoExisteException.class,
+            SemestreException.class,
+            AsignaturaPreviaExistenteException.class,
+            CicloEnAsignaturasException.class,
+            FechaException.class,
+            TramitePendienteExistenteException.class,
+            TramiteNotPendienteException.class,
+            MessagingException.class,
+            PeriodoInscripcionExeption.class,
+            InscripcionExamenException.class,
+            CalificacionExamenExeption.class,
+            BajaExamenException.class,
+            BajaDocenteException.class,
+            })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected ResponseEntity<Object> handleUniqueField(UniqueFieldException ex) {
+    public ResponseEntity<Map<String, Object>> handleBadRequest(RuntimeException ex) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("message", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<Map<String, Object>> handleBadCredentials(BadCredentialsException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("message", ex.getMessage());
+        body.put("trace", "");
+        return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
     }
 }

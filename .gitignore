@@ -61,4 +61,7 @@ out/
 ### VS Code ###
 .vscode/
 
+# Ignore the development properties file
+application-dev.properties
 *ssl-server.jks*
+/src/main/resources/gestedu2024-firebase-adminsdk-ckzik-bfe20d3ea9.json

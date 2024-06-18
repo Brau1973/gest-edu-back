@@ -1,10 +1,9 @@
 package com.tecnoinf.gestedu.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -18,9 +17,31 @@ public class Carrera {
     private Long id;
     @Column(unique = true)
     private String nombre;
+    @Column(length = 2000)
     private String descripcion;
-    private Integer duracionAnios;
+    @Transient
+    private Float duracionAnios;
+    @Transient
     private Integer creditos;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean existePlanEstudio = false;
+    @OneToMany(mappedBy = "carrera", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Asignatura> asignaturas = new ArrayList<>();
+    @OneToMany(mappedBy = "carrera", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<InscripcionCarrera> inscripciones = new ArrayList<>();
     @OneToMany(mappedBy = "carrera")
-    private List<Asignatura> asignaturas;
+    private List<PeriodoExamen> periodosExamen;
+
+    @PostLoad
+    private void calculateCreditosYDuracion() {
+        if(asignaturas != null && !asignaturas.isEmpty()){
+            this.creditos = asignaturas.stream().mapToInt(Asignatura::getCreditos).sum();
+            this.duracionAnios =  (asignaturas.stream().mapToInt(Asignatura::getSemestrePlanEstudio).max().orElse(0) / 2.0f);
+        }
+    }
+
 }

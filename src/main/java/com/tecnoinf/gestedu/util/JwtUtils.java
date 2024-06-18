@@ -6,8 +6,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.tecnoinf.gestedu.models.ListaNegraToken;
-import com.tecnoinf.gestedu.repositories.ListaNegraTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -28,9 +26,6 @@ public class JwtUtils {
     @Value("${security.jwt.user.generator}")
     private String userGenerator;
 
-    @Autowired
-    private ListaNegraTokenRepository listaNegraTokenRepository;
-
     public String crearToken(Authentication authentication) {
         Algorithm algoritmo = Algorithm.HMAC256(this.privateKey);
 
@@ -44,7 +39,7 @@ public class JwtUtils {
                 .withSubject(username)
                 .withClaim("roles", roles)
                 .withIssuedAt(new Date())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 1800000)) //vence en 30 minutos
+                .withExpiresAt(new Date(System.currentTimeMillis() + 5400000)) //vence en 90 minutos
                 .withJWTId(UUID.randomUUID().toString())
                 .withNotBefore(new Date(System.currentTimeMillis()))
                 .sign(algoritmo);
@@ -53,11 +48,6 @@ public class JwtUtils {
 
     public DecodedJWT validarToken(String token) {
         try{
-            ListaNegraToken listaNegraToken = listaNegraTokenRepository.findByToken(token);
-            if (listaNegraToken != null) {
-                throw new JWTVerificationException("Token en lista negra");
-            }
-
             Algorithm algoritmo = Algorithm.HMAC256(this.privateKey);
             JWTVerifier verifier = JWT.require(algoritmo)
                     .withIssuer(this.userGenerator)
@@ -65,6 +55,7 @@ public class JwtUtils {
             DecodedJWT decodedJWT = verifier.verify(token);
             return decodedJWT;
         } catch (JWTVerificationException e) {
+            System.out.println("Token validation failed: " + e.getMessage());
             throw new JWTVerificationException("Token no válido");
         }
     }
@@ -81,11 +72,4 @@ public class JwtUtils {
         return decodedJWT.getClaims();
     }
 
-    public void listaNegraToken(String token) {
-        DecodedJWT decodedJWT = validarToken(token);
-        ListaNegraToken blacklistedToken = new ListaNegraToken();
-        blacklistedToken.setToken(token);
-        blacklistedToken.setFechaExpiracion(decodedJWT.getExpiresAt().toInstant());
-        listaNegraTokenRepository.save(blacklistedToken);
-    }
 }
