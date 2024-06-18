@@ -63,7 +63,7 @@ public class TramiteServiceImpl implements TramiteService {
         //Verificar si el estudiante ya tiene un trámite pendiente asociado con la misma carrera y con el mismo tipo
         if (tramiteRepository.existsByUsuarioSolicitanteAndCarreraAndTipoAndEstado(estudiante, carrera, tipoTramite, EstadoTramite.PENDIENTE)) {
             throw new TramitePendienteExistenteException("El estudiante " + estudiante.getNombre() + " ya tiene un trámite pendiente del tipo "
-                    + tipoTramite + "relacionado con la carrera" +carrera.getNombre());
+                    + tipoTramite + " relacionado con la carrera " +carrera.getNombre());
         }
 
         Tramite tramite = new Tramite();
