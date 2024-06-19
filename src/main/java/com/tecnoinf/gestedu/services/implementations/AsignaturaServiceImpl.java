@@ -15,6 +15,7 @@ import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
+import com.tecnoinf.gestedu.repositories.CursoRepository;
 import com.tecnoinf.gestedu.repositories.ExamenRepository;
 import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.AsignaturaService;
@@ -40,15 +41,18 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     private final CarreraRepository carreraRepository;
     private final ExamenRepository examenRepository;
     private final ActividadService actividadService;
+    private final CursoRepository cursoRepository;
 
 
     @Autowired
-    public AsignaturaServiceImpl(ActividadService actividadService, AsignaturaRepository asignaturaRepository, CarreraRepository carreraRepository , ModelMapper modelMapper, ExamenRepository examenRepository) {
+    public AsignaturaServiceImpl(ActividadService actividadService, AsignaturaRepository asignaturaRepository, CarreraRepository carreraRepository ,
+                                 ModelMapper modelMapper, ExamenRepository examenRepository, CursoRepository cursoRepository) {
         this.asignaturaRepository = asignaturaRepository;
         this.carreraRepository = carreraRepository;
         this.modelMapper = modelMapper;
         this.examenRepository = examenRepository;
         this.actividadService = actividadService;
+        this.cursoRepository = cursoRepository;
     }
 
     @Override
@@ -233,5 +237,21 @@ public class AsignaturaServiceImpl implements AsignaturaService {
 
         Type listType = new TypeToken<List<CursoDTO>>(){}.getType();
         return modelMapper.map(cursos, listType);
+    }
+
+    @Override
+    public List<CursoDTO> obtenerCursosCalificadosDeAsignatura(Long asignaturaId){
+        List<Curso> cursos = cursoRepository.findByAsignaturaIdAndEstado(asignaturaId, Estado.FINALIZADO);
+        return cursos.stream()
+                .map(curso -> modelMapper.map(curso, CursoDTO.class))
+                .toList();
+    }
+
+    @Override
+    public List<ExamenDTO> obtenerExamenesCalificadosDeAsignatura(Long asignaturaId){
+        List<Examen> examenes = examenRepository.findByAsignaturaIdAndEstado(asignaturaId, Estado.FINALIZADO);
+        return examenes.stream()
+                .map(examen -> modelMapper.map(examen, ExamenDTO.class))
+                .toList();
     }
 }
