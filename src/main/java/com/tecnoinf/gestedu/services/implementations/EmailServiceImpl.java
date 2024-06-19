@@ -131,10 +131,10 @@ public class EmailServiceImpl implements EmailService {
     //---------------------------------REGISTRAR CALIFICACIONES DE CURSO--------------------------------------
     @Override
     @Async
-    public void sendCalificacionCursoEmail(String to, String estudianteName, String asignaturaName, CalificacionCurso calificacion) throws MessagingException {
+    public void sendCalificacionCursoEmail(String to, String estudianteName, String carreraName, String asignaturaName, String calificacion) throws MessagingException {
         String subject = "Calificación del curso " + asignaturaName;
         String htmlBody = "<h1> Saludos " + estudianteName + ". </h1>"
-                + "<p>Tu calificación para el curso " + asignaturaName + " es: " + calificacion.toString()
+                + "<p>Tu calificación para el curso " + asignaturaName + "de la carrera " + carreraName  + " es: " + calificacion
                 + ".<br>" +
                 " Saludos,<br>" +
                 " Equipo GestEdu</p>"

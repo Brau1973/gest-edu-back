@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.services.implementations;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.examen.ActaExamenDTO;
@@ -42,12 +43,15 @@ public class ExamenServiceImpl implements ExamenService {
     private final InscripcionCursoRepository inscripcionCursoRepository;
     private final EmailService emailService;
     private final ActividadService actividadService;
+    private final NotificacionRepository notificacionRepository;
+    private final NotificacionService notificacionService;
 
 
     public ExamenServiceImpl(PeriodoExamenService periodoExamenService,CarreraService carreraService,
                              AsignaturaRepository asignaturaRepository, DocenteRepository docenteRepository,
                              ExamenRepository examenRepository, UsuarioRepository usuarioRepository, InscripcionExamenRepository inscripcionExamenRepository,
-                             InscripcionCursoRepository inscripcionCursoRepository, EstudianteRepository estudianteRepository, EmailService emailService, ActividadService actividadService) {
+                             InscripcionCursoRepository inscripcionCursoRepository, EstudianteRepository estudianteRepository, EmailService emailService,
+                             ActividadService actividadService, NotificacionRepository notificacionRepository, NotificacionService notificacionService) {
         this.carreraService = carreraService;
         this.asignaturaRepository = asignaturaRepository;
         this.docenteRepository = docenteRepository;
@@ -57,6 +61,8 @@ public class ExamenServiceImpl implements ExamenService {
         this.inscripcionCursoRepository = inscripcionCursoRepository;
         this.emailService = emailService;
         this.actividadService = actividadService;
+        this.notificacionRepository = notificacionRepository;
+        this.notificacionService = notificacionService;
     }
 
     @Override
@@ -259,10 +265,9 @@ public class ExamenServiceImpl implements ExamenService {
             inscripcion.setCalificacion(calificacionDTO.getCalificacion());
             inscripcionExamenRepository.save(inscripcion);
 
-            emailService.sendCalificacionesExamenEmail(inscripcion.getEstudiante().getEmail(),
-                    inscripcion.getEstudiante().getNombre(), inscripcion.getExamen().getAsignatura().getCarrera().getNombre(),
-                    inscripcion.getExamen().getAsignatura().getNombre(), inscripcion.getCalificacion().toString());
+            enviarNotificaciones(inscripcion);
         }
+
         examen.setEstado(Estado.FINALIZADO);
         examenRepository.save(examen);
 
@@ -272,6 +277,30 @@ public class ExamenServiceImpl implements ExamenService {
                 .stream()
                 .map(InscripcionExamenCalificacionDTO::new)
                 .toList();
+    }
+
+    private void enviarNotificaciones(InscripcionExamen inscripcion) throws MessagingException {
+        Notificacion notificacion = new Notificacion(LocalDate.now(), false, inscripcion.getEstudiante());
+        notificacion.setTitulo("Calificación de examen");
+        notificacion.setDescripcion("Se ha registrado la calificación del examen de la asignatura "
+                + inscripcion.getExamen().getAsignatura().getNombre() + " con calificación " + inscripcion.getCalificacion());
+        notificacionRepository.save(notificacion);
+
+        try {
+            List<String> tokens = inscripcion.getEstudiante().getTokenFirebase();
+            if (tokens == null || tokens.isEmpty()) {
+                System.err.println("No se encontraron tokens para el estudiante: " + inscripcion.getEstudiante().getNombre());
+            } else {
+                notificacionService.enviarNotificacion(notificacion, tokens);
+            }
+        } catch (FirebaseMessagingException e) {
+            System.err.println("Error al enviar notificación: " + e.getMessage());
+        }
+
+        // Enviar el correo electrónico
+        emailService.sendCalificacionesExamenEmail(inscripcion.getEstudiante().getEmail(),
+                inscripcion.getEstudiante().getNombre(), inscripcion.getExamen().getAsignatura().getCarrera().getNombre(),
+                inscripcion.getExamen().getAsignatura().getNombre(), inscripcion.getCalificacion().toString());
     }
 
     @Override
