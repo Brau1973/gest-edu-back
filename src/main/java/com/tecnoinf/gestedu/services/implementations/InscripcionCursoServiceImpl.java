@@ -139,7 +139,7 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Curso not found with id " + inscripcionCursoDTO.getCursoId()));
 
         //Me fijo en qué carreras está inscripto el estudiante
-        List<InscripcionCarrera> inscripcionTodasCarrerasAlumno = inscripcionCarreraRepository.findInscripcionCarreraEstudianteById(inscripcionCursoDTO.getEstudianteId());
+        List<InscripcionCarrera> inscripcionTodasCarrerasAlumno = inscripcionCarreraRepository.findInscripcionCarreraEstudianteById(estudiante.getId());
         if (inscripcionTodasCarrerasAlumno != null) {
             //Selecciono la carrera perteneciente al curso
             InscripcionCarrera inscripcionCarrera = estaInscriptoEnCarrera(inscripcionTodasCarrerasAlumno, curso);
