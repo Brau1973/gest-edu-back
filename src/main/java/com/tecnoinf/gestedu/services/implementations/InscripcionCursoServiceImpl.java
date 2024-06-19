@@ -1,11 +1,15 @@
 package com.tecnoinf.gestedu.services.implementations;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.tecnoinf.gestedu.models.*;
+import com.tecnoinf.gestedu.repositories.*;
+import com.tecnoinf.gestedu.services.interfaces.NotificacionService;
+import jakarta.mail.MessagingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +38,6 @@ import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CursoRepository;
 import com.tecnoinf.gestedu.repositories.EstudianteRepository;
-import com.tecnoinf.gestedu.repositories.ExamenRepository;
 import com.tecnoinf.gestedu.repositories.InscripcionCarreraRepository;
 import com.tecnoinf.gestedu.repositories.InscripcionCursoRepository;
 import com.tecnoinf.gestedu.repositories.InscripcionExamenRepository;
@@ -55,12 +58,16 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
     private final EmailService emailService;
     private final ModelMapper modelMapper;
     private final ActividadService actividadService;
+    private final NotificacionRepository notificacionRepository;
+    private final NotificacionService notificacionService;
+
 
     @Autowired
     public InscripcionCursoServiceImpl(CursoRepository cursoRepository, EstudianteRepository estudianteRepository,
                                        InscripcionCursoRepository inscripcionCursoRepository, InscripcionCarreraRepository inscripcionCarreraRepository,
-                                       AsignaturaRepository asignaturaRepository, UsuarioRepository usuarioRepository, InscripcionExamenRepository inscripcionExamenRepository, EmailService emailService, ModelMapper modelMapper,
-                                       ActividadService actividadService) {
+                                       AsignaturaRepository asignaturaRepository, UsuarioRepository usuarioRepository, InscripcionExamenRepository inscripcionExamenRepository,
+                                       EmailService emailService, ModelMapper modelMapper, ActividadService actividadService, NotificacionRepository notificacionRepository,
+                                       NotificacionService notificacionService) {
         this.cursoRepository = cursoRepository;
         this.estudianteRepository = estudianteRepository;
         this.inscripcionCursoRepository = inscripcionCursoRepository;
@@ -71,6 +78,8 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
         this.emailService = emailService;
         this.modelMapper = modelMapper;
         this.actividadService = actividadService;
+        this.notificacionRepository = notificacionRepository;
+        this.notificacionService = notificacionService;
     }
 
     InscripcionCarrera estaInscriptoEnCarrera(List<InscripcionCarrera> inscripcionCarrera, Curso curso) {
@@ -97,7 +106,7 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                     if (auxInscripcionCurso.getCalificacion().equals(CalificacionCurso.EXONERADO)) {
                         cantPreviasExoneradas++;
                     }
-                //Si no pasó el curso reviso el examen
+                    //Si no pasó el curso reviso el examen
                     else{
                         List<InscripcionExamen> inscripcionesExamenes = inscripcionExamenRepository.findAllByEstudianteIdAndExamenAsignaturaId(idEstudiante, auxAsignatura.getId());
                         if(inscripcionesExamenes != null){
@@ -177,7 +186,7 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                                 actividadService.registrarActividad(TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " + inscripcionCursoDTO.getCursoId() + " exitosa.");
 
                                 return modelMapper.map(createdInscripcion, InscripcionCursoDTO.class);
-                            }                            
+                            }
                             else {
                                 throw new IllegalArgumentException("Faltan exonerar asignaturas previamente.");
                             }
@@ -200,7 +209,7 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
     }
 
     @Override
-    public List<InscripcionCursoCalificacionDTO> registrarCalificaciones(Long id, List<InscripcionCursoCalificacionDTO> calificaciones){
+    public List<InscripcionCursoCalificacionDTO> registrarCalificaciones(Long id, List<InscripcionCursoCalificacionDTO> calificaciones) throws MessagingException {
         Curso curso = cursoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Curso no encontrado."));
         if (calificaciones.isEmpty()) {
@@ -232,12 +241,7 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
 
             actividadService.registrarActividad(TipoActividad.REGISTRO_CALIFICACION, "Registro de calificaciónes de curso");
 
-            //TODO Chequear el mandado de mails
-            /*try {
-                emailService.sendCalificacionCursoEmail("gestedu.info@gmail.com", estudiante.getNombre(), inscripcionCurso.getCurso().getAsignatura().getNombre(), inscripcionCurso.getCalificacion());
-            } catch (MessagingException e) {
-                throw new RuntimeException(e);
-            }*/
+            enviarNotificaciones(inscripcionCurso);
         }
 
         curso.setEstado(Estado.FINALIZADO);
@@ -247,6 +251,28 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                 .stream()
                 .map(InscripcionCursoCalificacionDTO::new)
                 .toList();
+    }
+
+    private void enviarNotificaciones(InscripcionCurso inscripcionCurso) throws MessagingException {
+        Notificacion notificacion = new Notificacion(LocalDate.now(), false, inscripcionCurso.getEstudiante());
+        notificacion.setTitulo("Calificación de curso");
+        notificacion.setDescripcion("Se ha registrado la calificación del curso " + inscripcionCurso.getCurso().getAsignatura().getNombre());
+        notificacionRepository.save(notificacion);
+
+        try {
+            List<String> tokens = inscripcionCurso.getEstudiante().getTokenFirebase();
+            if (tokens == null || tokens.isEmpty()) {
+                System.err.println("No se encontraron tokens para el estudiante: " + inscripcionCurso.getEstudiante().getNombre());
+            } else {
+                notificacionService.enviarNotificacion(notificacion, tokens);
+            }
+        } catch (FirebaseMessagingException e) {
+            System.err.println("Error al enviar notificación: " + e.getMessage());
+        }
+        // Enviar el correo electrónico
+        emailService.sendCalificacionCursoEmail(inscripcionCurso.getEstudiante().getEmail(),
+                inscripcionCurso.getEstudiante().getNombre(), inscripcionCurso.getCurso().getAsignatura().getCarrera().getNombre(),
+                inscripcionCurso.getCurso().getAsignatura().getNombre(), inscripcionCurso.getCalificacion().toString());
     }
 
     @Override

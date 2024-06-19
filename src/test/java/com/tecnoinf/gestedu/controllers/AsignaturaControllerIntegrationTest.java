@@ -1,6 +1,8 @@
 package com.tecnoinf.gestedu.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.firebase.FirebaseApp;
+import com.tecnoinf.gestedu.config.TestConfig;
 import com.tecnoinf.gestedu.dtos.asignatura.CreateAsignaturaDTO;
 import com.tecnoinf.gestedu.models.Asignatura;
 import com.tecnoinf.gestedu.models.Carrera;
@@ -16,10 +18,12 @@ import com.tecnoinf.gestedu.services.interfaces.AsignaturaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
+@Import(TestConfig.class)
 @SpringBootTest(properties = {
         "spring.jpa.hibernate.ddl-auto=update"
 })
@@ -71,6 +76,9 @@ public class AsignaturaControllerIntegrationTest {
 
     @InjectMocks
     private InscripcionCursoController inscripcionCursoController;
+
+    @Mock
+    private FirebaseApp firebaseApp;
 
     @BeforeEach
     public void setup() {

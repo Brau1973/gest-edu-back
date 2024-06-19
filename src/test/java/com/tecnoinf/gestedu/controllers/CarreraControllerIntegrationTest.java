@@ -1,18 +1,23 @@
 package com.tecnoinf.gestedu.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.firebase.FirebaseApp;
+import com.tecnoinf.gestedu.config.TestConfig;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.models.enums.*;
 import com.tecnoinf.gestedu.repositories.*;
 import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -34,9 +39,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Import(TestConfig.class)
 @SpringBootTest(properties = {
         "spring.jpa.hibernate.ddl-auto=update"
 })
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 public class CarreraControllerIntegrationTest {
     @Autowired
@@ -69,6 +76,8 @@ public class CarreraControllerIntegrationTest {
     @Autowired
     private DocenteRepository docenteRepository;
 
+    @Mock
+    private FirebaseApp firebaseApp;
 
     @MockBean
     private ActividadService actividadService;
