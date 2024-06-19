@@ -1,6 +1,7 @@
 package com.tecnoinf.gestedu.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tecnoinf.gestedu.config.TestConfig;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.models.enums.*;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -34,6 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Import(TestConfig.class)
 @SpringBootTest(properties = {
         "spring.jpa.hibernate.ddl-auto=update"
 })
