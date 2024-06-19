@@ -73,6 +73,9 @@ public class ExamenServiceImplTest {
     @Mock
     private ActividadService actividadService;
 
+    @Mock
+    private NotificacionRepository notificacionRepository;
+
     @BeforeEach
     public void init() {
         MockitoAnnotations.initMocks(this);

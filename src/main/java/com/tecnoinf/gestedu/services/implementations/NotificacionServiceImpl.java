@@ -41,7 +41,7 @@ public class NotificacionServiceImpl implements NotificacionService {
     public void enviarNotificacion(Notificacion notificacion, List<String> tokens) throws FirebaseMessagingException {
 
         if (tokens == null || tokens.isEmpty()) {
-            throw new IllegalArgumentException("El token Firebase no puede ser nulo o vacío.");
+            return;
         }
 
         Map<String, String> datos = new HashMap<>();
@@ -69,7 +69,7 @@ public class NotificacionServiceImpl implements NotificacionService {
             }
         });
     }
-    
+
     @Override
     public List<NotificacionDTO> obtenerNotificaciones(String name){
         ModelMapper modelMapper = new ModelMapper();
@@ -85,4 +85,5 @@ public class NotificacionServiceImpl implements NotificacionService {
         List<Notificacion> notificaciones = notificacionRepository.findByEstudianteEmail(name);
         return (int) notificaciones.stream().filter(notificacion -> !notificacion.isLeido()).count();
     }
+
 }
