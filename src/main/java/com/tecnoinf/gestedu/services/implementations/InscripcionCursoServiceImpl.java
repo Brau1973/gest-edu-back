@@ -1,7 +1,6 @@
 package com.tecnoinf.gestedu.services.implementations;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +38,6 @@ import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CursoRepository;
 import com.tecnoinf.gestedu.repositories.EstudianteRepository;
-import com.tecnoinf.gestedu.repositories.ExamenRepository;
 import com.tecnoinf.gestedu.repositories.InscripcionCarreraRepository;
 import com.tecnoinf.gestedu.repositories.InscripcionCursoRepository;
 import com.tecnoinf.gestedu.repositories.InscripcionExamenRepository;
@@ -47,7 +45,6 @@ import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.EmailService;
 import com.tecnoinf.gestedu.services.interfaces.InscripcionCursoService;
-import com.tecnoinf.gestedu.services.interfaces.NotificationService;
 
 @Service
 public class InscripcionCursoServiceImpl implements InscripcionCursoService {
