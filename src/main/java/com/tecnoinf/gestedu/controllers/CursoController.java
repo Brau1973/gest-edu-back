@@ -63,4 +63,12 @@ public class CursoController {
         Page<HorarioDTO> horarios = cursoService.getHorariosByCurso(cursoId, pageable);
         return ResponseEntity.ok(horarios);
     }
+
+    @Operation(summary = "Obtener calificaciones de curso")
+    @GetMapping("/{id}/calificaciones")
+    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    public ResponseEntity<List<InscripcionCursoCalificacionDTO>> getCalificacionesExamen(@PathVariable Long id) {
+        List<InscripcionCursoCalificacionDTO> calificaciones = cursoService.obtenerCalificaciones(id);
+        return ResponseEntity.ok().body(calificaciones);
+    }
 }

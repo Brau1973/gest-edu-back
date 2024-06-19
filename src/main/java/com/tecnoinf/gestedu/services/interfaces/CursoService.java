@@ -2,6 +2,8 @@ package com.tecnoinf.gestedu.services.interfaces;
 
 import java.util.List;
 
+import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
+import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenCalificacionDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -15,4 +17,5 @@ public interface CursoService {
     List<UsuarioDTO> getEstudiantesByCurso(Long cursoId);
     CursoDTO getCursoPorId(Long cursoId);
     Page<HorarioDTO> getHorariosByCurso(Long cursoId, Pageable pageable);
+    List<InscripcionCursoCalificacionDTO> obtenerCalificaciones(Long id);
 }

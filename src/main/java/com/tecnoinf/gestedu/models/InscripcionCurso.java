@@ -36,4 +36,5 @@ public class InscripcionCurso {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Curso curso;
+
 }

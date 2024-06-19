@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -173,5 +174,15 @@ public class CursoServiceImpl implements CursoService {
         return new PageImpl<>(listaHorarioDTO, pageable, listaHorarioDTO.size());
         //Type listType = new TypeToken<List<HorarioDTO>>(){}.getType();
         //return modelMapper.map(horarios, listType);
+    }
+
+    @Override
+    public List<InscripcionCursoCalificacionDTO> obtenerCalificaciones(Long id){
+        Curso curso = cursoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Curso no encontrado"));
+        return curso.getInscripciones()
+                .stream()
+                .map(InscripcionCursoCalificacionDTO::new)
+                .toList();
     }
 }
