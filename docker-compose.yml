@@ -8,6 +8,8 @@ services:
       DB_URL: ${DB_URL}
       DB_USER_NAME: ${DB_USER_NAME}
       DB_PASSWORD: ${DB_PASSWORD}
+      MAIL_USER_NAME: ${MAIL_USER_NAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
     restart: always
     depends_on:
       - db
