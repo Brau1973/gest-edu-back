@@ -101,4 +101,18 @@ public class AsignaturaController {
         List<CursoDTO> cursos = asignaturaService.obtenerCursosDeAsignatura(asignaturaId);
         return ResponseEntity.ok().body(cursos);
     }
+
+    @Operation(summary = "Obtener cursos calificados de una asignatura")
+    @GetMapping("{asignaturaId}/cursosCalificados")
+    public ResponseEntity<List<CursoDTO>> getCursosCalificadosDeAsignatura(@PathVariable Long asignaturaId){
+        List<CursoDTO> cursos = asignaturaService.obtenerCursosCalificadosDeAsignatura(asignaturaId);
+        return ResponseEntity.ok().body(cursos);
+    }
+
+    @Operation(summary = "Obtener examenes calificados de una asignatura")
+    @GetMapping("{asignaturaId}/examenesCalificados")
+    public ResponseEntity<List<ExamenDTO>> getExamenesCalificadosDeAsignatura(@PathVariable Long asignaturaId){
+        List<ExamenDTO> examenes = asignaturaService.obtenerExamenesCalificadosDeAsignatura(asignaturaId);
+        return ResponseEntity.ok().body(examenes);
+    }
 }
