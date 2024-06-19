@@ -6,6 +6,7 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -20,6 +21,7 @@ public class FirebaseConfig {
 
 
     @Bean
+    @Profile("!test")
     public FirebaseApp initializeFirebase() throws IOException {
         FileInputStream serviceAccount =
                 new FileInputStream("src/main/resources/gestedu2024-firebase-adminsdk-ckzik-bfe20d3ea9.json");

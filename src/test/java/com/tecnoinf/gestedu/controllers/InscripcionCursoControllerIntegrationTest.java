@@ -1,6 +1,7 @@
 package com.tecnoinf.gestedu.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.firebase.FirebaseApp;
 import com.tecnoinf.gestedu.config.TestConfig;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoDTO;
@@ -25,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(properties = {
         "spring.jpa.hibernate.ddl-auto=update"
 })
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 public class InscripcionCursoControllerIntegrationTest {
     @Autowired
@@ -80,6 +83,9 @@ public class InscripcionCursoControllerIntegrationTest {
 
     @Autowired
     private DocenteRepository docenteRepository;
+
+    @Mock
+    private FirebaseApp firebaseApp;
 
     @MockBean
     private ActividadService actividadService;
