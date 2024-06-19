@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.config;
 
+import com.google.firebase.FirebaseApp;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Bean;
@@ -21,5 +22,11 @@ public class TestConfig {
         MimeMessage mimeMessage = new JavaMailSenderImpl().createMimeMessage();
         when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
         return mailSender;
+    }
+
+    @Bean
+    @Primary
+    public FirebaseApp firebaseApp() {
+        return mock(FirebaseApp.class);
     }
 }
