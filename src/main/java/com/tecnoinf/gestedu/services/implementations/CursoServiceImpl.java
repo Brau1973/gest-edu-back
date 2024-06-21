@@ -192,7 +192,6 @@ public class CursoServiceImpl implements CursoService {
 
     @Override
     public ActaCursoDTO generarActaCurso(Long id) {
-        System.out.println("Inicio del método generarActaCurso con id: " + id);
         Curso curso;
         try {
             curso = cursoRepository.findById(id)
@@ -208,21 +207,15 @@ public class CursoServiceImpl implements CursoService {
             actaCurso.setFecha(curso.getFechaFin());
             actaCurso.setAsignatura(new AsignaturaDTO(curso.getAsignatura()));
             actaCurso.setDocente(new DocenteDTO(curso.getDocente()));
+            actaCurso.setCurso(new CursoDTO(curso));
             actaCurso.setInscripciones(curso.getInscripciones().stream().map(InscripcionCursoDTO::new).toList());
-            System.out.println("ActaCursoDTO creado correctamente.");
         } catch (Exception e) {
             System.err.println("Error al crear Acta Curso: " + e.getMessage());
             throw e;
         }
-        System.out.println("ENTRE AL FOR");
-        for(InscripcionCursoDTO cursoaux: actaCurso.getInscripciones()){
-            System.out.println(cursoaux.getFechaInscripcion().toString());
-        }            System.out.println("SALI DEL FOR");
 
-        System.out.println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
         try {
             actividadService.registrarActividad(TipoActividad.GENERACION_ACTA_CURSO, "Generación del acta del curso con id " + id);
-            System.out.println("Actividad registrada correctamente.");
         } catch (Exception e) {
             System.err.println("Error al registrar actividad: " + e.getMessage());
             throw e;
