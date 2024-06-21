@@ -14,12 +14,14 @@ public class InscripcionExamenCalificacionDTO {
     private Long estudianteId;
     private String estudianteNombre;
     private String estudianteApellido;
+    private String estudianteCi;
     private CalificacionExamen calificacion;
 
     public InscripcionExamenCalificacionDTO(InscripcionExamen inscripcionExamen) {
         this.estudianteId = inscripcionExamen.getEstudiante().getId();
         this.estudianteNombre = inscripcionExamen.getEstudiante().getNombre();
         this.estudianteApellido = inscripcionExamen.getEstudiante().getApellido();
+        this.estudianteCi = inscripcionExamen.getEstudiante().getCi();
         this.calificacion = inscripcionExamen.getCalificacion();
     }
 }
