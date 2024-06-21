@@ -1,9 +1,9 @@
 package com.tecnoinf.gestedu.controllers;
 
+import com.tecnoinf.gestedu.dtos.curso.ActaCursoDTO;
 import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.curso.HorarioDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
-import com.tecnoinf.gestedu.dtos.inscripcionExamen.InscripcionExamenCalificacionDTO;
 import com.tecnoinf.gestedu.dtos.usuario.UsuarioDTO;
 import com.tecnoinf.gestedu.services.interfaces.CursoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -70,5 +70,12 @@ public class CursoController {
     public ResponseEntity<List<InscripcionCursoCalificacionDTO>> getCalificacionesExamen(@PathVariable Long id) {
         List<InscripcionCursoCalificacionDTO> calificaciones = cursoService.obtenerCalificaciones(id);
         return ResponseEntity.ok().body(calificaciones);
+    }
+
+    @Operation(summary = "Generar acta de fin de Curso")
+    @GetMapping("/{id}/acta")
+    public ResponseEntity<ActaCursoDTO> getActaCurso(@PathVariable Long id) {
+        ActaCursoDTO actaCurso = cursoService.generarActaCurso(id);
+        return ResponseEntity.ok().body(actaCurso);
     }
 }

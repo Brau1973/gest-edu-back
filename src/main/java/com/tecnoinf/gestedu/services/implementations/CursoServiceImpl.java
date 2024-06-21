@@ -5,17 +5,21 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.tecnoinf.gestedu.dtos.DocenteDTO;
+import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
+import com.tecnoinf.gestedu.dtos.curso.ActaCursoDTO;
 import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.curso.HorarioDTO;
+import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
+import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoDTO;
 import com.tecnoinf.gestedu.dtos.usuario.UsuarioDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.models.Asignatura;
@@ -184,5 +188,46 @@ public class CursoServiceImpl implements CursoService {
                 .stream()
                 .map(InscripcionCursoCalificacionDTO::new)
                 .toList();
+    }
+
+    @Override
+    public ActaCursoDTO generarActaCurso(Long id) {
+        System.out.println("Inicio del método generarActaCurso con id: " + id);
+        Curso curso;
+        try {
+            curso = cursoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Curso no encontrado."));
+        } catch (Exception e) {
+            System.err.println("Error al obtener el curso: " + e.getMessage());
+            throw e;
+        }
+
+        ActaCursoDTO actaCurso = new ActaCursoDTO();
+        try {
+            actaCurso.setId(curso.getId());
+            actaCurso.setFecha(curso.getFechaFin());
+            actaCurso.setAsignatura(new AsignaturaDTO(curso.getAsignatura()));
+            actaCurso.setDocente(new DocenteDTO(curso.getDocente()));
+            actaCurso.setInscripciones(curso.getInscripciones().stream().map(InscripcionCursoDTO::new).toList());
+            System.out.println("ActaCursoDTO creado correctamente.");
+        } catch (Exception e) {
+            System.err.println("Error al crear Acta Curso: " + e.getMessage());
+            throw e;
+        }
+        System.out.println("ENTRE AL FOR");
+        for(InscripcionCursoDTO cursoaux: actaCurso.getInscripciones()){
+            System.out.println(cursoaux.getFechaInscripcion().toString());
+        }            System.out.println("SALI DEL FOR");
+
+        System.out.println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ");
+        try {
+            actividadService.registrarActividad(TipoActividad.GENERACION_ACTA_CURSO, "Generación del acta del curso con id " + id);
+            System.out.println("Actividad registrada correctamente.");
+        } catch (Exception e) {
+            System.err.println("Error al registrar actividad: " + e.getMessage());
+            throw e;
+        }
+
+        return actaCurso;
     }
 }
