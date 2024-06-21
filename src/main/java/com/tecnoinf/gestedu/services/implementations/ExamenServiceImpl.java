@@ -344,4 +344,11 @@ public class ExamenServiceImpl implements ExamenService {
 
         return actaExamen;
     }
+
+    @Override
+    public ExamenDTO getExamenPorId(Long examenId){
+        Examen examen = examenRepository.findById(examenId)
+                .orElseThrow(() -> new ResourceNotFoundException("Examen no encontrado."));
+        return new ExamenDTO(examen);
+    }
 }
