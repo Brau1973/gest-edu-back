@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.controllers;
 
+import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.examen.ActaExamenDTO;
 import com.tecnoinf.gestedu.dtos.examen.CreateExamenDTO;
 import com.tecnoinf.gestedu.dtos.examen.ExamenDTO;
@@ -38,6 +39,13 @@ public class ExamenController {
     public ResponseEntity<ExamenDTO> createExamen(@RequestBody CreateExamenDTO createExamenDto) {
         ExamenDTO createdExamen = examenService.altaExamen(createExamenDto);
         return ResponseEntity.ok().body(createdExamen);
+    }
+
+    @Operation(summary = "Obtener examen por Id")
+    @GetMapping("/{examenId}")
+    public ResponseEntity<ExamenDTO> getCursoById(@PathVariable Long examenId){
+        ExamenDTO examen = examenService.getExamenPorId(examenId);
+        return  ResponseEntity.ok(examen);
     }
 
     @Operation(summary = "Inscribirse a un examen")
