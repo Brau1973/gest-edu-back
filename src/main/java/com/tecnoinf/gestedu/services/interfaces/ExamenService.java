@@ -21,4 +21,5 @@ public interface ExamenService {
     List<InscripcionExamenCalificacionDTO> registrarCalificaciones(Long id, List<InscripcionExamenCalificacionDTO> calificaciones) throws MessagingException;
     InscripcionExamenDTO darseDeBajaExamen(Long id, String name);
     ActaExamenDTO generarActaExamen(Long id);
+    ExamenDTO getExamenPorId(Long examenId);
 }
