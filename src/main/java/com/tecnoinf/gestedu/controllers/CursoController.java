@@ -57,7 +57,7 @@ public class CursoController {
         return  ResponseEntity.ok(curso);
     }
 
-    @Operation(summary = "Obtner Horarios del Curso")
+    @Operation(summary = "Obtener Horarios del Curso")
     @GetMapping("/{cursoId}/horarios")
     public ResponseEntity<Page<HorarioDTO>> getHorariosByCursoId(@PathVariable Long cursoId, Pageable pageable){
         Page<HorarioDTO> horarios = cursoService.getHorariosByCurso(cursoId, pageable);

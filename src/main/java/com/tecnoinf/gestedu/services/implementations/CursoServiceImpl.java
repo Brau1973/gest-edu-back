@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -121,7 +122,7 @@ public class CursoServiceImpl implements CursoService {
         if (horarioSolapa(horariosEnSemestre, nuevoHorario)) {
             throw new IllegalArgumentException("El horario se solapa con otro horario existente en el mismo semestre.");
         }
-
+        
         Horario horario = modelMapper.map(nuevoHorario, Horario.class);
         horario.setCurso(curso);
         curso.getHorarios().add(horario);
@@ -136,17 +137,20 @@ public class CursoServiceImpl implements CursoService {
     @Override
     public List<UsuarioDTO> getEstudiantesByCurso(Long cursoId) {
         Curso curso = cursoRepository.findById(cursoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Curso not found with id " + cursoId));
-        List<InscripcionCurso> inscripciones = curso.getInscripciones();
-        List<Estudiante> estudiantes = new ArrayList<>();
-        for (InscripcionCurso inscripcionCurso : inscripciones) {
-            estudiantes.add(inscripcionCurso.getEstudiante());
-        }
-
-        Type listType = new TypeToken<List<UsuarioDTO>>() {
-        }.getType();
-        return modelMapper.map(estudiantes, listType);
+            .orElseThrow(() -> new ResourceNotFoundException("Curso not found with id " + cursoId));
+    List<InscripcionCurso> inscripciones = curso.getInscripciones();
+    List<Estudiante> estudiantes = new ArrayList<>();
+    for (InscripcionCurso inscripcionCurso : inscripciones) {
+        estudiantes.add(inscripcionCurso.getEstudiante());
     }
+
+    // Mapeo manual para propósitos de prueba
+    List<UsuarioDTO> usuariosDTO = estudiantes.stream()
+            .map(estudiante -> modelMapper.map(estudiante, UsuarioDTO.class))
+            .collect(Collectors.toList());
+
+    return usuariosDTO;
+}
 
     @Override
     public CursoDTO getCursoPorId(Long cursoId){

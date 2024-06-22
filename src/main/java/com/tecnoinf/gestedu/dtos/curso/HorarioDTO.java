@@ -14,5 +14,5 @@ public class HorarioDTO {
     private DiaSemana dia;
     private LocalTime horaInicio;
     private LocalTime horaFin;
-    //private Long cursoId;
+    ////private Lon cursoId;
 }
