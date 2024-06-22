@@ -25,6 +25,7 @@ public class BasicInfoUsuarioDTO {
     private LocalDate fechaNac;
     private String imagen;
     private TipoUsuario tipoUsuario;
+    private Boolean activo;
 
     public BasicInfoUsuarioDTO(Usuario usuario) {
         this.id = usuario.getId();
@@ -44,5 +45,6 @@ public class BasicInfoUsuarioDTO {
             default -> {
             }
         }
+        this.activo = usuario.getIsEnable();
     }
 }
