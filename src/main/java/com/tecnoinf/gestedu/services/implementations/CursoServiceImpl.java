@@ -4,18 +4,23 @@ import java.lang.reflect.Type;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.tecnoinf.gestedu.dtos.DocenteDTO;
+import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
+import com.tecnoinf.gestedu.dtos.curso.ActaCursoDTO;
 import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.curso.HorarioDTO;
+import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
+import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoDTO;
 import com.tecnoinf.gestedu.dtos.usuario.UsuarioDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.models.Asignatura;
@@ -117,7 +122,7 @@ public class CursoServiceImpl implements CursoService {
         if (horarioSolapa(horariosEnSemestre, nuevoHorario)) {
             throw new IllegalArgumentException("El horario se solapa con otro horario existente en el mismo semestre.");
         }
-
+        
         Horario horario = modelMapper.map(nuevoHorario, Horario.class);
         horario.setCurso(curso);
         curso.getHorarios().add(horario);
@@ -132,17 +137,20 @@ public class CursoServiceImpl implements CursoService {
     @Override
     public List<UsuarioDTO> getEstudiantesByCurso(Long cursoId) {
         Curso curso = cursoRepository.findById(cursoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Curso not found with id " + cursoId));
-        List<InscripcionCurso> inscripciones = curso.getInscripciones();
-        List<Estudiante> estudiantes = new ArrayList<>();
-        for (InscripcionCurso inscripcionCurso : inscripciones) {
-            estudiantes.add(inscripcionCurso.getEstudiante());
-        }
-
-        Type listType = new TypeToken<List<UsuarioDTO>>() {
-        }.getType();
-        return modelMapper.map(estudiantes, listType);
+            .orElseThrow(() -> new ResourceNotFoundException("Curso not found with id " + cursoId));
+    List<InscripcionCurso> inscripciones = curso.getInscripciones();
+    List<Estudiante> estudiantes = new ArrayList<>();
+    for (InscripcionCurso inscripcionCurso : inscripciones) {
+        estudiantes.add(inscripcionCurso.getEstudiante());
     }
+
+    // Mapeo manual para propósitos de prueba
+    List<UsuarioDTO> usuariosDTO = estudiantes.stream()
+            .map(estudiante -> modelMapper.map(estudiante, UsuarioDTO.class))
+            .collect(Collectors.toList());
+
+    return usuariosDTO;
+}
 
     @Override
     public CursoDTO getCursoPorId(Long cursoId){
@@ -184,5 +192,39 @@ public class CursoServiceImpl implements CursoService {
                 .stream()
                 .map(InscripcionCursoCalificacionDTO::new)
                 .toList();
+    }
+
+    @Override
+    public ActaCursoDTO generarActaCurso(Long id) {
+        Curso curso;
+        try {
+            curso = cursoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Curso no encontrado."));
+        } catch (Exception e) {
+            System.err.println("Error al obtener el curso: " + e.getMessage());
+            throw e;
+        }
+
+        ActaCursoDTO actaCurso = new ActaCursoDTO();
+        try {
+            actaCurso.setId(curso.getId());
+            actaCurso.setFecha(curso.getFechaFin());
+            actaCurso.setAsignatura(new AsignaturaDTO(curso.getAsignatura()));
+            actaCurso.setDocente(new DocenteDTO(curso.getDocente()));
+            actaCurso.setCurso(new CursoDTO(curso));
+            actaCurso.setInscripciones(curso.getInscripciones().stream().map(InscripcionCursoDTO::new).toList());
+        } catch (Exception e) {
+            System.err.println("Error al crear Acta Curso: " + e.getMessage());
+            throw e;
+        }
+
+        try {
+            actividadService.registrarActividad(TipoActividad.GENERACION_ACTA_CURSO, "Generación del acta del curso con id " + id);
+        } catch (Exception e) {
+            System.err.println("Error al registrar actividad: " + e.getMessage());
+            throw e;
+        }
+
+        return actaCurso;
     }
 }
