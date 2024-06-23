@@ -10,6 +10,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       MAIL_USER_NAME: ${MAIL_USER_NAME}
       MAIL_PASSWORD: ${MAIL_PASSWORD}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
     restart: always
     depends_on:
       - db
