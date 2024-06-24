@@ -21,6 +21,7 @@ import com.tecnoinf.gestedu.dtos.curso.CursoDTO;
 import com.tecnoinf.gestedu.dtos.curso.HorarioDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoDTO;
+import com.tecnoinf.gestedu.dtos.usuario.BasicInfoEstudianteDTO;
 import com.tecnoinf.gestedu.dtos.usuario.UsuarioDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.models.Asignatura;
@@ -29,6 +30,7 @@ import com.tecnoinf.gestedu.models.Docente;
 import com.tecnoinf.gestedu.models.Estudiante;
 import com.tecnoinf.gestedu.models.Horario;
 import com.tecnoinf.gestedu.models.InscripcionCurso;
+import com.tecnoinf.gestedu.models.Usuario;
 import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
@@ -213,6 +215,19 @@ public class CursoServiceImpl implements CursoService {
             actaCurso.setDocente(new DocenteDTO(curso.getDocente()));
             actaCurso.setCurso(new CursoDTO(curso));
             actaCurso.setInscripciones(curso.getInscripciones().stream().map(InscripcionCursoDTO::new).toList());
+            List<BasicInfoEstudianteDTO> listaEstudiantes = new ArrayList<>();
+            List<InscripcionCursoDTO> inscripciones = actaCurso.getInscripciones();
+            for(InscripcionCursoDTO inscripcion: inscripciones){
+                Usuario estudiante = estudianteRepository.findById(inscripcion.getEstudianteId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Estudiante no encontrado."));
+                BasicInfoEstudianteDTO infoEstudiante = new BasicInfoEstudianteDTO();
+                infoEstudiante.setId(estudiante.getId());
+                infoEstudiante.setCi(estudiante.getCi());
+                infoEstudiante.setNombre(estudiante.getNombre());
+                infoEstudiante.setApellido(estudiante.getApellido());
+                listaEstudiantes.add(infoEstudiante);
+            }
+            actaCurso.setEstudiantes(listaEstudiantes);
         } catch (Exception e) {
             System.err.println("Error al crear Acta Curso: " + e.getMessage());
             throw e;

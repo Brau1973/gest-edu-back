@@ -6,6 +6,7 @@ import java.util.List;
 import com.tecnoinf.gestedu.dtos.DocenteDTO;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoDTO;
+import com.tecnoinf.gestedu.dtos.usuario.BasicInfoEstudianteDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,4 +23,5 @@ public class ActaCursoDTO {
     private CursoDTO curso;
     private DocenteDTO docente;
     private List<InscripcionCursoDTO> inscripciones;
+    private List<BasicInfoEstudianteDTO> estudiantes;
 }
