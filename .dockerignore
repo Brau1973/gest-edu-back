@@ -1,0 +1,17 @@
+*.class
+*.jar
+*.war
+*.tar
+*.zip
+*.log
+build/
+.gradle/
+out/
+.idea/
+*.iml
+.git/
+.gitignore
+Dockerfile
+docker-compose.yml
+README.md
+LICENSE
