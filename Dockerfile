@@ -11,7 +11,7 @@ COPY . /app
 RUN gradle build --no-daemon
 
 # Usar una imagen base de OpenJDK 21 en su versión ligera (slim) para el runtime
-FROM openjdk:21-slim
+FROM openjdk:21-slim AS runtime
 
 # Establecer el directorio de trabajo en /app
 WORKDIR /app
