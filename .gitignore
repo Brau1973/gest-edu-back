@@ -65,6 +65,7 @@ out/
 application-dev.properties
 application-prod.properties
 *ssl-server.jks*
+*.p12
 
 # firebase
 /src/main/resources/google-services.json
