@@ -12,6 +12,7 @@ services:
       MAIL_USER_NAME: ${MAIL_USER_NAME}
       MAIL_PASSWORD: ${MAIL_PASSWORD}
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      JPA_HIBERNATE_DDL_AUTO: ${JPA_HIBERNATE_DDL_AUTO}
     restart: always
     depends_on:
       - db
