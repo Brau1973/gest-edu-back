@@ -20,7 +20,7 @@ WORKDIR /app
 COPY --from=builder /app/build/libs/gest-edu-0.0.1-SNAPSHOT.jar /app/gest-edu-back.jar
 
 # Exponer el puerto 8080 para permitir la comunicación con la aplicación
-EXPOSE 8080
+EXPOSE 8443
 
 # Definir el comando que se ejecutará cuando el contenedor se inicie
 ENTRYPOINT ["java", "-jar", "/app/gest-edu-back.jar"]
