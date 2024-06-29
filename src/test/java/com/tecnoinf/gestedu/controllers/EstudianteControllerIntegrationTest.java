@@ -82,7 +82,7 @@ public class EstudianteControllerIntegrationTest {
 
     @Test
     @Transactional
-    @WithMockUser(username = "johndoe@gmail.com", roles = "ESTUDIANTE")
+    @WithMockUser(username = "johndoe@gmail.com", authorities = { "ROL_ESTUDIANTE" })
     public void obtenerAsignaturasParaInscripcion() throws Exception {
         // Crear Estudiante
         Estudiante estudiante1 = new Estudiante();

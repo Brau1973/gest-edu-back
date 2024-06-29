@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -67,7 +68,7 @@ public class UsuarioController {
     }
 
     @Operation(summary = "Listar usuarios")
-    //@PreAuthorize("hasAuthority('ROL_ADMINISTRADOR')")
+    @PreAuthorize("hasAuthority('ROL_ADMINISTRADOR')")
     @GetMapping("/listar")
     public ResponseEntity<Page<BasicInfoUsuarioDTO>> listarUsuarios(Pageable pageable) {
         return new ResponseEntity<>(usuarioService.getBasicInfoUsuarios(pageable), HttpStatus.OK);
@@ -75,7 +76,7 @@ public class UsuarioController {
 
     @Operation(summary = "Buscar usuario por ci")
     @GetMapping("/buscar/{ci}")
-    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO', 'ROL_ADMINISTRADOR', 'ROL_COORDINADOR')")
+    @PreAuthorize("hasAnyAuthority('ROL_FUNCIONARIO', 'ROL_ADMINISTRADOR', 'ROL_COORDINADOR')")
     public ResponseEntity<BasicInfoUsuarioDTO> buscarEstudiantePorCi(@PathVariable String ci) {
         Optional<BasicInfoUsuarioDTO> usuario = usuarioService.obtenerUsuarioPorCi(ci);
         if(usuario.isPresent()){

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class ActividadController {
         this.actividadService = actividadService;
     }
 
-    //@PreAuthorize("hasAuthority('ROL_ADMINISTRADOR')")
+    @PreAuthorize("hasAuthority('ROL_ADMINISTRADOR')")
     @Operation(summary = "Obtener la actividad de un usuario por su id")
     @GetMapping("/{id}")
     public ResponseEntity<List<ActividadDTO>> getActividadByUsuarioId(@PathVariable("id") Long id) {

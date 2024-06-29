@@ -8,6 +8,7 @@ import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +29,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/inscripcionCurso")
-@Tag(name = "InscripcioCurso", description = "Inscripcion a Cursos")
+@Tag(name = "InscripcionCurso", description = "Inscripcion a Cursos")
 public class InscripcionCursoController {
     private final InscripcionCursoService inscripcionCursoService;
 
@@ -39,7 +40,7 @@ public class InscripcionCursoController {
 
     @Operation(summary = "Inscribirse a un Curso")
     @PostMapping()
-    //PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
+    @PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
     public ResponseEntity<InscripcionCursoDTO> createInscripcionCurso(@RequestBody InscripcionCursoDTO inscripcionCursoDTO, Principal principal) throws ParseException {
         InscripcionCursoDTO createdInscripcionCurso = inscripcionCursoService.createInscripcionCurso(inscripcionCursoDTO, principal.getName());
 
@@ -48,7 +49,7 @@ public class InscripcionCursoController {
 
     @Operation(summary = "Registrar calificaciones del curso")
     @PutMapping("/{cursoId}/calificar")
-    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    @PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<List<InscripcionCursoCalificacionDTO>> registrarCalificaciones(@PathVariable Long cursoId, @RequestBody List<InscripcionCursoCalificacionDTO> calificaciones) throws MessagingException {
         List<InscripcionCursoCalificacionDTO> calificacionesCurso = inscripcionCursoService.registrarCalificaciones(cursoId, calificaciones);
         return ResponseEntity.ok().body(calificacionesCurso);
@@ -56,7 +57,7 @@ public class InscripcionCursoController {
 
     @Operation(summary = "Cancelar Inscripción a un Curso")
     @DeleteMapping("/cancelarInscripcion/{inscripcionCursoId}")
-    //@PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
+    @PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
     public ResponseEntity<Void> cancelInscripcionCurso(@PathVariable Long inscripcionCursoId) {
         inscripcionCursoService.deleteInscripcionCurso(inscripcionCursoId);
         return ResponseEntity.noContent().build();  // 204 No Content
@@ -64,7 +65,7 @@ public class InscripcionCursoController {
 
     @Operation(summary = "Listar Cursos y Horarios de Estudiante Inscripto al Curso")
     @GetMapping("/cursos-inscripto")
-    //@PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
+    @PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
     public ResponseEntity<List<CursoHorarioDTO>> getCursosHorariosInscriptos(Principal principal){
         List<CursoHorarioDTO> cursos = inscripcionCursoService.listarCursosHorariosInscriptos(principal.getName());
         return ResponseEntity.ok().body(cursos);
@@ -72,7 +73,7 @@ public class InscripcionCursoController {
 
     @Operation(summary = "Darse de baja de un curso.")
     @DeleteMapping("/{inscripcionCursoId}/eliminar")
-    //@PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
+    @PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
     public ResponseEntity<InscripcionCursoDTO> deleteCurso(@PathVariable Long inscripcionCursoId, Principal principal){
         if(principal == null) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);

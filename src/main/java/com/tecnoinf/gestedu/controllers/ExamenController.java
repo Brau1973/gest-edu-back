@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -35,7 +36,7 @@ public class ExamenController {
 
     @Operation(summary = "Crear un examen")
     @PostMapping("/crear")
-    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    @PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<ExamenDTO> createExamen(@RequestBody CreateExamenDTO createExamenDto) {
         ExamenDTO createdExamen = examenService.altaExamen(createExamenDto);
         return ResponseEntity.ok().body(createdExamen);
@@ -50,7 +51,7 @@ public class ExamenController {
 
     @Operation(summary = "Inscribirse a un examen")
     @PostMapping("/inscribirse")
-    //@PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
+    @PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
     public ResponseEntity<InscripcionExamenDTO> inscribirseExamen(@RequestBody CreateInscripcionExamenDTO inscripcionExamenDto, Principal principal) {
         if(principal == null) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -63,7 +64,7 @@ public class ExamenController {
 
     @Operation(summary = "Darse de baja de un examen")
     @DeleteMapping("/{id}/baja")
-    //@PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
+    @PreAuthorize("hasAuthority('ROL_ESTUDIANTE')")
     public ResponseEntity<InscripcionExamenDTO> darseDeBajaExamen(@PathVariable Long id, Principal principal) {
         if(principal == null) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -74,13 +75,14 @@ public class ExamenController {
 
     @Operation(summary = "Listar examenes pendientes de calificar")
     @GetMapping("/examenes-pendientes")
-    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    @PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<Page<ExamenDTO>> listarExamenesPendientes(Pageable pageable) {
         return new ResponseEntity<>(examenService.listarExamenesPendientesCalificar(pageable), HttpStatus.OK);
     }
 
     @Operation(summary = "Listar estudiantes inscriptos a un examen")
     @GetMapping("/{id}/estudiantes-inscriptos")
+    @PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<List<InscripcionExamenDTO>> getEstudiantesInscriptos(@PathVariable Long id) {
         List<InscripcionExamenDTO> inscripciones = examenService.listarInscriptosExamen(id);
         return ResponseEntity.ok().body(inscripciones);
@@ -88,6 +90,7 @@ public class ExamenController {
 
     @Operation(summary = "Generar acta de examen")
     @GetMapping("/{id}/acta")
+    @PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<ActaExamenDTO> getActaExamen(@PathVariable Long id) {
         ActaExamenDTO actaExamen = examenService.generarActaExamen(id);
         return ResponseEntity.ok().body(actaExamen);
@@ -96,7 +99,7 @@ public class ExamenController {
 
     @Operation(summary = "Obtener calificaciones de examen")
     @GetMapping("/{id}/calificar")
-    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    @PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<List<InscripcionExamenCalificacionDTO>> getCalificacionesExamen(@PathVariable Long id) {
         List<InscripcionExamenCalificacionDTO> calificacionesExamen = examenService.obtenerCalificaciones(id);
         return ResponseEntity.ok().body(calificacionesExamen);
@@ -104,7 +107,7 @@ public class ExamenController {
 
     @Operation(summary = "Registrar calificaciones de examen")
     @PutMapping("/{id}/calificar")
-    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    @PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<List<InscripcionExamenCalificacionDTO>> registrarCalificaciones(@PathVariable Long id, @RequestBody List<InscripcionExamenCalificacionDTO> calificaciones) throws MessagingException {
         List<InscripcionExamenCalificacionDTO> calificacionesExamen = examenService.registrarCalificaciones(id, calificaciones);
         return ResponseEntity.ok().body(calificacionesExamen);

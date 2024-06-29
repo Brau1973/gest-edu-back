@@ -26,6 +26,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,6 +100,7 @@ public class CursoControllerIntegrationTest {
 
     @Test
     @Transactional
+    @WithMockUser(authorities = { "ROL_FUNCIONARIO" })
     public void testRegisterCurso_Success() throws Exception {
         // Crear carrera
         Carrera carrera = new Carrera();
@@ -136,6 +138,7 @@ public class CursoControllerIntegrationTest {
 
     @Test
     @Transactional
+    @WithMockUser(authorities = { "ROL_FUNCIONARIO" })
     public void testRegisterHorario_Curso_Success() throws Exception {
         // Crear carrera
         Carrera carrera = new Carrera();
@@ -181,6 +184,7 @@ public class CursoControllerIntegrationTest {
 
     @Test
     @Transactional
+    @WithMockUser(authorities = { "ROL_FUNCIONARIO" })
     public void getCursoById() throws Exception {
         // Crear carrera
         Carrera carrera = new Carrera();
@@ -223,6 +227,7 @@ public class CursoControllerIntegrationTest {
 
     @Test
     @Transactional
+    @WithMockUser(authorities = { "ROL_FUNCIONARIO" })
     public void getEstudiantesByCurso() throws Exception {
         //Crear Estudiante
         Estudiante estudiante = new Estudiante();
