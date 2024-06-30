@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,7 +50,7 @@ public class CarreraController {
 
     @Operation(summary = "Crear una carrera con su info basica")
     @PostMapping()
-    //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
+    @PreAuthorize("hasAuthority('ROL_COORDINADOR')")
     public ResponseEntity<CreateCarreraDTO> createCarrera(@RequestBody CreateCarreraDTO createCarreraDto) {
         CreateCarreraDTO createdCarrera = carreraService.createCarrera(createCarreraDto);
         return ResponseEntity.ok().body(createdCarrera);
@@ -57,7 +58,7 @@ public class CarreraController {
 
     @Operation(summary = "Actualizar info basica de una carrera")
     @PutMapping("/{id}")
-    //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
+    @PreAuthorize("hasAuthority('ROL_COORDINADOR')")
     public ResponseEntity<BasicInfoCarreraDTO> updateCarrera(@PathVariable Long id, @RequestBody CreateCarreraDTO createCarreraDTO) {
         BasicInfoCarreraDTO updatedCarrera = carreraService.updateCarrera(id, createCarreraDTO);
         return ResponseEntity.ok().body(updatedCarrera);
@@ -65,7 +66,7 @@ public class CarreraController {
 
     @Operation(summary = "Eliminar una carrera")
     @DeleteMapping("/{id}")
-    //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
+    @PreAuthorize("hasAuthority('ROL_COORDINADOR')")
     public ResponseEntity<?> deleteCarrera(@PathVariable Long id) {
         carreraService.deleteCarrera(id);
         return ResponseEntity.noContent().build();
@@ -73,7 +74,7 @@ public class CarreraController {
 
     @Operation(summary = "Obtener las carreras sin plan de estudio")
     @GetMapping("/carreras-sin-plan-de-estudio")
-    //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
+    @PreAuthorize("hasAuthority('ROL_COORDINADOR')")
     public ResponseEntity<Page<BasicInfoCarreraDTO>> getCarrerasSinPlanDeEstudio(Pageable pageable) {
         Page<BasicInfoCarreraDTO> carreras = carreraService.getCarrerasSinPlanDeEstudio(pageable);
         return ResponseEntity.ok().body(carreras);
@@ -88,7 +89,7 @@ public class CarreraController {
 
     @Operation(summary = "Actualiza el semestre en que recomienda el plan de estudio cursar las asignaturas de una carrera")
     @PutMapping("/{id}/asignaturas/semestre-plan-estudio")
-    //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
+    @PreAuthorize("hasAuthority('ROL_COORDINADOR')")
     public ResponseEntity<?> updateSemestrePlanEstudio(@PathVariable Long id, @RequestBody List<AsignaturaDTO> asignaturasDto) {
         carreraService.updateSemestrePlanEstudio(id,asignaturasDto);
         return ResponseEntity.ok().build();
@@ -96,6 +97,7 @@ public class CarreraController {
 
     @Operation(summary = "Listar estudiantes inscriptos a carrera")
     @GetMapping("/{id}/estudiantes-inscriptos")
+    @PreAuthorize("hasAnyAuthority('ROL_COORDINADOR', 'ROL_FUNCIONARIO')")
     public ResponseEntity<List<InscripcionCarreraDTO>> getEstudiantesInscriptos(@PathVariable Long id) {
         List<InscripcionCarreraDTO> inscripciones = carreraService.getEstudiantesInscriptos(id);
         return ResponseEntity.ok().body(inscripciones);
@@ -103,7 +105,7 @@ public class CarreraController {
 
     @Operation(summary = "Listar periodos de examen de carrera")
     @GetMapping("/{id}/periodos-examen")
-    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    @PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<Page<PeriodoExamenDTO>> obtenerPeriodosExamenCarrera(@PathVariable Long id, Pageable pageable) {
         Page<PeriodoExamenDTO> periodosExamen = carreraService.obtenerPeriodosExamenCarrera(id, pageable);
         return ResponseEntity.ok().body(periodosExamen);
@@ -123,7 +125,7 @@ public class CarreraController {
         return ResponseEntity.ok().body(cursos);
     }
 
-    @Operation(summary = "Litar Horarios de Cursos por Carrera")
+    @Operation(summary = "Listar Horarios de Cursos por Carrera")
     @GetMapping("/{idCarrera}/horarios-cursos")
     //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<Page<CursoHorarioDTO>> obtenerHorariosCursosCarrera(@PathVariable Long idCarrera, Pageable pageable){

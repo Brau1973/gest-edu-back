@@ -100,7 +100,7 @@ public class InscripcionCursoControllerIntegrationTest {
     }
 
     @Test
-    @WithMockUser(username = "estudiante@gmail.com", roles = { "FUNCIONARIO" })
+    @WithMockUser(username = "estudiante@gmail.com", authorities = { "ROL_ESTUDIANTE" })
     @Transactional
     public void registerCurso()  throws Exception  {
         //Crear Estudiante
@@ -168,6 +168,7 @@ public class InscripcionCursoControllerIntegrationTest {
 
     @Test
     @Transactional
+    @WithMockUser(authorities = { "ROL_FUNCIONARIO" })
     void registrarCalificaciones() throws Exception{
         //Crear Estudiante
         Estudiante estudiante = new Estudiante();
@@ -252,6 +253,7 @@ public class InscripcionCursoControllerIntegrationTest {
 
     @Test
     @Transactional
+    @WithMockUser(authorities = { "ROL_ESTUDIANTE" })
     public void cancelInscripcionCurso() throws Exception {
         //Crear Estudiante
         Estudiante estudiante = new Estudiante();
@@ -321,8 +323,8 @@ public class InscripcionCursoControllerIntegrationTest {
     }
 
     @Test
-    @WithMockUser(username = "estudiante@gmail.com", roles = { "ESTUDIANTE" })
     @Transactional
+    @WithMockUser(username = "estudiante@gmail.com", authorities = { "ROL_ESTUDIANTE" })
     public void getCursosHorariosInscriptos() throws Exception {
         //Crear Estudiante
         Estudiante estudiante = new Estudiante();
