@@ -7,10 +7,12 @@ import com.tecnoinf.gestedu.dtos.inscripcionCurso.InscripcionCursoCalificacionDT
 import com.tecnoinf.gestedu.dtos.usuario.UsuarioDTO;
 import com.tecnoinf.gestedu.services.interfaces.CursoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -18,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/cursos")
+@Tag(name = "Cursos", description = "API para operaciones de cursos")
 public class CursoController {
     private final CursoService cursoService;
 
@@ -28,7 +31,7 @@ public class CursoController {
 
     @Operation(summary = "Registrar Curso de Asignatura")
     @PostMapping()
-    //PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    @PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<CursoDTO> registerCurso(@RequestBody CursoDTO cursoDTO) throws ParseException {
         CursoDTO createdCurso = cursoService.createCurso(cursoDTO);
 
@@ -37,7 +40,7 @@ public class CursoController {
 
     @Operation(summary = "Registrar Curso de Asignatura")
     @PostMapping("/{cursoId}/horarios")
-    //PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    @PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<HorarioDTO> addHorarioToCurso(@PathVariable Long cursoId, @RequestBody HorarioDTO nuevoHorario) {
         HorarioDTO horario = cursoService.addHorarioToCurso(cursoId, nuevoHorario);
         return ResponseEntity.ok(horario);
@@ -45,6 +48,7 @@ public class CursoController {
 
     @Operation(summary = "Listar Estudiantes de un Curso")
     @GetMapping("/{cursoId}/estudiantes")
+    @PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<List<UsuarioDTO>> getEstudiantesByCursoId(@PathVariable Long cursoId) {
         List<UsuarioDTO> estudiantes = cursoService.getEstudiantesByCurso(cursoId);
         return ResponseEntity.ok(estudiantes);
@@ -66,7 +70,7 @@ public class CursoController {
 
     @Operation(summary = "Obtener calificaciones de curso")
     @GetMapping("/{id}/calificaciones")
-    //@PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
+    @PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<List<InscripcionCursoCalificacionDTO>> getCalificacionesExamen(@PathVariable Long id) {
         List<InscripcionCursoCalificacionDTO> calificaciones = cursoService.obtenerCalificaciones(id);
         return ResponseEntity.ok().body(calificaciones);
@@ -74,6 +78,7 @@ public class CursoController {
 
     @Operation(summary = "Generar acta de fin de Curso")
     @GetMapping("/{id}/acta")
+    @PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<ActaCursoDTO> getActaCurso(@PathVariable Long id) {
         ActaCursoDTO actaCurso = cursoService.generarActaCurso(id);
         return ResponseEntity.ok().body(actaCurso);

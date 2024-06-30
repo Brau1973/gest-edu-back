@@ -25,6 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -88,6 +89,7 @@ public class AsignaturaControllerIntegrationTest {
 
     @Test
     @Transactional
+    @WithMockUser(authorities = { "ROL_COORDINADOR" })
     public void testCreateAsignatura_Success() throws Exception {
         Carrera carrera = new Carrera();
         carrera.setNombre("Carrera Test");
@@ -130,6 +132,7 @@ public class AsignaturaControllerIntegrationTest {
 
     @Test
     @Transactional
+    @WithMockUser(authorities = { "ROL_COORDINADOR" })
     public void testGetPrevias() throws Exception {
         // Crear una carrera
         Carrera carrera = new Carrera();
@@ -157,6 +160,7 @@ public class AsignaturaControllerIntegrationTest {
 
     @Test
     @Transactional
+    @WithMockUser(authorities = { "ROL_COORDINADOR" })
     public void testGetNoPrevias() throws Exception {
         // Crear una carrera
         Carrera carrera = new Carrera();
@@ -183,6 +187,7 @@ public class AsignaturaControllerIntegrationTest {
 
     @Test
     @Transactional
+    @WithMockUser(authorities = { "ROL_COORDINADOR" })
     public void testAddPrevia() throws Exception {
         // Crear una carrera
         Carrera carrera = new Carrera();
@@ -210,6 +215,7 @@ public class AsignaturaControllerIntegrationTest {
 
     @Test
     @Transactional
+    @WithMockUser(authorities = { "ROL_COORDINADOR" })
     public void getCursosDeAsignatura() throws Exception{
         // Crear carrera
         Carrera carrera = new Carrera();

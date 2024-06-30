@@ -51,7 +51,7 @@ public class AdministradorController {
 
     @Operation(summary = "Desactivar cuenta usuario (coordinador/funcionario)")
     @PostMapping("/desactivarUsuario")
-    //@PreAuthorize("hasAuthority('ROL_ADMINISTRADOR')")
+    @PreAuthorize("hasAuthority('ROL_ADMINISTRADOR')")
     public ResponseEntity<?> desactivarUsuario(@RequestBody Long id) {
         Optional<Usuario> usuario = usuarioRepository.findById(id);
         if (usuario.isEmpty()) {

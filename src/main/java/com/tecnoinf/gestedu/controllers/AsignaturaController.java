@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class AsignaturaController {
 
     @Operation(summary = "Crear una asignatura")
     @PostMapping()
-    //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
+    @PreAuthorize("hasAuthority('ROL_COORDINADOR')")
     public ResponseEntity<AsignaturaDTO> createAsignatura(@RequestBody CreateAsignaturaDTO createAsignaturaDto) {
         AsignaturaDTO createdAsignatura = asignaturaService.createAsignatura(createAsignaturaDto);
         return ResponseEntity.ok().body(createdAsignatura);
@@ -39,7 +40,7 @@ public class AsignaturaController {
 
     @Operation(summary = "Actualizar info basica de una asignatura")
     @PutMapping("/{id}")
-    //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
+    @PreAuthorize("hasAuthority('ROL_COORDINADOR')")
     public ResponseEntity<AsignaturaDTO> updateAsignatura(@PathVariable Long id, @RequestBody CreateAsignaturaDTO createCarreraDTO) {
         AsignaturaDTO updatedAsignatura = asignaturaService.updateAsignatura(id, createCarreraDTO);
         return ResponseEntity.ok().body(updatedAsignatura);
@@ -61,7 +62,7 @@ public class AsignaturaController {
 
     @Operation(summary = "Registrar previa de una asignatura")
     @PostMapping("/{asignaturaId}/previa/{previaId}")
-    //@PreAuthorize("hasAuthority('ROL_COORDINADOR')")
+    @PreAuthorize("hasAuthority('ROL_COORDINADOR')")
     public ResponseEntity<AsignaturaDTO> addPrevia(@PathVariable Long asignaturaId, @PathVariable Long previaId) {
         AsignaturaDTO updatedAsignatura = asignaturaService.addPrevia(asignaturaId, previaId);
         return ResponseEntity.ok().body(updatedAsignatura);
