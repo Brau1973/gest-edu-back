@@ -239,10 +239,10 @@ public class GestionEducativaOnlineApplication {
 
 				// INSCRIPCIONES A CURSO EN DISTINTOS ESTADOS
 				InscripcionCurso inscripcionCurso4 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante5, cursoCOEViejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.AEXAMEN,LocalDate.of(2023, 7, 10));
-				InscripcionCurso inscripcionCurso5 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante5, cursoMDL1, EstadoInscripcionCurso.CURSANDO,CalificacionCurso.PENDIENTE, LocalDate.now());
+				//InscripcionCurso inscripcionCurso5 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante5, cursoMDL1, EstadoInscripcionCurso.CURSANDO,CalificacionCurso.PENDIENTE, LocalDate.now());
 				InscripcionCurso inscripcionCurso6 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante5, cursoPAVViejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.AEXAMEN, LocalDate.of(2023, 7, 10));
 				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoCOEViejo.getId(), estudiante5, LocalDateTime.of(2023,7,10,0,0));
-				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoMDL1.getId(), estudiante5, LocalDateTime.of(2023,7,10,0,0));
+				//createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoMDL1.getId(), estudiante5, LocalDateTime.of(2023,7,10,0,0));
 				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoPAVViejo.getId(), estudiante5, LocalDateTime.of(2023,7,10,0,0));
 
 				InscripcionCurso inscripcionCurso7 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante8, cursoCOEViejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.EXONERADO, LocalDate.of(2023, 7, 10));
@@ -282,10 +282,10 @@ public class GestionEducativaOnlineApplication {
                 //----- INSCRIPCIONEXAMEN -----
 				InscripcionExamen inscripcionExamen1 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante5, examenPAVFinalizado, CalificacionExamen.REPROBADO, LocalDate.now().minusMonths(5).minusDays(2));
 				InscripcionExamen inscripcionExamen2 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante5, examenPAV, CalificacionExamen.PENDIENTE,LocalDate.now());
-				InscripcionExamen inscripcionExamen7 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante5, examenCOEFinalizado, CalificacionExamen.APROBADO,LocalDate.now().minusMonths(5).minusDays(2));
+				//InscripcionExamen inscripcionExamen7 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante5, examenCOEFinalizado, CalificacionExamen.APROBADO,LocalDate.now().minusMonths(5).minusDays(2));
 				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_EXAMEN, "Inscripcion a examen con id " + examenPAVFinalizado.getId() + " exitosa.", estudiante5, LocalDateTime.now().minusMonths(5).minusDays(2));
 				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_EXAMEN, "Inscripcion a examen con id " + examenPAV.getId() + " exitosa.", estudiante5, LocalDateTime.now());
-				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_EXAMEN, "Inscripcion a examen con id " + examenCOEFinalizado.getId() + " exitosa.", estudiante5, LocalDateTime.now().minusMonths(5).minusDays(2));
+				//createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_EXAMEN, "Inscripcion a examen con id " + examenCOEFinalizado.getId() + " exitosa.", estudiante5, LocalDateTime.now().minusMonths(5).minusDays(2));
 
 				InscripcionExamen inscripcionExamen3 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante8, examenPAVFinalizado, CalificacionExamen.REPROBADO,LocalDate.now().minusMonths(5).minusDays(2));
 				InscripcionExamen inscripcionExamen4 = createAndSaveInscripcionExamen(inscripcionExamenRepository, estudiante8, examenPAV, CalificacionExamen.PENDIENTE,LocalDate.now());
