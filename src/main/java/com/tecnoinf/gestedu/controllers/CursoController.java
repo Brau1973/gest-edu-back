@@ -38,7 +38,7 @@ public class CursoController {
         return ResponseEntity.ok().body(createdCurso);
     }
 
-    @Operation(summary = "Registrar Curso de Asignatura")
+    @Operation(summary = "Registrar Horario de Asignatura")
     @PostMapping("/{cursoId}/horarios")
     @PreAuthorize("hasAuthority('ROL_FUNCIONARIO')")
     public ResponseEntity<HorarioDTO> addHorarioToCurso(@PathVariable Long cursoId, @RequestBody HorarioDTO nuevoHorario) {
