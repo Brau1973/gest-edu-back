@@ -61,12 +61,12 @@ public class HorarioRepositoryTest {
         entityManager.persist(horario);
         entityManager.flush();
 
-        List<Horario> foundHorarios = horarioRepository.findHorariosBySemestreAndDia(curso.getAsignatura().getSemestrePlanEstudio(), horario.getDia());
+        List<Horario> foundHorarios = horarioRepository.findHorariosBySemestreDiaAndCarrera(curso.getAsignatura().getSemestrePlanEstudio(), horario.getDia(), curso.getAsignatura().getCarrera().getId());
 
         assertThat(foundHorarios).isNotNull();
         assertThat(foundHorarios).isNotEmpty();
 
-        List<Horario> foundHorarios2 = horarioRepository.findHorariosBySemestreAndDia(1, DiaSemana.MARTES);
+        List<Horario> foundHorarios2 = horarioRepository.findHorariosBySemestreDiaAndCarrera(1, DiaSemana.MARTES, curso.getAsignatura().getCarrera().getId());
 
         assertThat(foundHorarios2).isEmpty();
 
