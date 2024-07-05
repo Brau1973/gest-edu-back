@@ -124,7 +124,7 @@ public class CursoServiceImpl implements CursoService {
         if (horarioSolapa(horariosEnSemestre, nuevoHorario)) {
             throw new IllegalArgumentException("El horario se solapa con otro horario existente en el mismo semestre.");
         }
-
+        
         Horario horario = modelMapper.map(nuevoHorario, Horario.class);
         horario.setCurso(curso);
         curso.getHorarios().add(horario);
