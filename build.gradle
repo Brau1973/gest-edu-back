@@ -28,7 +28,7 @@ dependencies {
 	//NOTIFICACIONES PUSH
 	implementation group: 'com.google.firebase', name: 'firebase-admin', version: '9.3.0'
 
-	//SECURIYT
+	//SECURITY
 	implementation group: 'com.auth0', name: 'java-jwt', version: '4.4.0'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 

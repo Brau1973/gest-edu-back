@@ -120,7 +120,7 @@ public class CursoServiceImpl implements CursoService {
     public HorarioDTO addHorarioToCurso(Long cursoId, HorarioDTO nuevoHorario) {
         Curso curso = cursoRepository.findById(cursoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Curso not found with id " + cursoId));
-        List<Horario> horariosEnSemestre = horarioRepository.findHorariosBySemestreAndDia(curso.getAsignatura().getSemestrePlanEstudio(), nuevoHorario.getDia());
+        List<Horario> horariosEnSemestre = horarioRepository.findHorariosBySemestreDiaAndCarrera(curso.getAsignatura().getSemestrePlanEstudio(), nuevoHorario.getDia(), curso.getAsignatura().getCarrera().getId());
         if (horarioSolapa(horariosEnSemestre, nuevoHorario)) {
             throw new IllegalArgumentException("El horario se solapa con otro horario existente en el mismo semestre.");
         }

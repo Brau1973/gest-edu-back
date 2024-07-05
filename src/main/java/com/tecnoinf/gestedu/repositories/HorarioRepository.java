@@ -13,4 +13,13 @@ public interface HorarioRepository extends JpaRepository<Horario, Long> {
 
     @Query("SELECT h FROM Horario h WHERE h.curso.id = :cursoId")
     List<Horario> findHorariosByCursoId(Long cursoId);
+
+    @Query("SELECT h FROM Horario h " +
+            "JOIN h.curso c " +
+            "JOIN c.asignatura a " +
+            "JOIN a.carrera car " +
+            "WHERE a.semestrePlanEstudio = :semestre " +
+            "AND h.dia = :dia " +
+            "AND car.id = :carreraId")
+    List<Horario> findHorariosBySemestreDiaAndCarrera(Integer semestre,DiaSemana dia, Long carreraId);
 }
