@@ -185,12 +185,16 @@ public class GestionEducativaOnlineApplication {
 				//TECNOLOGO INFORMATICO
 
 				//CURSOS FINALIZADOS (VIEJOS)
-				Curso cursoCOEViejo = createAndSaveCurso(cursoRepository, Estado.FINALIZADO, COE, LocalDate.of(2023, 7, 15), LocalDate.of(2023, 11, 15), docente1, 30);
-				Curso cursoMDL1Viejo = createAndSaveCurso(cursoRepository, Estado.FINALIZADO, MDL1, LocalDate.of(2023, 7, 15), LocalDate.of(2023, 11, 15), docente2, 30);
+				Curso cursoCOEViejo = createAndSaveCurso(cursoRepository, Estado.FINALIZADO, COE, LocalDate.of(2023, 3, 15), LocalDate.of(2023, 6, 15), docente1, 30);
+				Curso cursoMDL1Viejo = createAndSaveCurso(cursoRepository, Estado.FINALIZADO, MDL1, LocalDate.of(2023, 3, 15), LocalDate.of(2023, 6, 15), docente2, 30);
 				Curso cursoPAVViejo = createAndSaveCurso(cursoRepository, Estado.FINALIZADO, PAV, LocalDate.of(2023, 7, 15), LocalDate.of(2023, 11, 15), docente3, 30);
-				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + COE.getNombre() + " con fecha de inicio " + cursoCOEViejo.getFechaInicio() + " y fecha de fin " + cursoCOEViejo.getFechaFin(), funcionario1, LocalDateTime.of(2023, 6, 8, 10, 0));
-				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + MDL1.getNombre() + " con fecha de inicio " + cursoMDL1Viejo.getFechaInicio() + " y fecha de fin " + cursoMDL1Viejo.getFechaFin(), funcionario1, LocalDateTime.of(2023, 6, 8, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + COE.getNombre() + " con fecha de inicio " + cursoCOEViejo.getFechaInicio() + " y fecha de fin " + cursoCOEViejo.getFechaFin(), funcionario1, LocalDateTime.of(2023, 3, 8, 10, 0));
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + MDL1.getNombre() + " con fecha de inicio " + cursoMDL1Viejo.getFechaInicio() + " y fecha de fin " + cursoMDL1Viejo.getFechaFin(), funcionario1, LocalDateTime.of(2023, 3, 8, 10, 0));
 				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + PAV.getNombre() + " con fecha de inicio " + cursoPAVViejo.getFechaInicio() + " y fecha de fin " + cursoPAVViejo.getFechaFin(), funcionario1, LocalDateTime.of(2023, 6, 8, 10, 0));
+
+				//CURSOS ACTIVOS (VIEJOS)
+				Curso cursoMDL2Viejo = createAndSaveCurso(cursoRepository, Estado.ACTIVO, MDL1, LocalDate.of(2023, 7, 15), LocalDate.of(2023, 11, 15), docente2, 30);
+				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + MDL1.getNombre() + " con fecha de inicio " + cursoMDL2Viejo.getFechaInicio() + " y fecha de fin " + cursoMDL2Viejo.getFechaFin(), funcionario1, LocalDateTime.of(2023, 6, 8, 10, 0));
 
 				//CURSOS ACTIVOS (FECHAS DINAMICAS)
 				Curso cursoCOE = createAndSaveCurso(cursoRepository, Estado.ACTIVO, COE, LocalDate.now().plusDays(20), LocalDate.now().plusDays(20).plusMonths(4), docente1, 30);
@@ -258,6 +262,12 @@ public class GestionEducativaOnlineApplication {
 				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoCOEViejo.getId(), estudiante9, LocalDateTime.of(2023,7,10,0,0));
 				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoMDL1.getId(), estudiante9, LocalDateTime.of(2023,7,10,0,0));
 				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoPAVViejo.getId(), estudiante9, LocalDateTime.of(2023,7,10,0,0));
+
+				//inscripcion a curso viejo pendiente de cailficar
+				InscripcionCurso inscripcionCurso16 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante8, cursoMDL2Viejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.PENDIENTE, LocalDate.of(2023, 7, 13));
+				InscripcionCurso inscripcionCurso17 = createAndSaveInscripcionCurso(inscripcionCursoRepository, estudiante9, cursoMDL2Viejo, EstadoInscripcionCurso.COMPLETADA,CalificacionCurso.PENDIENTE, LocalDate.of(2023, 7, 13));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoMDL2Viejo.getId(), estudiante8, LocalDateTime.of(2023,7,13,0,0));
+				createAndSaveActividad(actividadRepository,TipoActividad.INSCRIPCION_A_CURSO, "Inscripcion a curso con id " +cursoMDL2Viejo.getId(), estudiante9, LocalDateTime.of(2023,7,13,0,0));
 
 				//ESTUDIANTE 3 NO ESTA INSCRIPTO A NINGUN CURSO
 
