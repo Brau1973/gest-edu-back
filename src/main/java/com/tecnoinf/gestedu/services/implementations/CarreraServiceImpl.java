@@ -1,5 +1,6 @@
 package com.tecnoinf.gestedu.services.implementations;
 
+import com.tecnoinf.gestedu.dtos.Tramite.TramiteDTO;
 import com.tecnoinf.gestedu.dtos.asignatura.AsignaturaDTO;
 import com.tecnoinf.gestedu.dtos.carrera.BasicInfoCarreraDTO;
 import com.tecnoinf.gestedu.dtos.carrera.CreateCarreraDTO;
@@ -23,6 +24,7 @@ import com.tecnoinf.gestedu.repositories.PeriodoExamenRepository;
 import com.tecnoinf.gestedu.repositories.specifications.CarreraSpecification;
 import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.CarreraService;
+import com.tecnoinf.gestedu.services.interfaces.EstudianteService;
 import com.tecnoinf.gestedu.services.interfaces.ExamenService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -38,6 +40,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CarreraServiceImpl implements CarreraService {
@@ -48,10 +51,12 @@ public class CarreraServiceImpl implements CarreraService {
     private final PeriodoExamenRepository periodoExamenRepository;
     private final ActividadService actividadService;
     private final ExamenRepository examenRepository;
+    private final EstudianteService estudianteService;
 
     @Autowired
-    public CarreraServiceImpl(CarreraRepository carreraRepository, ModelMapper modelMapper, AsignaturaRepository asignaturaRepository, HorarioRepository horarioRepository,
-                              PeriodoExamenRepository periodoExamenRepository, ActividadService actividadService, ExamenRepository examenRepository) {
+    public CarreraServiceImpl(CarreraRepository carreraRepository, ModelMapper modelMapper, AsignaturaRepository asignaturaRepository,
+                              HorarioRepository horarioRepository, PeriodoExamenRepository periodoExamenRepository,
+                              ActividadService actividadService, ExamenRepository examenRepository, EstudianteService estudianteService) {
         this.carreraRepository = carreraRepository;
         this.modelMapper = modelMapper;
         this.asignaturaRepository = asignaturaRepository;
@@ -59,6 +64,7 @@ public class CarreraServiceImpl implements CarreraService {
         this.periodoExamenRepository = periodoExamenRepository;
         this.actividadService = actividadService;
         this.examenRepository = examenRepository;
+        this.estudianteService = estudianteService;
     }
 
     @Override
@@ -148,10 +154,10 @@ public class CarreraServiceImpl implements CarreraService {
     public List<InscripcionCarreraDTO> getEstudiantesInscriptos(Long id) {
         Carrera carrera = carreraRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Carrera not found with id " + id));
-        return carrera.getInscripciones()
-                .stream()
-                .map(inscripcion -> modelMapper.map(inscripcion, InscripcionCarreraDTO.class))
-                .toList();
+        List<InscripcionCarrera> inscripciones =  carrera.getInscripciones();
+        return inscripciones.stream()
+                .map(this::mapInscripcionCarreraToDTOAndAddCreditosAprobados)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -241,4 +247,13 @@ public class CarreraServiceImpl implements CarreraService {
         }
         return new PageImpl<>(horariosCursos, pageable, horariosCursos.size());
     }
+
+    private InscripcionCarreraDTO mapInscripcionCarreraToDTOAndAddCreditosAprobados(InscripcionCarrera inscripcionCarrera) {
+        InscripcionCarreraDTO inscripcionCarreraDTO = modelMapper.map(inscripcionCarrera, InscripcionCarreraDTO.class);
+        Estudiante estudiante = inscripcionCarrera.getEstudiante();
+        Integer creditosAprobados = estudianteService.obtenerCreditosAprobados(estudiante, inscripcionCarrera.getCarrera());
+        inscripcionCarreraDTO.setCreditosObtenidos(creditosAprobados);
+        return inscripcionCarreraDTO;
+    }
+
 }
