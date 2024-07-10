@@ -33,6 +33,7 @@ public class InscripcionCarrera {
     private Carrera carrera;
 
     //TODO cuando se tenga el tema de cursos se calculara en base a los cursos aprobados y de cada uno se suma los creditos que da esa asignatura
+    //TODO no se usa, no lo borro para no romper otras cosas
     @Transient
     Integer creditosObtenidos;
 
