@@ -9,11 +9,13 @@ import com.tecnoinf.gestedu.dtos.inscripcionCarrera.InscripcionCarreraDTO;
 import com.tecnoinf.gestedu.exceptions.ResourceNotFoundException;
 import com.tecnoinf.gestedu.exceptions.UniqueFieldException;
 import com.tecnoinf.gestedu.models.Carrera;
+import com.tecnoinf.gestedu.models.Estudiante;
 import com.tecnoinf.gestedu.models.InscripcionCarrera;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.specifications.CarreraSpecification;
 import com.tecnoinf.gestedu.services.implementations.CarreraServiceImpl;
 import com.tecnoinf.gestedu.services.interfaces.ActividadService;
+import com.tecnoinf.gestedu.services.interfaces.EstudianteService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -36,6 +38,9 @@ class CarreraServiceImplTest {
 
     @Mock
     ModelMapper modelMapper;
+
+    @Mock
+    private EstudianteService estudianteService;
 
     @Mock
     private ActividadService actividadService;
@@ -203,6 +208,7 @@ class CarreraServiceImplTest {
 
         when(carreraRepository.findById(id)).thenReturn(Optional.of(carrera));
         when(modelMapper.map(inscripcion, InscripcionCarreraDTO.class)).thenReturn(inscripcionCarreraDTO);
+        when(estudianteService.obtenerCreditosAprobados(any(Estudiante.class), any(Carrera.class))).thenReturn(10);
 
         List<InscripcionCarreraDTO> result = carreraService.getEstudiantesInscriptos(id);
 
