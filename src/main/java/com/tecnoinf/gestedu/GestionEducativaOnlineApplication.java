@@ -185,21 +185,21 @@ public class GestionEducativaOnlineApplication {
 				//TECNOLOGO INFORMATICO
 
 				//CURSOS FINALIZADOS (VIEJOS)
-				Curso cursoCOEViejo = createAndSaveCurso(cursoRepository, Estado.FINALIZADO, COE, LocalDate.of(2023, 3, 15), LocalDate.of(2023, 6, 15), docente1, 30);
-				Curso cursoMDL1Viejo = createAndSaveCurso(cursoRepository, Estado.FINALIZADO, MDL1, LocalDate.of(2023, 3, 15), LocalDate.of(2023, 6, 15), docente2, 30);
-				Curso cursoPAVViejo = createAndSaveCurso(cursoRepository, Estado.FINALIZADO, PAV, LocalDate.of(2023, 7, 15), LocalDate.of(2023, 11, 15), docente3, 30);
+				Curso cursoCOEViejo = createAndSaveCurso(cursoRepository, Estado.FINALIZADO, COE, LocalDate.of(2023, 3, 15), LocalDate.of(2023, 6, 15), docente1, 30, false);
+				Curso cursoMDL1Viejo = createAndSaveCurso(cursoRepository, Estado.FINALIZADO, MDL1, LocalDate.of(2023, 3, 15), LocalDate.of(2023, 6, 15), docente2, 30, false);
+				Curso cursoPAVViejo = createAndSaveCurso(cursoRepository, Estado.FINALIZADO, PAV, LocalDate.of(2023, 7, 15), LocalDate.of(2023, 11, 15), docente3, 30, false);
 				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + COE.getNombre() + " con fecha de inicio " + cursoCOEViejo.getFechaInicio() + " y fecha de fin " + cursoCOEViejo.getFechaFin(), funcionario1, LocalDateTime.of(2023, 3, 8, 10, 0));
 				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + MDL1.getNombre() + " con fecha de inicio " + cursoMDL1Viejo.getFechaInicio() + " y fecha de fin " + cursoMDL1Viejo.getFechaFin(), funcionario1, LocalDateTime.of(2023, 3, 8, 10, 0));
 				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + PAV.getNombre() + " con fecha de inicio " + cursoPAVViejo.getFechaInicio() + " y fecha de fin " + cursoPAVViejo.getFechaFin(), funcionario1, LocalDateTime.of(2023, 6, 8, 10, 0));
 
 				//CURSOS ACTIVOS (VIEJOS)
-				Curso cursoMDL2Viejo = createAndSaveCurso(cursoRepository, Estado.ACTIVO, MDL1, LocalDate.of(2023, 7, 15), LocalDate.of(2023, 11, 15), docente2, 30);
+				Curso cursoMDL2Viejo = createAndSaveCurso(cursoRepository, Estado.ACTIVO, MDL1, LocalDate.of(2023, 7, 15), LocalDate.of(2023, 11, 15), docente2, 30, false);
 				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + MDL1.getNombre() + " con fecha de inicio " + cursoMDL2Viejo.getFechaInicio() + " y fecha de fin " + cursoMDL2Viejo.getFechaFin(), funcionario1, LocalDateTime.of(2023, 6, 8, 10, 0));
 
 				//CURSOS ACTIVOS (FECHAS DINAMICAS)
-				Curso cursoCOE = createAndSaveCurso(cursoRepository, Estado.ACTIVO, COE, LocalDate.now().plusDays(20), LocalDate.now().plusDays(20).plusMonths(4), docente1, 30);
-				Curso cursoMDL1 = createAndSaveCurso(cursoRepository, Estado.ACTIVO, MDL1, LocalDate.now().plusDays(20), LocalDate.now().plusDays(20).plusMonths(4), docente2, 30);
-				Curso cursoPAV = createAndSaveCurso(cursoRepository, Estado.ACTIVO, PAV, LocalDate.now().plusDays(20), LocalDate.now().plusDays(20).plusMonths(4), docente3, 30);
+				Curso cursoCOE = createAndSaveCurso(cursoRepository, Estado.ACTIVO, COE, LocalDate.now().plusDays(20), LocalDate.now().plusDays(20).plusMonths(4), docente1, 30, true);
+				Curso cursoMDL1 = createAndSaveCurso(cursoRepository, Estado.ACTIVO, MDL1, LocalDate.now().plusDays(20), LocalDate.now().plusDays(20).plusMonths(4), docente2, 30, true);
+				Curso cursoPAV = createAndSaveCurso(cursoRepository, Estado.ACTIVO, PAV, LocalDate.now().plusDays(20), LocalDate.now().plusDays(20).plusMonths(4), docente3, 30, true);
 				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + COE.getNombre() + " con fecha de inicio " + cursoCOE.getFechaInicio() + " y fecha de fin " + cursoCOE.getFechaFin(), funcionario1, LocalDateTime.now().minusDays(20));
 				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + MDL1.getNombre() + " con fecha de inicio " + cursoMDL1.getFechaInicio() + " y fecha de fin " + cursoMDL1.getFechaFin(), funcionario1, LocalDateTime.now().minusDays(20));
 				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + PAV.getNombre() + " con fecha de inicio " + cursoPAV.getFechaInicio() + " y fecha de fin " + cursoPAV.getFechaFin(), funcionario1, LocalDateTime.now().minusDays(20));
@@ -219,8 +219,8 @@ public class GestionEducativaOnlineApplication {
 				createAndSaveActividad(actividadRepository,TipoActividad.REGISTRO_HORARIOS_CURSO, "Se ha registrado un horario para el curso con id " + cursoPAV.getId(), funcionario1, LocalDateTime.now().minusDays(20));
 
 				//CURSOS FUTUROS (NO SE PUEDE INSCRIBIR AUN)
-				Curso cursoCOEFuturo = createAndSaveCurso(cursoRepository, Estado.ACTIVO, COE, LocalDate.now().plusDays(40), LocalDate.now().plusDays(40).plusMonths(4), docente1, 30);
-				Curso cursoMDL1Futuro = createAndSaveCurso(cursoRepository, Estado.ACTIVO, MDL1, LocalDate.now().plusDays(40), LocalDate.now().plusDays(40).plusMonths(4), docente2, 30);
+				Curso cursoCOEFuturo = createAndSaveCurso(cursoRepository, Estado.ACTIVO, COE, LocalDate.now().plusDays(40), LocalDate.now().plusDays(40).plusMonths(4), docente1, 30, false);
+				Curso cursoMDL1Futuro = createAndSaveCurso(cursoRepository, Estado.ACTIVO, MDL1, LocalDate.now().plusDays(40), LocalDate.now().plusDays(40).plusMonths(4), docente2, 30, false);
 				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + COE.getNombre() + " con fecha de inicio " + cursoCOEFuturo.getFechaInicio() + " y fecha de fin " + cursoCOEFuturo.getFechaFin(), funcionario1, LocalDateTime.now().minusDays(20));
 				createAndSaveActividad(actividadRepository,TipoActividad.ALTA_CURSO, "Se ha creado un curso para la asignatura" + MDL1.getNombre() + " con fecha de inicio " + cursoMDL1Futuro.getFechaInicio() + " y fecha de fin " + cursoMDL1Futuro.getFechaFin(), funcionario1, LocalDateTime.now().minusDays(20));
 
@@ -372,7 +372,7 @@ public class GestionEducativaOnlineApplication {
 		return docenteRepository.save(docente);
 	}
 
-	private Curso createAndSaveCurso(CursoRepository cursoRepository, Estado estado, Asignatura asignatura, LocalDate fechaInicio, LocalDate fechaFin, Docente docente, int diasPrevInsc) {
+	private Curso createAndSaveCurso(CursoRepository cursoRepository, Estado estado, Asignatura asignatura, LocalDate fechaInicio, LocalDate fechaFin, Docente docente, int diasPrevInsc, Boolean horario) {
 		Curso curso = new Curso();
 		curso.setEstado(estado);
 		curso.setAsignatura(asignatura);
@@ -380,6 +380,7 @@ public class GestionEducativaOnlineApplication {
 		curso.setFechaFin(fechaFin);
 		curso.setDocente(docente);
 		curso.setDiasPrevInsc(diasPrevInsc);
+		curso.setHorario(horario);
 		return cursoRepository.save(curso);
 	}
 
