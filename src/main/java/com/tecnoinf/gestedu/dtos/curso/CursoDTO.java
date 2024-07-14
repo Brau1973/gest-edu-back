@@ -20,6 +20,7 @@ public class CursoDTO {
     private LocalDate fechaFin;
     private Integer diasPrevInsc;
     private Estado estado;
+    private Boolean horario;
     //private Integer semestre;
     //private Set<HorarioDTO> horarios;
     private Long asignaturaId;
@@ -31,6 +32,7 @@ public class CursoDTO {
         this.fechaFin = curso.getFechaFin();
         this.diasPrevInsc = curso.getDiasPrevInsc();
         this.estado = curso.getEstado();
+        this.horario = curso.getHorario();
         //this.semestre = curso.getSemestre();
         this.asignaturaId = curso.getAsignatura().getId();
         this.docenteId = curso.getDocente().getId();
