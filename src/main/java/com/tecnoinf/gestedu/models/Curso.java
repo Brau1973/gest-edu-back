@@ -30,6 +30,8 @@ public class Curso {
     @Column(name = "estado", nullable = false)
     private Estado estado;
 
+    private Boolean horario;
+
     @OneToMany(mappedBy = "curso")
     private List<Horario> horarios = new ArrayList<>();
 

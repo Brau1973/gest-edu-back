@@ -83,6 +83,7 @@ public class CursoServiceImpl implements CursoService {
             curso.setFechaFin(cursoDTO.getFechaFin());
             curso.setDiasPrevInsc(cursoDTO.getDiasPrevInsc());
             curso.setEstado(Estado.ACTIVO);
+            curso.setHorario(false);
             curso.setAsignatura(asignatura);
             /*Curso curso = modelMapper.map(cursoDTO, Curso.class);
             curso.setAsignatura(asignatura);
@@ -128,6 +129,7 @@ public class CursoServiceImpl implements CursoService {
         Horario horario = modelMapper.map(nuevoHorario, Horario.class);
         horario.setCurso(curso);
         curso.getHorarios().add(horario);
+        curso.setHorario(true);
         horarioRepository.save(horario);
         cursoRepository.save(curso);
 

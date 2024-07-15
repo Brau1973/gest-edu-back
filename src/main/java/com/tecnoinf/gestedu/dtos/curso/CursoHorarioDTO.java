@@ -24,6 +24,7 @@ public class CursoHorarioDTO {
     private String asignaturaNombre;
     private String docenteNombre;
     private String docenteApellido;
+    private Boolean horario;
     //private List<CursoDTO> cursos;
     private List<HorarioDTO> horarios;
 }
