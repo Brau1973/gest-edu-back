@@ -231,6 +231,7 @@ public class CarreraServiceImpl implements CarreraService {
                         cursoHorarioDTO.setDocenteNombre(curso.getDocente().getNombre());
                         cursoHorarioDTO.setDocenteApellido(curso.getDocente().getApellido());
                         cursoHorarioDTO.setDiasPrevInsc(curso.getDiasPrevInsc());
+                        cursoHorarioDTO.setHorario(curso.getHorario());
 
                         List<Horario> horarios = horarioRepository.findHorariosByCursoId(curso.getId());
                         List<HorarioDTO> horarioDTOList = new ArrayList<>();
