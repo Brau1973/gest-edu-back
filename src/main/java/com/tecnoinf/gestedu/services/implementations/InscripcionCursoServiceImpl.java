@@ -329,6 +329,7 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
                 auxCursoHorario.setDocenteNombre(curso.getDocente().getNombre());
                 auxCursoHorario.setDocenteApellido(curso.getDocente().getApellido());
                 auxCursoHorario.setAsignaturaNombre(curso.getAsignatura().getNombre());
+                auxCursoHorario.setHorario(curso.getHorario());
                 //auxCursoHorario.setDiasPrevInsc(curso.getDiasPrevInsc());
 
                 List<HorarioDTO> dtoHorarios = new ArrayList<>();
