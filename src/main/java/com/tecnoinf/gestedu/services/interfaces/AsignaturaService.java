@@ -22,4 +22,5 @@ public interface AsignaturaService {
     List<CursoDTO> obtenerCursosDeAsignatura(Long asignaturaId);
     List<CursoDTO> obtenerCursosCalificadosDeAsignatura(Long asignaturaId);
     List<ExamenDTO> obtenerExamenesCalificadosDeAsignatura(Long asignaturaId);
+    List<CursoDTO> obtenerCursosDeAsignaturaValidos(Long asignaturaId, String email);
 }
