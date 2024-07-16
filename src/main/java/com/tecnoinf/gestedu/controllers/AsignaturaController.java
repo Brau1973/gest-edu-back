@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -100,6 +101,13 @@ public class AsignaturaController {
     @GetMapping("{asignaturaId}/cursos")
     public ResponseEntity<List<CursoDTO>> getCursosDeAsignatura(@PathVariable Long asignaturaId){
         List<CursoDTO> cursos = asignaturaService.obtenerCursosDeAsignatura(asignaturaId);
+        return ResponseEntity.ok().body(cursos);
+    }
+
+    @Operation(summary = "Obtener Cursos validos para inscripcion de una Asignatura")
+    @GetMapping("{asignaturaId}/listado-cursos-disponibles")
+    public ResponseEntity<List<CursoDTO>> getCursosDeAsignaturaValidos(@PathVariable Long asignaturaId, Principal principal){
+        List<CursoDTO> cursos = asignaturaService.obtenerCursosDeAsignaturaValidos(asignaturaId, principal.getName());
         return ResponseEntity.ok().body(cursos);
     }
 

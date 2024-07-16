@@ -11,12 +11,16 @@ import com.tecnoinf.gestedu.models.Asignatura;
 import com.tecnoinf.gestedu.models.Carrera;
 import com.tecnoinf.gestedu.models.Curso;
 import com.tecnoinf.gestedu.models.Examen;
+import com.tecnoinf.gestedu.models.InscripcionCurso;
+import com.tecnoinf.gestedu.models.Usuario;
 import com.tecnoinf.gestedu.models.enums.Estado;
 import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.repositories.AsignaturaRepository;
 import com.tecnoinf.gestedu.repositories.CarreraRepository;
 import com.tecnoinf.gestedu.repositories.CursoRepository;
 import com.tecnoinf.gestedu.repositories.ExamenRepository;
+import com.tecnoinf.gestedu.repositories.InscripcionCursoRepository;
+import com.tecnoinf.gestedu.repositories.UsuarioRepository;
 import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.AsignaturaService;
 import org.modelmapper.ModelMapper;
@@ -28,9 +32,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,17 +48,21 @@ public class AsignaturaServiceImpl implements AsignaturaService {
     private final ExamenRepository examenRepository;
     private final ActividadService actividadService;
     private final CursoRepository cursoRepository;
-
+    private final InscripcionCursoRepository inscripcionCursoRepository;
+    private final UsuarioRepository usuarioRepository;
 
     @Autowired
     public AsignaturaServiceImpl(ActividadService actividadService, AsignaturaRepository asignaturaRepository, CarreraRepository carreraRepository ,
-                                 ModelMapper modelMapper, ExamenRepository examenRepository, CursoRepository cursoRepository) {
+                                 ModelMapper modelMapper, ExamenRepository examenRepository, CursoRepository cursoRepository, InscripcionCursoRepository inscripcionCursoRepository,
+                                 UsuarioRepository usuarioRepository) {
         this.asignaturaRepository = asignaturaRepository;
         this.carreraRepository = carreraRepository;
         this.modelMapper = modelMapper;
         this.examenRepository = examenRepository;
         this.actividadService = actividadService;
         this.cursoRepository = cursoRepository;
+        this.inscripcionCursoRepository = inscripcionCursoRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @Override
@@ -227,7 +237,7 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         List<ExamenDTO> examenesDto = examenesSinCalificar.stream().map(examen -> modelMapper.map(examen, ExamenDTO.class)).collect(Collectors.toList());
         return new PageImpl<>(examenesDto, pageable, examenesSinCalificar.size());
     }
-    
+
     @Override
     public List<CursoDTO> obtenerCursosDeAsignatura(Long asignaturaId){
         Asignatura asignatura = asignaturaRepository.findById(asignaturaId)
@@ -238,6 +248,38 @@ public class AsignaturaServiceImpl implements AsignaturaService {
         Type listType = new TypeToken<List<CursoDTO>>(){}.getType();
         return modelMapper.map(cursos, listType);
     }
+
+    @Override
+    public List<CursoDTO> obtenerCursosDeAsignaturaValidos(Long asignaturaId, String email) {
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
+        if (usuario.isEmpty()) {
+            throw new ResourceNotFoundException("Usuario no encontrado.");
+        }
+        Asignatura asignatura = asignaturaRepository.findById(asignaturaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Asignatura no encontrada - id " + asignaturaId));
+
+        List<Curso> cursos = asignatura.getCursos();
+
+        LocalDate fechaActual = LocalDate.now();
+
+        List<Curso> cursosValidos = cursos.stream()
+                .filter(curso -> curso.getEstado() == Estado.ACTIVO)
+                .filter(curso -> {
+                    LocalDate fechaInicioCurso = curso.getFechaInicio();
+                    int plazoDiasPrevios = curso.getDiasPrevInsc();
+                    LocalDate limiteFechaInicio = fechaInicioCurso.minusDays(plazoDiasPrevios);
+                    return fechaActual.isAfter(limiteFechaInicio) && fechaActual.isBefore(fechaInicioCurso);
+                })
+                .filter(curso -> {
+                    Optional<InscripcionCurso> inscripcion = inscripcionCursoRepository.findInscripcionCursoEstudianteByEstudianteIdAndCursoId(usuario.get().getId(), curso.getId());
+                    return inscripcion.isEmpty();
+                })
+                .collect(Collectors.toList());
+
+        Type listType = new TypeToken<List<CursoDTO>>() {}.getType();
+        return modelMapper.map(cursosValidos, listType);
+    }
+
 
     @Override
     public List<CursoDTO> obtenerCursosCalificadosDeAsignatura(Long asignaturaId){

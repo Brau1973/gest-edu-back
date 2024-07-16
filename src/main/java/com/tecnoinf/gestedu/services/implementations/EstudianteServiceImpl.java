@@ -185,6 +185,29 @@ public class EstudianteServiceImpl implements EstudianteService {
         return certificadoService.generarCertificado(inscripcionCarrera.getCarrera().getNombre(), estudiante);
     }
 
+    public boolean isAsignaturaExoneradaPorEstudiante(Estudiante estudiante, Asignatura asignatura) {
+        List<Curso> cursos = asignatura.getCursos();
+        for (Curso curso : cursos) {
+            List<InscripcionCurso> inscripcionesCurso = inscripcionCursoRepository.findInscripcionCursoEstudianteById(estudiante.getId());
+            for (InscripcionCurso inscripcion : inscripcionesCurso) {
+                if (inscripcion.getCurso().equals(curso)) {
+                    if (inscripcion.getCalificacion().equals(CalificacionCurso.EXONERADO)) {
+                        return true;
+                    }
+                    if (inscripcion.getCalificacion().equals(CalificacionCurso.AEXAMEN)) {
+                        List<InscripcionExamen> inscripcionesExamen = inscripcionExamenRepository.findByCalificacionAndEstudianteId(CalificacionExamen.APROBADO, estudiante.getId());
+                        for (InscripcionExamen inscripcionExamen : inscripcionesExamen) {
+                            if (curso.getAsignatura().getExamenes().contains(inscripcionExamen.getExamen())) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public Page<AsignaturaDTO> obtenerAsignaturasParaInscripcion(Long id, String emailEstudiante, Pageable pageable){
         Optional<Usuario> usuario = usuarioRepository.findByEmail(emailEstudiante);
@@ -199,27 +222,28 @@ public class EstudianteServiceImpl implements EstudianteService {
                 .orElseThrow(() -> new ResourceNotFoundException("Carrera not found with id " + id));
         List<Asignatura> asignaturas = carrera.getAsignaturas();
         if (asignaturas != null){
+            boolean periodoInscripcion = false;
             for(Asignatura auxAsignatura: asignaturas){
+                // Verificar si el estudiante ya exoneró la asignatura
+                if(isAsignaturaExoneradaPorEstudiante(estudiante, auxAsignatura)){
+                    continue; // Saltar esta asignatura
+                }
                 if(auxAsignatura.getSemestrePlanEstudio() == 1){
                     //No tiene previas...
-                    //Chequear que la fecha corresponda entre la fecha de Inicio con la de prevInscripcion en cursos
                     List<Curso> cursos = auxAsignatura.getCursos();
-                    if(cursos != null)
-                    {
+                    if(cursos != null) {
                         for(Curso auxCursos: cursos){
                             LocalDate fechaActual = LocalDate.now();
                             LocalDate fechaInicioCurso = auxCursos.getFechaInicio();
                             int plazoDiasPrevios = auxCursos.getDiasPrevInsc();
                             LocalDate limiteFechaInicio = fechaInicioCurso.minusDays(plazoDiasPrevios);
 
-                            boolean periodoInscripcion = false;
                             if (fechaActual.isBefore(fechaInicioCurso)) {
                                 if (fechaActual.isAfter(limiteFechaInicio)) {
                                     //Dentro del horario de Inscripcion
                                     periodoInscripcion = true;
                                     List<InscripcionCurso> inscripcionCursos = auxCursos.getInscripciones();
                                     if(inscripcionCursos == null){
-                                        //        Horario horario = modelMapper.map(nuevoHorario, Horario.class);
                                         AsignaturaDTO asignaturaDTO = modelMapper.map(auxAsignatura, AsignaturaDTO.class);
                                         asignaturaDTOS.add(asignaturaDTO);
                                     }
@@ -233,21 +257,11 @@ public class EstudianteServiceImpl implements EstudianteService {
                                         AsignaturaDTO asignaturaDTO = modelMapper.map(auxAsignatura, AsignaturaDTO.class);
                                         asignaturaDTOS.add(asignaturaDTO);
                                     }
-                                    else {
-                                        throw new UniqueFieldException("Ya está inscripto al curso.");
-                                    }
                                 }
-                            }
-                            if(!periodoInscripcion){
-                                throw new UniqueFieldException("Está fuera del plazo de inscripción de cualquier curso.");
                             }
                         }
                     }
-                    else {
-                        throw new UniqueFieldException("No existen cursos asociados a la asignatura.");
-                    }
-                }
-                else{
+                } else {
                     List<Asignatura> previas = asignaturaRepository.findPreviasByAsignaturaId(auxAsignatura.getId());
                     int cantPrevias = 0;
                     int previasExoneradas = 0;
@@ -260,8 +274,7 @@ public class EstudianteServiceImpl implements EstudianteService {
                                 if(inscripcionCurso.getCurso().equals(auxCursoPrevias)){
                                     if(inscripcionCurso.getCalificacion().equals(CalificacionCurso.EXONERADO)){
                                         previasExoneradas++;
-                                    }
-                                    else if (inscripcionCurso.getCalificacion().equals(CalificacionCurso.AEXAMEN)){
+                                    } else if (inscripcionCurso.getCalificacion().equals(CalificacionCurso.AEXAMEN)){
                                         List<InscripcionExamen> examenesAprovadosEstudiante = inscripcionExamenRepository.findByCalificacionAndEstudianteId(CalificacionExamen.APROBADO, estudiante.getId());
                                         List<Examen> examenesAsignaturas = previa.getExamenes();
                                         for(InscripcionExamen examenAprovado: examenesAprovadosEstudiante){
@@ -277,26 +290,19 @@ public class EstudianteServiceImpl implements EstudianteService {
                         }
                     }
                     if(cantPrevias == previasExoneradas){
-                        //Pasó todas las previas
                         List<Curso> cursos = auxAsignatura.getCursos();
-                        if(cursos != null)
-                        {
-                            //Cursos de asignatura
+                        if(cursos != null) {
                             for(Curso auxCursos: cursos){
                                 LocalDate fechaActual = LocalDate.now();
                                 LocalDate fechaInicioCurso = auxCursos.getFechaInicio();
                                 int plazoDiasPrevios = auxCursos.getDiasPrevInsc();
                                 LocalDate limiteFechaInicio = fechaInicioCurso.minusDays(plazoDiasPrevios);
 
-                                boolean periodoInscripcion = false;
                                 if (fechaActual.isBefore(fechaInicioCurso)) {
                                     if (fechaActual.isAfter(limiteFechaInicio)) {
-                                        //Dentro del horario de Inscripcion
                                         periodoInscripcion = true;
-                                        //Inscripciones del Curso
                                         List<InscripcionCurso> inscripcionCursos = auxCursos.getInscripciones();
                                         if(inscripcionCursos == null){
-                                            //Horario horario = modelMapper.map(nuevoHorario, Horario.class);
                                             AsignaturaDTO asignaturaDTO = modelMapper.map(auxAsignatura, AsignaturaDTO.class);
                                             asignaturaDTOS.add(asignaturaDTO);
                                         }
@@ -313,19 +319,19 @@ public class EstudianteServiceImpl implements EstudianteService {
                                     }
                                 }
                             }
-                        }
-                        else {
+                        } else {
                             throw new UniqueFieldException("No existen cursos asociados a la asignatura.");
                         }
                     }
                 }
             }
-        }
-        else {
+            if(!periodoInscripcion){
+                throw new UniqueFieldException("Está fuera del plazo de inscripción de cualquier curso.");
+            }
+        } else {
             throw new UniqueFieldException("No existen asignaturas asociadas a la carrera.");
         }
-
-        return  new PageImpl<>(asignaturaDTOS, pageable, asignaturaDTOS.size());
+        return new PageImpl<>(asignaturaDTOS, pageable, asignaturaDTOS.size());
     }
 
     @Override

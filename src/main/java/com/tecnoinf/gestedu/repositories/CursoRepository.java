@@ -11,4 +11,5 @@ import java.util.List;
 public interface CursoRepository extends JpaRepository<Curso, Long> {
     boolean existsByDocenteId(Long id);
     List<Curso> findByAsignaturaIdAndEstado(Long asignaturaId, Estado estado);
+    List<Curso> findByAsignaturaCarreraId(Long carreraId);
 }
