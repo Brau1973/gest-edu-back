@@ -1,9 +1,7 @@
 package com.tecnoinf.gestedu.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -15,6 +13,8 @@ public class Certificado {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @ManyToOne
     private Estudiante estudiante;
     private String codigoValidacion;

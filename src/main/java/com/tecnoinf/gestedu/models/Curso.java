@@ -33,6 +33,8 @@ public class Curso {
     private Boolean horario;
 
     @OneToMany(mappedBy = "curso")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Horario> horarios = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

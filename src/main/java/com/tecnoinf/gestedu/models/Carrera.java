@@ -34,6 +34,8 @@ public class Carrera {
     @EqualsAndHashCode.Exclude
     private List<InscripcionCarrera> inscripciones = new ArrayList<>();
     @OneToMany(mappedBy = "carrera")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<PeriodoExamen> periodosExamen;
 
     @PostLoad

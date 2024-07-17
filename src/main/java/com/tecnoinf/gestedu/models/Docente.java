@@ -1,9 +1,7 @@
 package com.tecnoinf.gestedu.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +21,8 @@ public class Docente {
     private String apellido;
 
     @ManyToMany(mappedBy = "docentes")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Examen> examenes = new ArrayList<>();
 
 }

@@ -1,9 +1,7 @@
 package com.tecnoinf.gestedu.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -22,6 +20,8 @@ public class Notificacion {
     private String token;
 
     @ManyToOne
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Estudiante estudiante;
 
     public Notificacion(LocalDate fecha, boolean leido, Estudiante estudiante) {

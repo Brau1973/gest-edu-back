@@ -2,9 +2,7 @@ package com.tecnoinf.gestedu.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,6 +21,8 @@ public class PeriodoExamen {
 
     @ManyToOne
     @JoinColumn(name = "carrera_id")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Carrera carrera;
 
 }

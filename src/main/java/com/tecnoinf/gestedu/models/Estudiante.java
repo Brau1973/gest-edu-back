@@ -30,9 +30,13 @@ public class Estudiante extends Usuario {
     private List<InscripcionCurso> inscripcionesCursos = new ArrayList<>();
 
     @OneToMany(mappedBy = "estudiante")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Certificado> certificados;
 
     @OneToMany(mappedBy = "estudiante")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Notificacion> notificaciones;
 
     @ElementCollection
