@@ -33,11 +33,17 @@ public class Asignatura {
             joinColumns = @JoinColumn(name = "asignatura_id"),
             inverseJoinColumns = @JoinColumn(name = "previa_id")
     )
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Asignatura> previas = new ArrayList<>();
 
     @OneToMany(mappedBy = "asignatura")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Examen> examenes = new ArrayList<>();
 
     @OneToMany(mappedBy = "asignatura")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Curso> cursos = new ArrayList<>();
 }

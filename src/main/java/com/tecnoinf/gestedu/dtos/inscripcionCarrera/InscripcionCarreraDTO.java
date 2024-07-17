@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -18,5 +19,5 @@ public class InscripcionCarreraDTO {
     private UsuarioTramiteInfoDTO estudiante;;
     Integer creditosObtenidos;
     private EstadoInscripcionCarrera estado;
-    private LocalDateTime fechaInscripcion;
+    private LocalDate fechaInscripcion;
 }

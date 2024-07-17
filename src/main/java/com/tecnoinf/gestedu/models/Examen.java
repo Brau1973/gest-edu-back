@@ -23,6 +23,8 @@ public class Examen {
     private Estado estado = Estado.ACTIVO;
 
     @ManyToOne
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Asignatura asignatura;
 
     @ManyToMany
@@ -31,6 +33,8 @@ public class Examen {
             joinColumns = @JoinColumn(name = "examen_id"),
             inverseJoinColumns = @JoinColumn(name = "docente_id")
     )
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Docente> docentes = new ArrayList<>();
 
     @OneToMany(mappedBy = "examen")
