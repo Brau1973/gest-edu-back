@@ -178,19 +178,19 @@ public class TramiteServiceImpl implements TramiteService {
         if(tipoTramite == TipoTramite.INSCRIPCION_A_CARRERA){
             if (estadoTramite == EstadoTramite.ACEPTADO){
                 inscripcionCarreraService.createInscripcionCarrera(carrera, estudianteSolicitante);
-                actividadService.registrarActividad(TipoActividad.APROBACION_SOLICITUD_INSCRIPCION_CARRERA, "Se aprobo la solicitud de inscripcion del estudiante " + estudianteSolicitante.getNombre() + " a la carrera " + carrera.getNombre());
+                actividadService.registrarActividad(TipoActividad.APROBACION_SOLICITUD_INSCRIPCION_CARRERA, "Se aprobo la solicitud de inscripcion del estudiante " + estudianteSolicitante.getNombre() + " " + estudianteSolicitante.getApellido() + " a la carrera " + carrera.getNombre());
                 emailService.sendAprobacionTramiteInscripcionCarreraEmail("gestedu.info@gmail.com", estudianteSolicitante.getNombre(), carrera.getNombre(), usuarioResponsable.getNombre());
             } else if (estadoTramite == EstadoTramite.RECHAZADO){
-                actividadService.registrarActividad(TipoActividad.RECHAZO_SOLICITUD_INSCRIPCION_CARRERA, "Se rechazo la solicitud de inscripcion del estudiante " + estudianteSolicitante.getNombre() + " a la carrera " + carrera.getNombre());
+                actividadService.registrarActividad(TipoActividad.RECHAZO_SOLICITUD_INSCRIPCION_CARRERA, "Se rechazo la solicitud de inscripcion del estudiante " + estudianteSolicitante.getNombre() + " " + estudianteSolicitante.getApellido() + " a la carrera " + carrera.getNombre());
                 emailService.sendRechazoTramiteInscripcionCarreraEmail("gestedu.info@gmail.com", estudianteSolicitante.getNombre(), carrera.getNombre(), usuarioResponsable.getNombre(), motivoRechazo);
             }
         } else if (tipoTramite == TipoTramite.SOLICITUD_DE_TITULO){
             if (estadoTramite == EstadoTramite.ACEPTADO){
                 tituloService.createTitulo(carrera.getNombre(),estudianteSolicitante);
-                actividadService.registrarActividad(TipoActividad.APROBACION_SOLICITUD_TITULO, "Se aprobo la solicitud de titulo del estudiante " + estudianteSolicitante.getNombre() + " de la carrera " + carrera.getNombre());
+                actividadService.registrarActividad(TipoActividad.APROBACION_SOLICITUD_TITULO, "Se aprobo la solicitud de titulo del estudiante " + estudianteSolicitante.getNombre() + " " + estudianteSolicitante.getApellido() + " de la carrera " + carrera.getNombre());
                 emailService.sendAprobacionTramiteTituloCarreraEmail("gestedu.info@gmail.com", estudianteSolicitante.getNombre(), carrera.getNombre(), usuarioResponsable.getNombre());
             } else if (estadoTramite == EstadoTramite.RECHAZADO){
-                actividadService.registrarActividad(TipoActividad.RECHAZO_SOLICITUD_TITULO, "Se rechazo la solicitud de titulo del estudiante " + estudianteSolicitante.getNombre() + " de la carrera " + carrera.getNombre());
+                actividadService.registrarActividad(TipoActividad.RECHAZO_SOLICITUD_TITULO, "Se rechazo la solicitud de titulo del estudiante " + estudianteSolicitante.getNombre() + " " + estudianteSolicitante.getApellido() + " de la carrera " + carrera.getNombre());
                 emailService.sendRechazoTramiteTituloCarreraEmail("gestedu.info@gmail.com", estudianteSolicitante.getNombre(), carrera.getNombre(), usuarioResponsable.getNombre(), motivoRechazo);
             }
         }

@@ -2,8 +2,10 @@ package com.tecnoinf.gestedu.controllers;
 
 import com.tecnoinf.gestedu.dtos.usuario.*;
 import com.tecnoinf.gestedu.models.Usuario;
+import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.services.implementations.UserDetailsServiceImpl;
 import com.tecnoinf.gestedu.services.implementations.UsuarioService;
+import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +30,12 @@ public class UsuarioController {
     @Autowired
     UsuarioService usuarioService;
 
+    @Autowired
+    ActividadService actividadService;
+
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestHeader(value="Authorization") String token) {
+        //actividadService.registrarActividad(TipoActividad.CIERRE_SESION, "Se ha cerrado sesion.");
         return new ResponseEntity<>("Sesión cerrada", HttpStatus.OK);
     }
 
@@ -64,6 +70,7 @@ public class UsuarioController {
         user.setDomicilio(UsuarioDTO.getDomicilio());
         user.setImagen(UsuarioDTO.getImagen());
         usuarioService.updateUsuario(user);
+        actividadService.registrarActividad(TipoActividad.EDITAR_DATOS_BASICOS_DE_PERFIL_DE_USUARIO, "Se modificó el perfil del usuario.");
         return new ResponseEntity<>(new UsuarioDTO(user), HttpStatus.OK);
     }
 

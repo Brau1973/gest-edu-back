@@ -11,9 +11,11 @@ import com.tecnoinf.gestedu.exceptions.TokenInactivoException;
 import com.tecnoinf.gestedu.exceptions.TokenInvalidoException;
 import com.tecnoinf.gestedu.exceptions.TokenVencidoException;
 import com.tecnoinf.gestedu.models.Usuario;
+import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.services.implementations.TokenPassService;
 import com.tecnoinf.gestedu.services.implementations.UserDetailsServiceImpl;
 import com.tecnoinf.gestedu.services.implementations.UsuarioService;
+import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.CertificadoService;
 import com.tecnoinf.gestedu.services.interfaces.InvitadoService;
 import com.tecnoinf.gestedu.util.JwtUtils;
@@ -48,6 +50,9 @@ public class InvitadoController {
 
     @Autowired
     UsuarioService usuarioService;
+
+    @Autowired
+    ActividadService actividadService;
 
     @Autowired
     TokenPassService tokenPassService;
@@ -85,6 +90,7 @@ public class InvitadoController {
         String token = tokenPassService.crearTokenPassword(usuario.get());
         dto.setTokenPassword(token);
         invitadoService.sendEmailResetPass(dto, usuario.get());
+        actividadService.registrarActividad(TipoActividad.RECUPERAR_CONTRASENA_POR_MAIL, "Se ha enviado un mail de recuperación de contraseña al usuario con id " + usuario.get().getId() + " exitosamente.");
         return new ResponseEntity<>("Correo enviado con éxito", HttpStatusCode.valueOf(200));
     }
 
