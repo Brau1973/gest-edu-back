@@ -32,8 +32,10 @@ public class NotificacionServiceImpl implements NotificacionService {
         Optional<Usuario> usuario = estudianteRepository.findByEmail(name);
         if (usuario.isPresent()) {
             Estudiante estudiante = (Estudiante) usuario.get();
-            estudiante.getTokenFirebase().add(tokenFirebase);
-            estudianteRepository.save(estudiante);
+            if(!estudiante.getTokenFirebase().contains(tokenFirebase)){
+                estudiante.getTokenFirebase().add(tokenFirebase);
+                estudianteRepository.save(estudiante);
+            }
         }
     }
 

@@ -11,7 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cglib.core.Local;
+import java.time.ZoneId;
+import java.util.TimeZone;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,12 +27,13 @@ import java.util.ArrayList;
 @SpringBootApplication
 @EnableAsync
 public class GestionEducativaOnlineApplication {
-	;
+
 	@Value("${spring.jpa.hibernate.ddl-auto}")
     private String ddlAuto;
 
 	public static void main(String[] args) {
         SpringApplication.run(GestionEducativaOnlineApplication.class, args);
+		TimeZone.setDefault(TimeZone.getTimeZone(ZoneId.of("America/Montevideo")));
     }
 
     @Bean

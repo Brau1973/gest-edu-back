@@ -242,12 +242,11 @@ public class InscripcionCursoServiceImpl implements InscripcionCursoService {
             inscripcionCurso.setEstado(EstadoInscripcionCurso.COMPLETADA);
             inscripcionCursoRepository.save(inscripcionCurso);
 
-            actividadService.registrarActividad(TipoActividad.REGISTRO_CALIFICACION, "Registro de calificaciónes de curso");
-
             enviarNotificaciones(inscripcionCurso);
         }
 
         curso.setEstado(Estado.FINALIZADO);
+        actividadService.registrarActividad(TipoActividad.REGISTRO_CALIFICACION, "Registro de calificaciónes de curso");
         cursoRepository.save(curso);
 
         return curso.getInscripciones()
