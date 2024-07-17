@@ -33,7 +33,7 @@ public class InscripcionCarreraServiceImpl  implements InscripcionCarreraService
         inscripcionCarrera.setEstudiante(estudiante);
 
         // NO ES UNA ACTIVIDAD REALIZADA POR EL ESTUDIANTE, ES RESULTADO DE QUE EL FUNCIONARIO APRUEBE EL  TRAMITE
-        //actividadService.registrarActividad(TipoActividad.INSCRIPCION_A_CARRERA, "Se ha inscrito a la carrera " + carrera.getNombre() + " con éxito");
+        //actividadService.registrarActividad(TipoActividad.INSCRIPCION_A_CARRERA, "Se ha aceptado la inscripción a la carrera " + carrera.getNombre() + " del estudiante con id " + estudiante.getId());
 
         return modelmapper.map(inscripcionCarreraRepository.save(inscripcionCarrera), InscripcionCarreraDTO.class);
     }

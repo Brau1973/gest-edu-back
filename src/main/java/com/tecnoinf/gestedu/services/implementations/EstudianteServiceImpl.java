@@ -11,7 +11,9 @@ import com.tecnoinf.gestedu.exceptions.UniqueFieldException;
 import com.tecnoinf.gestedu.models.*;
 import com.tecnoinf.gestedu.models.enums.CalificacionCurso;
 import com.tecnoinf.gestedu.models.enums.CalificacionExamen;
+import com.tecnoinf.gestedu.models.enums.TipoActividad;
 import com.tecnoinf.gestedu.repositories.*;
+import com.tecnoinf.gestedu.services.interfaces.ActividadService;
 import com.tecnoinf.gestedu.services.interfaces.CertificadoService;
 import com.tecnoinf.gestedu.services.interfaces.EstudianteService;
 import org.modelmapper.ModelMapper;
@@ -37,12 +39,14 @@ public class EstudianteServiceImpl implements EstudianteService {
     private final InscripcionExamenRepository inscripcionExamenRepository;
     private final InscripcionCarreraRepository inscripcionCarreraRepository;
     private final CertificadoService certificadoService;
+    private final ActividadService actividadService;
 
     @Autowired
     public EstudianteServiceImpl(EstudianteRepository estudianteRepository , CarreraRepository carreraRepository,
                                  UsuarioRepository usuarioRepository, ModelMapper modelMapper, AsignaturaRepository asignaturaRepository,
                                  InscripcionCursoRepository inscripcionCursoRepository, InscripcionExamenRepository inscripcionExamenRepository,
-                                 InscripcionCarreraRepository inscripcionCarreraRepository, CertificadoService certificadoService) {
+                                 InscripcionCarreraRepository inscripcionCarreraRepository, CertificadoService certificadoService,
+                                 ActividadService actividadService) {
         this.estudianteRepository = estudianteRepository;
         this.carreraRepository = carreraRepository;
         this.usuarioRepository = usuarioRepository;
@@ -52,6 +56,7 @@ public class EstudianteServiceImpl implements EstudianteService {
         this.inscripcionExamenRepository = inscripcionExamenRepository;
         this.inscripcionCarreraRepository = inscripcionCarreraRepository;
         this.certificadoService = certificadoService;
+        this.actividadService = actividadService;
     }
 
     @Override
@@ -354,6 +359,8 @@ public class EstudianteServiceImpl implements EstudianteService {
         escolaridadDTO.setCreditosAprobados(creditosAprobados);
         List<EscolaridadSemestreDTO> semestres = obtenerInfoSemestres(estudiante, inscripcionCarrera.getCarrera());
         escolaridadDTO.setSemestres(semestres);
+        actividadService.registrarActividad(TipoActividad.GENERACION_ESCOLARIDAD, "Se generó la escolaridad exitosamente.");
+
         return escolaridadDTO;
     }
 
