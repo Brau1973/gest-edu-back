@@ -62,9 +62,9 @@ public class DocenteServiceImpl implements DocenteService {
 
     @Override
     public DocenteDTO updateDocente(Long id, DocenteDTO docenteDto) {
-        checkDocumentoExists(docenteDto.getDocumento());
+        //checkDocumentoExists(docenteDto.getDocumento());
         Docente existingDocente = findDocenteById(id);
-        existingDocente.setDocumento(docenteDto.getDocumento());
+        //existingDocente.setDocumento(docenteDto.getDocumento());
         existingDocente.setNombre(docenteDto.getNombre());
         existingDocente.setApellido(docenteDto.getApellido());
         Docente updatedDocente = docenteRepository.save(existingDocente);
