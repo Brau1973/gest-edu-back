@@ -5,6 +5,10 @@ Este es el repositorio del backend para el proyecto **GestEdu**, un sistema de g
 ## Misión del Proyecto 🚀
 Desarrollar una plataforma educativa que permita la autogestión de estudiantes, administración de perfiles, generación de reportes en PDF, y muchas más funcionalidades, asegurando un sistema robusto, escalable y seguro.
 
+[![DemoWeb](https://img.youtube.com/vi/Rp1q63lyLAw/hqdefault.jpg)](https://www.youtube.com/watch?v=Rp1q63lyLAw)
+
+[![DemoMobile](https://img.youtube.com/vi/YwOAsZWHOSs/hqdefault.jpg)](https://www.youtube.com/watch?v=YwOAsZWHOSs)
+
 ## Integrantes del Equipo 👩‍💻👨‍💻
 - Braulio Jaureguy
 - María Rita Iglesias
