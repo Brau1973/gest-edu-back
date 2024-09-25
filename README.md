@@ -6,14 +6,10 @@ Este es el repositorio del backend para el proyecto **GestEdu**, un sistema de g
 Desarrollar una plataforma educativa que permita la autogestión de estudiantes, administración de perfiles, generación de reportes en PDF, y muchas más funcionalidades, asegurando un sistema robusto, escalable y seguro.
 
 ## Demo Web 👨‍💻
-<a href="https://www.youtube.com/watch?v=Rp1q63lyLAw" target="_blank">
-  <img src="https://img.youtube.com/vi/Rp1q63lyLAw/hqdefault.jpg" alt="Demo Web">
-</a>
+[![DemoWeb](https://img.youtube.com/vi/Rp1q63lyLAw/hqdefault.jpg)](https://www.youtube.com/watch?v=Rp1q63lyLAw)
 
 ## Demo Mobile 👨‍💻
-<a href="https://www.youtube.com/watch?v=YwOAsZWHOSs" target="_blank">
-  <img src="https://img.youtube.com/vi/YwOAsZWHOSs/hqdefault.jpg" alt="Demo Mobile">
-</a>
+[![DemoMobile](https://img.youtube.com/vi/YwOAsZWHOSs/hqdefault.jpg)](https://www.youtube.com/watch?v=YwOAsZWHOSs)
 
 ## Integrantes del Equipo 👩‍💻👨‍💻
 - Braulio Jaureguy
